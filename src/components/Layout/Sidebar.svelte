@@ -1,4 +1,9 @@
 <script lang="ts">
+	import { getStores } from '$app/stores';
+	import { goto } from '$app/navigation';
+	const { page } = getStores();
+	$: pathname = $page.url.pathname;
+
 	import logo from '$lib/assets/icons/logo-gradient.png';
 	import premium from '$lib/assets/icons/premium.png';
 	import noProfile from '$lib/assets/icons/no-profile.png';
@@ -7,8 +12,6 @@
 	import logout from '$lib/assets/icons/door-open.png';
 	import { ChevronRight, MessageCircle } from 'lucide-svelte';
 	import noChat from '$lib/assets/icons/empty state.png';
-
-	$: active = 'chat';
 </script>
 
 <aside
@@ -20,31 +23,31 @@
 
 			<div class="my-5 space-y-3 mt-10">
 				<button
-					class={`text-[14px] font-normal p-2 rounded-[8px] cursor-pointer flex items-center gap-2 ${active === 'chat' ? 'bg-gradient text-white' : 'text-[#808990]'} w-full`}
-					on:click={() => (active = 'chat')}
+					class={`text-[14px] font-normal p-2 rounded-[8px] cursor-pointer flex items-center gap-2 ${pathname === '/' ? 'bg-gradient text-white' : 'text-[#808990]'} w-full`}
+					on:click={() => goto('/')}
 				>
-					<MessageCircle size={17} color={active === 'chat' ? 'white' : '#808990'} />
+					<MessageCircle size={17} color={pathname === '/' ? 'white' : '#808990'} />
 					Chat
 				</button>
 				<button
-					class={` text-[14px] font-normal p-2 rounded-[8px] cursor-pointer flex items-center gap-2 ${active === 'resume' ? 'bg-gradient text-white' : 'text-[#808990]'} w-full`}
-					on:click={() => (active = 'resume')}
+					class={` text-[14px] font-normal p-2 rounded-[8px] cursor-pointer flex items-center gap-2 ${pathname.includes('my-resume') ? 'bg-gradient text-white' : 'text-[#808990]'} w-full`}
+					on:click={() => goto('/my-resume')}
 				>
-					{#if active === 'cover-letter'}
-						<img src={pdfGrey} alt="Rafiki X" width="20" height="20" />
+					{#if pathname.includes('my-resume')}
+						<img src={pdfGrey} alt="" width="20" height="20" />
 					{:else}
-						<img src={pdfGrey} alt="Rafiki X" width="20" height="20" />
+						<img src={pdfGrey} alt="" width="20" height="20" />
 					{/if}
 					<p>My Resume</p>
 				</button>
 				<button
-					on:click={() => (active = 'cover-letter')}
-					class={` text-[14px] font-normal p-2 rounded-[8px] cursor-pointer flex items-center gap-2 ${active === 'cover-letter' ? 'bg-gradient text-white' : 'text-[#808990]'} w-full`}
+					on:click={() => goto('/cover-letter')}
+					class={` text-[14px] font-normal p-2 rounded-[8px] cursor-pointer flex items-center gap-2 ${pathname.includes('cover-letter') ? 'bg-gradient text-white' : 'text-[#808990]'} w-full`}
 				>
-					{#if active === 'cover-letter'}
-						<img src={briefcaseGrey} alt="Rafiki X" width="20" height="20" />
+					{#if pathname.includes('cover-letter')}
+						<img src={briefcaseGrey} alt="" width="20" height="20" />
 					{:else}
-						<img src={briefcaseGrey} alt="Rafiki X" width="20" height="20" />
+						<img src={briefcaseGrey} alt="" width="20" height="20" />
 					{/if}
 					<p>Cover Letter</p>
 				</button>
