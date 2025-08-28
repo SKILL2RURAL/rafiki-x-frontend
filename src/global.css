@@ -6,19 +6,27 @@
 
 @font-face {
 	font-family: 'Satoshi-Regular';
-	font-weight: 400;
 	src: url('/fonts/Satoshi-Regular.otf') format('opentype');
+	font-weight: 400;
 }
 
 @font-face {
 	font-family: 'PlusJakartaSans-Semibold';
+	src: url('/fonts/PlusJakartaSans-SemiBold.ttf') format('truetype');
 	font-weight: 600;
-	src: url('/fonts/PlusJakartaSans-SemiBold') format('truetype');
 }
 @font-face {
 	font-family: 'PlusJakartaSans-Medium';
+	src: url('/fonts/PlusJakartaSans-Medium.ttf') format('truetype');
 	font-weight: 500;
-	src: url('/fonts/PlusJakartaSans-Medium') format('truetype');
+}
+
+@font-face {
+	font-family: 'Mulish';
+	font-style: normal;
+	font-weight: 200 1000;
+	font-display: swap;
+	src: url(https://fonts.googleapis.com/css2?family=Mulish:ital,wght@0,200..1000;1,200..1000&display=swap);
 }
 
 :root {
@@ -129,6 +137,7 @@
 }
 
 @theme {
+	--font-mulish: Mulish, system-ui, sans-serif;
 	--font-satoshi-regular: Satoshi-Regular, system-ui, sans-serif;
 	--font-plus-jakarta-sans-semibold: PlusJakartaSans-Semibold, system-ui, sans-serif;
 	--font-plus-jakarta-sans-medium: PlusJakartaSans-Medium, system-ui, sans-serif;
