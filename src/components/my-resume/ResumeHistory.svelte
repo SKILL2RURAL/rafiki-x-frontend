@@ -1,5 +1,5 @@
-<script>
-    export let history = [];
+<script lang="ts">
+    let { history }: {history: Array<{title: string}>} = $props()
 </script>
 
 
