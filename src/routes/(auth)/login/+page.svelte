@@ -32,6 +32,11 @@
 				<p class="text-center font-plus-jakarta-sans-medium text-sm">Or Continue with</p>
 
 				<LoginForm />
+				<a href="/register">
+					<p class="mt-5 text-sm font-plus-jakarta-sans-medium text-center">
+						Dont have an account? <span class="underline">Create an account in seconds</span>
+					</p>
+				</a>
 			</div>
 		</div>
 	</div>
