@@ -15,8 +15,11 @@
 </script>
 
 <aside
-	class="w-[var(--sidebar-width)] p-5 py-7 max-h-screen border-r-[0.4px] border-[#C8CCD0] font-mulish"
+	class="w-[var(--sidebar-width)] p-5 py-7 max-h-screen border-r-[0.4px] border-[#C8CCD0] font-mulish relative"
 >
+	<div class="absolute -right-4 top-10 bg-gradient rounded-full cursor-pointer p-1">
+		<ChevronRight color="white" size={25} />
+	</div>
 	<div class="flex flex-col h-full justify-between">
 		<div>
 			<img src={logo} alt="Rafiki X" width="45" height="45" />
@@ -83,7 +86,12 @@
 					<img src={noProfile} alt="Rafiki X" width="20" height="20" />
 					<p>My profile</p>
 				</button>
-				<button class="flex items-center gap-3">
+				<button
+					class="flex items-center gap-3"
+					on:click={() => {
+						goto('/login');
+					}}
+				>
 					<img src={logout} alt="Rafiki X" width="20" height="20" />
 					<p>Logout</p>
 				</button>
