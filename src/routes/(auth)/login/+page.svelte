@@ -11,7 +11,7 @@
 		alt="Rafiki X"
 		width="100%"
 		height="100%"
-		class="h-screen w-screen z-[-1] top-0 left-0"
+		class="h-screen w-screen z-[-1] top-0 left-0 opacity-50"
 	/>
 	<div class="absolute top-0 left-0 z-[50] h-screen w-screen grid grid-cols-2 gap-5">
 		<div class="flex justify-center items-center">

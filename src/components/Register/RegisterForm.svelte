@@ -152,10 +152,10 @@
 		</div>
 	</div>
 
-	<button type="button" class="text-[12px] flex gap-2 items-center font-satoshi-regular">
+	<div class="text-[12px] flex gap-2 items-center font-satoshi-regular">
 		<Checkbox bind:checked={formData.agree} />
 		<p>I have read and agree with RafikiX</p>
-	</button>
+	</div>
 	<Button
 		class="bg-gradient w-full rounded-[8px] mt-5 border border-[#FFFFFF] h-[50px]"
 		type="submit">Sign up</Button

@@ -16,14 +16,14 @@
 		alt="Rafiki X"
 		width="100%"
 		height="100%"
-		class=" h-screen w-screen z-[-1] top-0 left-0"
+		class="h-screen w-screen z-[-1] top-0 left-0 opacity-50"
 	/>
-	<div class="absolute top-0 left-0 overflow-hidden max-h-screen w-screen grid grid-cols-2 gap-5">
+	<div class="absolute top-0 left-0 overflow-hidden h-screen w-screen grid grid-cols-2 gap-5">
 		<div class="flex justify-center items-center">
 			<img src={logo} alt="Rafiki X" width="500" height="500" />
 		</div>
-		<div class="flex justify-center items-center">
-			<div class="text-white max-h-screen overflow-auto my-5 w-[500px] px-5">
+		<div class="flex justify-center items-center h-full">
+			<div class="text-white max-h-screen overflow-auto py-5 w-[500px] px-5">
 				<h1 class="font-plus-jakarta-sans-semibold text-[30px]">Welcome to RafikiX</h1>
 				<p class="text-sm font-satoshi-regular">
 					Getting started is easy and only takes a few seconds.
