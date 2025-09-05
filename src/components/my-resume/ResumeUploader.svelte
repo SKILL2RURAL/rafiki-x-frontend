@@ -6,9 +6,9 @@
     import threeDot from '$lib/assets/icons/threeDot.png'
 	
 
-    let { onUpload, openEditor, files} : {
+    let { onUpload, onAddText, files} : {
         onUpload: (files: FileList) => void,
-        openEditor: boolean,
+        onAddText: () => void,
         files: Array<{name:string, size: string, type: string, icon?: string}>
     } = $props()
 
@@ -20,9 +20,6 @@
         }
     }
 
-    function handleAddText () {
-        openEditor ? false : true;
-    }
 
 </script>
 
@@ -46,7 +43,7 @@
 
 
 
-    <Button class="md:w-[611px] h-[48px] rounded-[8px] border p-2.5 bg-[#F7FBFD] text-black mt-4" onclick={handleAddText}>Add text Content</Button>
+    <Button class="md:w-[611px] h-[48px] rounded-[8px] border p-2.5 bg-[#F7FBFD] text-black mt-4" onclick={onAddText}>Add text Content</Button>
 
     <ul class="flex flex-col gap-4 mt-6">
         {#each files as file}
