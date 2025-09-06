@@ -14,3 +14,9 @@ export const fileIcons: Record<string, string> = {
     "image/jpeg": "",
     "default": ""
 }
+
+export const history = [
+        {id: 1, day: 'TODAY', subject: ['Career story generation']},
+        {id: 2, day: 'YESTERDAY', subject: ['Career story generation']},
+        {id: 3, day: 'RECENT', subject: ['Career story generation', 'Career story generation', 'Career story generation']}
+    ]
