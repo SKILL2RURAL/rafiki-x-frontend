@@ -33,7 +33,13 @@
   <div class="fixed right-0 top-0 h-full md:w-[580px] bg-white shadow-lg z-50"> 
     <div class="flex flex-col justify-between h-full">
         <div class="flex justify-between items-center mb-4 border-b-2 border-[#A3AED0] h-[92px] p-5">
-        <h2 class="text-lg font-satoshi-regular font-medium ">{title}</h2>
+          <div>
+            <h2 class="text-lg font-satoshi-regular font-medium ">{title}</h2>
+            {#if title === 'Add Text Content'}
+              <p class="text-sm text-[#A09D9D] font-satoshi-regular">txt file</p>
+            {/if}
+          </div>
+        
         <button onclick={close} class="text-gray-500 hover:text-black focus:outline-none">
           <!-- Close icon or text; e.g., -->
           <span class="w-[36.59] h-[36.59] rounded-[100%] bg-[#F9F9F9]">

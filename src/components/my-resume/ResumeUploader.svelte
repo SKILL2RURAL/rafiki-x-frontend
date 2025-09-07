@@ -10,7 +10,9 @@
         onUpload: (files: FileList) => void,
         onAddText: () => void,
         files: Array<{name:string, size: string, type: string, icon?: string}>
-    } = $props()
+    } = $props();
+
+    let openMenuIndex= $state<number | null>(null);
 
     function handleFileChange(event: Event) {
         const files = (event.target as HTMLInputElement).files;
@@ -18,6 +20,30 @@
             onUpload(files);
             console.log(files);
         }
+    }
+
+    function toggleMenu(index: number) {
+        openMenuIndex = openMenuIndex === index ? null : index;
+    }
+
+    function makeDefault(file) {
+        console.log('Make default:', file.name);
+        openMenuIndex = null;
+    }
+
+    function downloadFile(file) {
+        console.log('Download file:', file.name);
+        openMenuIndex = null;
+    }
+
+    function deleteFile(file) {
+        console.log('Delete file:', file.name);
+        openMenuIndex = null;
+    }
+
+    function viewFile(file) {
+        console.log('View file:', file.name);
+        openMenuIndex = null;
     }
 
 
@@ -46,8 +72,8 @@
     <Button class="md:w-[611px] h-[48px] rounded-[8px] border p-2.5 bg-[#F7FBFD] text-black mt-4" onclick={onAddText}>Add text Content</Button>
 
     <ul class="flex flex-col gap-4 mt-6">
-        {#each files as file}
-            <li>
+        {#each files as file, index}
+            <li class="relative">
                 <div class="md:w-[611px] h-[60px] flex justify-between rounded-[8px] bg-[#F7FBFD] p-3 font-satoshi-regular">
                     <div class="flex gap-2 items-center">
                         <img src={file.icon} alt="File Icon" class="" width="32" height="32"/>
@@ -59,9 +85,20 @@
                     <div class="flex gap-2.5 items-center">
                         <div class="bg-gradient h-[17px] w-[66px] rounded-full text-white font-satoshi-regular font-medium text-[12px] text-center ">Default</div>
                         <div class="flex gap-2.5 items-center">
-                            <img src={downloadIcon} alt="download icon" width="24" height="24"/>
+                            <button onclick={downloadFile}><img src={downloadIcon} alt="download icon" width="24" height="24"/></button>
                             <span class="w-[1px] h-[25px] bg-[#D9D9D9]"></span>
-                            <img src={threeDot} alt="more icon" width="24" height="24"/>
+                            <button onclick={() => toggleMenu(index)}><img src={threeDot} alt="more icon" width="24" height="24"/></button>
+
+                            {#if openMenuIndex === index}
+                                <div class="absolute right-0 top-10 w-[150px] bg-white rounded-md z-50">
+                                    <div class="w-[18.07px] h-[18.07px] rounded-[1px] rotate-45 absolute -top-2 right-3.5 bg-white shadow-md border"></div>
+                                    <div class="absolute z-51 w-[150px] bg-white rounded-md shadow-md text-sm font-satoshi-regular">
+                                        <button class="block w-full text-left px-4 py-2 hover:bg-gray-100" onclick={() => makeDefault(file)}>Make default</button>
+                                        <button class="block w-full text-left px-4 py-2 hover:bg-gray-100" onclick={() => viewFile(file)}>View</button>
+                                        <button class="block w-full text-left px-4 py-2 text-red-500 hover:bg-gray-100" onclick={() => deleteFile(file)}>Delete resume</button>
+                                    </div>
+                                </div>
+                            {/if}
                         </div>
                     </div>
                 </div>
