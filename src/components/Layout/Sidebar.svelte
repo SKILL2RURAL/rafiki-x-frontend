@@ -15,7 +15,7 @@
 </script>
 
 <aside
-	class="w-[var(--sidebar-width)] p-5 py-7 max-h-screen border-r-[0.4px] border-[#C8CCD0] font-mulish relative"
+	class="w-[var(--sidebar-width)] p-5 py-7 h-screen border-r-[0.4px] border-[#C8CCD0] font-mulish relative"
 >
 	<div class="absolute -right-4 top-10 bg-gradient rounded-full cursor-pointer p-1">
 		<ChevronRight color="white" size={25} />
@@ -44,7 +44,7 @@
 					<p>My Resume</p>
 				</button>
 				<button
-					on:click={() => goto('/cover-letter')}
+					on:click={() => goto('/career-guide')}
 					class={` text-[14px] font-normal p-2 rounded-[8px] cursor-pointer flex items-center gap-2 ${pathname.includes('cover-letter') ? 'bg-gradient text-white' : 'text-[#808990]'} w-full`}
 				>
 					{#if pathname.includes('cover-letter')}
@@ -52,7 +52,7 @@
 					{:else}
 						<img src={briefcaseGrey} alt="" width="20" height="20" />
 					{/if}
-					<p>Cover Letter</p>
+					<p>Career Guide</p>
 				</button>
 			</div>
 

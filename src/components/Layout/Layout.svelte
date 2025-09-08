@@ -11,11 +11,10 @@
 
 <div class="flex [--sidebar-width:300px] [--navbar-height:80px]">
 	<Sidebar />
-	<div class="w-full h-screen">
+	<div class="w-full h-screen overflow-auto">
 		<Navbar />
-		<main class="p-5">
-			<slot {rightSidebar}/>
+		<main class="p-5 h-[89vh] w-full">
+			<slot {rightSidebar} />
 		</main>
 	</div>
 </div>
- 
