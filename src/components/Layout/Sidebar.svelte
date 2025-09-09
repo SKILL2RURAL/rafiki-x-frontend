@@ -51,9 +51,9 @@
 				</button>
 				<button
 					onclick={() => goto('/career-guide')}
-					class={` text-[14px] font-normal p-2 rounded-[8px] cursor-pointer flex items-center gap-2 ${pathname.includes('cover-letter') ? 'bg-gradient text-white' : 'text-[#808990]'} w-full`}
+					class={` text-[14px] font-normal p-2 rounded-[8px] cursor-pointer flex items-center gap-2 ${pathname.includes('career-guide') ? 'bg-gradient text-white' : 'text-[#808990]'} w-full`}
 				>
-					{#if pathname.includes('career-guide')}
+					{#if pathname.includes('/career-guide')}
 						<img src={briefcaseGrey} alt="" width="20" height="20" />
 					{:else}
 						<img src={briefcaseGrey} alt="" width="20" height="20" />

@@ -3,18 +3,19 @@
 	import Button from '$lib/components/ui/button/button.svelte';
 	import downloadIcon from '$lib/assets/icons/downloadIcon.png';
 	import threeDot from '$lib/assets/icons/threeDot.png';
+	import Drawer from '../Common/ReuseableDrawer.svelte';
+	import TextEditor from './TextEditor.svelte';
 
 	let {
 		onUpload,
-		onAddText,
 		files
 	}: {
 		onUpload: (files: FileList) => void;
-		onAddText: () => void;
 		files: Array<{ name: string; size: string; type: string; icon?: string }>;
 	} = $props();
 
 	let openMenuIndex = $state<number | null>(null);
+	let isDrawerOpen = $state<boolean>(false);
 
 	function handleFileChange(event: Event) {
 		const files = (event.target as HTMLInputElement).files;
@@ -74,13 +75,15 @@
 
 	<Button
 		class="md:w-[611px] h-[48px] rounded-[8px] border p-2.5 bg-[#F7FBFD] text-black mt-4 hover:bg-[#F7FBFD]"
-		onclick={onAddText}>Add text Content</Button
+		onclick={() => {
+			isDrawerOpen = true;
+		}}>Add text Content</Button
 	>
 
-	<Button
+	<!-- <Button
 		class="md:w-[611px] h-[48px] rounded-[8px] border p-2.5 bg-[#F7FBFD] text-black mt-4"
 		onclick={onAddText}>Add text Content</Button
-	>
+	> -->
 
 	<ul class="flex flex-col gap-4 mt-6">
 		{#each files as file, index}
@@ -139,4 +142,39 @@
 			</li>
 		{/each}
 	</ul>
+
+	<!-- Drawer  -->
+	<Drawer bind:isOpen={isDrawerOpen} onClose={() => (isDrawerOpen = false)}>
+		<div class="flex flex-col justify-between h-full">
+			<div class="px-5 border-b border-[#A3AED0] h-[90px] flex flex-col justify-center relative">
+				<h4 class="font-medium text-[#262424] text-[20px]">Add text content</h4>
+				<p class="text-[#A09D9D] text-[14px]">txt file</p>
+				<button
+					onclick={() => (isDrawerOpen = false)}
+					class="bg-[#F9F9F9] text-[#5F5F5F] text-[14px] h-[35px] w-[35px] rounded-full flex justify-center items-center absolute top-5 right-5"
+				>
+					X
+				</button>
+			</div>
+			<TextEditor />
+			<div class="border-t border-[#33333380] p-5 flex justify-end gap-5">
+				<button
+					onclick={() => (isDrawerOpen = false)}
+					class="border bg-gradient-to-r from-[#51A3DA] to-[#60269E] p-[1px] rounded-[8px]"
+				>
+					<div class="bg-white h-[50px] w-[185px] flex items-center justify-center rounded-[9px]">
+						<p
+							class="bg-gradient-to-r from-[#51A3DA] to-[#60269E] bg-clip-text text-transparent font-mulish font-semibold"
+						>
+							Go Back
+						</p>
+					</div>
+				</button>
+				<Button
+					class="bg-gradient-to-t from-[#51A3DA] to-[#60269E] h-[55px] w-[185px] font-mulish font-semibold rounded-[8px]"
+					>Save</Button
+				>
+			</div>
+		</div>
+	</Drawer>
 </div>
