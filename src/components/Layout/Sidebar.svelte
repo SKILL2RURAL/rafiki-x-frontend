@@ -21,7 +21,9 @@
 </script>
 
 <aside
+
 	class="w-[var(--sidebar-width)] p-5 py-7 h-screen border-r-[0.4px] border-[#C8CCD0] font-mulish relative"
+
 >
 	<div class="absolute -right-4 top-10 bg-gradient rounded-full cursor-pointer p-1">
 		<ChevronRight color="white" size={25} />
