@@ -35,7 +35,7 @@
 				class="w-full border-none outline-none focus-visible:ring-transparent placeholder:text-[14px] placeholder:font-bold placeholder:text-[#80899A] text-black shadow-none"
 			/>
 		</div>
-		<div class="mt-5 flex gap-5">
+		<div class="mt-5 flex gap-5 w-full">
 			<button class="shadow-md rounded-[100px] flex items-center gap-2 px-4 py-3 w-fit">
 				<img src={mic} alt="mic" width="20" height="20" />
 				<p class="text-[14px] font-bold text-[#1E1E1E]">Voice Note</p>
