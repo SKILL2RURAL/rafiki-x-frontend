@@ -17,7 +17,9 @@
 <!-- Mount RightSidebar first to avoid undefined errors -->
 <!-- <RightSidebar bind:this={rightSidebar} /> -->
 
-<div class="flex [--sidebar-width:300px] [--navbar-height:10vh] h-screen w-screen overflow-hidden">
+<div
+	class="flex [--sidebar-full-width:300px] [--sidebar-collapsed-width:80px] [--navbar-height:10vh] h-screen w-screen overflow-hidden"
+>
 	<Sidebar openHistory={() => {}} />
 	<div class="w-full h-[100vh] overflow-auto">
 		<Navbar />
@@ -33,10 +35,10 @@
 	>
 		<button
 			aria-label="feedback"
-			class=" bg-gradient-to-r from-[#51A3DA] to-[#60269E] rounded-l-full p-2"
+			class=" bg-gradient-to-r from-[#51A3DA] to-[#60269E] rounded-l-full p-1"
 			onclick={() => (showFeedback = !showFeedback)}
 		>
-			<img src={arrowIcon} alt="arrow icon" width="24" height="24" />
+			<img src={arrowIcon} alt="arrow icon" width="20" height="20" />
 		</button>
 		{#if isFeedbackInput}
 			<FeedbackInput {closeFeedback} />

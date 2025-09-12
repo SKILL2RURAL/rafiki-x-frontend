@@ -5,6 +5,7 @@
 	import Image2 from '$lib/assets/icons/career2.svg';
 	import Image3 from '$lib/assets/icons/career3.svg';
 	import Image4 from '$lib/assets/icons/career4.svg';
+	import logo from '$lib/assets/icons/logo-gradient.png';
 
 	const lists = [
 		{
@@ -28,8 +29,10 @@
 
 <Layout>
 	<div class="w-full h-full flex flex-col items-center justify-center">
+		<img src={logo} alt="Rafki-X logo" width={38} height={38} />
+
 		<div
-			class="bg-gradient-to-b p-10 rounded-[20px] from-[#928bb8] via-[#ebdef8] to-[#FFFFFF] text-center font-mulish text-white relative"
+			class="bg-gradient-to-b p-10 rounded-[20px] from-[#928bb8] via-[#ebdef8] to-[#FFFFFF] text-center font-mulish text-white relative mt-10"
 		>
 			<div
 				class="absolute top-7 right-5 cursor-pointer bg-white h-[35px] w-[35px] flex items-center justify-center text-[18px] rounded-full text-[#1E1E1E]"

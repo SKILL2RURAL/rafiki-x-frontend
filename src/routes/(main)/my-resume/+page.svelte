@@ -20,7 +20,7 @@
 	}
 </script>
 
-<Layout let:rightSidebar>
+<Layout>
 	<div class="flex flex-col items-center gap-2 h-full justify-center">
 		<img src={logo} alt="Rafki-X logo" width={38} height={38} />
 
