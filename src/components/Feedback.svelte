@@ -13,7 +13,7 @@
 	<div class="flex flex-row gap-5 justify-between my-5">
 		{#each numbers as number}
 			<button
-				class="text-[24px] font-bold text-[#253B4B] bg-[#FCFCFD] p-5 py-2 rounded-[2px]"
+				class="text-[24px] font-bold text-[#253B4B] bg-[#FCFCFD] p-5 py-2 rounded-[2px] hover:bg-gradient-to-r from-[#51A3DA] to-[#60269E] hover:text-white"
 				onclick={showFeedbackInput}
 			>
 				{number}
