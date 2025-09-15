@@ -18,10 +18,10 @@
 <!-- <RightSidebar bind:this={rightSidebar} /> -->
 
 <div
-	class="flex [--sidebar-full-width:300px] [--sidebar-collapsed-width:80px] [--navbar-height:10vh] h-screen w-screen overflow-hidden"
+	class="flex [--sidebar-full-width:300px] [--sidebar-collapsed-width:80px] [--navbar-height:10vh] h-screen max-h-screen w-screen overflow-hidden"
 >
 	<Sidebar openHistory={() => {}} />
-	<div class="w-full h-[100vh] overflow-auto">
+	<div class="w-full h-[100vh]">
 		<Navbar />
 		<!-- svelte-ignore slot_element_deprecated -->
 		<main class="p-5 h-[90vh] w-full">
@@ -30,20 +30,22 @@
 	</div>
 
 	<!-- FEEDBACK  -->
-	<div
-		class={`absolute top-1/2 -translate-y-1/2  ${showFeedback ? 'translate-x-0' : 'translate-x-[800px]'} transition-all duration-500 right-0 flex overflow-hidden`}
-	>
+
+	<div class={`absolute top-1/2 -translate-y-1/2 right-0 hidden lg:flex`}>
 		<button
 			aria-label="feedback"
-			class=" bg-gradient-to-r from-[#51A3DA] to-[#60269E] rounded-l-full p-1"
+			class=" bg-gradient-to-r from-[#51A3DA] to-[#60269E] rounded-l-full p-1 h-[320px]"
 			onclick={() => (showFeedback = !showFeedback)}
 		>
 			<img src={arrowIcon} alt="arrow icon" width="20" height="20" />
 		</button>
-		{#if isFeedbackInput}
-			<FeedbackInput {closeFeedback} />
-		{:else}
-			<Feedback showFeedbackInput={() => (isFeedbackInput = true)} />
-		{/if}
+
+		<div class={showFeedback ? 'block' : 'hidden'}>
+			{#if isFeedbackInput}
+				<FeedbackInput {closeFeedback} />
+			{:else}
+				<Feedback showFeedbackInput={() => (isFeedbackInput = true)} />
+			{/if}
+		</div>
 	</div>
 </div>

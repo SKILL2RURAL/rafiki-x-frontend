@@ -51,10 +51,10 @@
 </script>
 
 <div
-	class="md:w-[677px] rounded-[20px] p-6 bg-white flex flex-col items-center shadow-[0_4px_8px_4px_rgba(112,144,176,0.1)]"
+	class="w-full lg:w-[677px] rounded-[20px] p-6 bg-whte flex flex-col items-center shadow-[0_4px_8px_4px_rgba(112,144,176,0.1)]"
 >
 	<div
-		class="md:w-[611px] md:h-[190px] rounded-[6px] bg-[#F7FBFD] font-satoshi-regular space-y-6 pt-5 text-center"
+		class="w-full md:h-[190px] rounded-[6px] bg-[#F7FBFD] font-satoshi-regular space-y-6 pt-5 text-center p-5"
 	>
 		<img src={upload} alt="Upload Icon" class="mx-auto mb-4" width="59.05" height="51.15" />
 		<p class="text-[13.73px] font-bold leading-5">
@@ -68,13 +68,13 @@
 	</div>
 
 	<div class="flex items-center gap-1 mt-6">
-		<span class="md:w-[285.5px] border-[0.64px] bg-[#C8CCD0]"> </span>
+		<span class="lg:w-[285.5px] border-[0.64px] bg-[#C8CCD0]"> </span>
 		<p class="text-[14px]">OR</p>
-		<span class="md:w-[285.5px] border-[0.64px] bg-[#C8CCD0]"> </span>
+		<span class="lg:w-[285.5px] border-[0.64px] bg-[#C8CCD0]"> </span>
 	</div>
 
 	<Button
-		class="md:w-[611px] h-[48px] rounded-[8px] border p-2.5 bg-[#F7FBFD] text-black mt-4 hover:bg-[#F7FBFD]"
+		class="w-full h-[48px] rounded-[8px] border p-2.5 bg-[#F7FBFD] text-black mt-4 hover:bg-[#F7FBFD]"
 		onclick={() => {
 			isDrawerOpen = true;
 		}}>Add text Content</Button

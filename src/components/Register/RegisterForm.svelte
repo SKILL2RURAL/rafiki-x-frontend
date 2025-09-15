@@ -38,7 +38,7 @@
 </script>
 
 <form class="space-y-5 mt-5 text-white" on:submit|preventDefault={handleSubmit}>
-	<div class="grid grid-cols-2 gap-5">
+	<div class="grid md:grid-cols-2 gap-5">
 		<div>
 			<label for="firstName" class="text-sm">First Name</label>
 			<Input
@@ -86,7 +86,7 @@
 		</Select.Root>
 	</div>
 
-	<div class="grid grid-cols-2 gap-5">
+	<div class="grid md:grid-cols-2 gap-5">
 		<!-- GENDER  -->
 		<div>
 			<label for="country" class="text-sm">Gender</label>

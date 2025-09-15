@@ -28,7 +28,7 @@
 </script>
 
 <aside
-	class={`${isSidebarOpen ? 'w-[var(--sidebar-full-width)]' : 'w-[var(--sidebar-collapsed-width)]'} transition-all duration-300  p-5 py-7 h-screen border-r-[0.4px] border-[#C8CCD0] font-mulish relative`}
+	class={`${isSidebarOpen ? 'w-[var(--sidebar-full-width)]' : 'w-[var(--sidebar-collapsed-width)]'} transition-all duration-300  p-5 py-7 h-screen border-r-[0.4px] border-[#C8CCD0] font-mulish relative hidden lg:block`}
 >
 	<button class="absolute -right-4 top-10 bg-gradient rounded-full cursor-pointer p-1">
 		<ChevronRight color="white" size={25} class={`${isSidebarOpen ? 'rotate-0' : 'rotate-180'}`} />

@@ -13,14 +13,26 @@
 		height="100%"
 		class="h-screen w-screen z-[-1] top-0 left-0 opacity-50"
 	/>
-	<div class="absolute top-0 left-0 z-[50] h-screen w-screen grid grid-cols-2 gap-5">
-		<div class="flex justify-center items-center">
-			<img src={logo} alt="Rafiki X" width="500" height="500" />
+	<div
+		class="absolute top-0 left-0 z-[50] h-screen w-screen flex flex-col items-center justify-center lg:grid grid-cols-2 gap-5"
+	>
+		<div class="flex justify-center items-center px-10">
+			<img
+				src={logo}
+				alt="Rafiki X"
+				width="500"
+				height="500"
+				class="w-[100px] h-[100px] lg:w-[500px] lg:h-[500px]"
+			/>
 		</div>
 		<div class="flex justify-center items-center">
-			<div class="text-white w-[400px]">
-				<h1 class="font-plus-jakarta-sans-semibold text-[30px]">Welcome, Login</h1>
-				<p class="text-sm font-satoshi-regular">Please provide your login credentials</p>
+			<div class="text-white lg:w-[400px] px-5">
+				<h1 class="font-plus-jakarta-sans-semibold text-[30px] text-center lg:text-left">
+					Welcome, Login
+				</h1>
+				<p class="text-sm font-satoshi-regular text-center lg:text-left">
+					Please provide your login credentials
+				</p>
 				<button
 					class="my-5 bg-white rounded-[12px] p-4 py-3 w-full flex gap-2 justify-center items-center"
 				>
