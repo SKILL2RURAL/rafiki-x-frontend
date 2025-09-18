@@ -25,8 +25,8 @@
 			</p>
 		</div>
 		<AlertDialog.Footer>
-			<AlertDialog.Cancel class="w-[50%]">Cancel</AlertDialog.Cancel>
-			<AlertDialog.Action class="w-[50%] bg-red-500 hover:bg-red-600"
+			<AlertDialog.Cancel class="w-full sm:w-[50%]">Cancel</AlertDialog.Cancel>
+			<AlertDialog.Action class="w-full sm:w-[50%] bg-red-500 hover:bg-red-600"
 				>Delete Account</AlertDialog.Action
 			>
 		</AlertDialog.Footer>

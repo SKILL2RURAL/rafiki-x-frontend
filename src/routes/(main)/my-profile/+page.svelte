@@ -10,7 +10,7 @@
 </script>
 
 <Layout>
-	<div class="px-10">
+	<div class="lg:px-10">
 		<h1 class="text-[#253B4B] text-[24px] font-normal mb-5">My Account</h1>
 
 		<div>
@@ -44,7 +44,7 @@
 						<p class="text-[#808990] text-[14px] font-satoshi-regular">Full name</p>
 					</div>
 				</div>
-				<div>
+				<div class="hidden lg:block">
 					<button class="bg-gradient rounded-full cursor-pointer p-1">
 						<ChevronRight color="white" size={25} />
 					</button>
@@ -55,11 +55,13 @@
 				<div class="flex space-x-5 items-center">
 					<Mail color="#808990" />
 					<div>
-						<h5 class="text-[#253B4B] text-[18px] font-medium">emmanueladebayo@gmail.com</h5>
+						<h5 class="text-[#253B4B] text-[18px] font-medium max-w-[200px] lg:w-full truncate">
+							emmanueladebayo@gmail.com
+						</h5>
 						<p class="text-[#808990] text-[14px] font-satoshi-regular">Email address</p>
 					</div>
 				</div>
-				<div>
+				<div class="hidden lg:block">
 					<button class="bg-gradient rounded-full cursor-pointer text-white px-4 text-[12px]"
 						>Default</button
 					>
@@ -76,12 +78,12 @@
 						<Lock color="#808990" />
 						<div>
 							<h5 class="text-[#253B4B] text-[18px] font-medium text-left">Password</h5>
-							<p class="text-[#808990] text-[14px] font-satoshi-regular">
+							<p class="text-[#808990] text-[14px] font-satoshi-regular text-left">
 								Change your account password
 							</p>
 						</div>
 					</div>
-					<div>
+					<div class="hidden lg:block">
 						<div class="bg-gradient rounded-full cursor-pointer p-1">
 							<ChevronRight color="white" size={25} />
 						</div>
@@ -99,13 +101,13 @@
 						<Trash2 color="#DE1106" />
 						<div>
 							<h5 class="text-[#DE1106] text-[18px] font-medium text-left">Delete account</h5>
-							<p class="text-[#808990] text-[14px] font-satoshi-regular">
+							<p class="text-[#808990] text-[14px] font-satoshi-regular text-left">
 								You won't be able to undo this action if you continue, and it may affect your future
 								account with us
 							</p>
 						</div>
 					</div>
-					<div>
+					<div class="hidden lg:block">
 						<div class="bg-gradient rounded-full cursor-pointer p-1">
 							<ChevronRight color="white" size={25} />
 						</div>
