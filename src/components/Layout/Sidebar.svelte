@@ -130,7 +130,7 @@
 					<img src={premium} alt="Rafiki X" width="20" height="20" />
 					<p class="">Go premium today</p>
 				</button>
-				<button class="flex items-center gap-3">
+				<button class="flex items-center gap-3" onclick={() => goto('/my-profile')}>
 					<img src={noProfile} alt="Rafiki X" width="20" height="20" />
 					<p>My profile</p>
 				</button>
