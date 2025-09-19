@@ -13,7 +13,7 @@
 	import pdfLight from '$lib/assets/icons/pdf-white.svg';
 	import logout from '$lib/assets/icons/door-open.png';
 	import { ChevronRight, MessageCircle } from 'lucide-svelte';
-	import noChat from '$lib/assets/icons/empty state.png';
+	import noChat from '$lib/assets/icons/empty-state.png';
 	import { history } from '$lib';
 	import greaterArrow from '$lib/assets/icons/greaterArrow.png';
 
