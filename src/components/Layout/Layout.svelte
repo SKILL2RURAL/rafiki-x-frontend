@@ -18,13 +18,13 @@
 <!-- <RightSidebar bind:this={rightSidebar} /> -->
 
 <div
-	class="flex [--sidebar-full-width:300px] [--sidebar-collapsed-width:80px] [--navbar-height:10vh] h-screen max-h-screen w-screen overflow-hidden"
+	class="flex [--sidebar-full-width:300px] [--sidebar-collapsed-width:80px] [--navbar-height:10vh] h-[100dvh] max-h-screen w-screen overflow-hidden"
 >
 	<Sidebar openHistory={() => {}} />
 	<div class="w-full h-[100vh]">
 		<Navbar />
 		<!-- svelte-ignore slot_element_deprecated -->
-		<main class="p-5 h-[90vh] w-full">
+		<main class="p-5 h-[90vh] w-full overflow-auto">
 			<slot />
 		</main>
 	</div>
