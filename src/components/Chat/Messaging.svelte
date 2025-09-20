@@ -10,6 +10,7 @@
     import like from "$lib/assets/icons/likeIcon.png"
     import thumDown from "$lib/assets/icons/thumbDown.png"
     import megaphone from "$lib/assets/icons/megaphone.png"
+    import mic from "$lib/assets/icons/mic.png"
 
     let newMessage = "";
     let selectedFile: File | null = null;
@@ -50,7 +51,7 @@
 
 </script>
 
-<div class="flex flex-col justify-between gap-20 h-full font-mulish font-medium">
+<div class="flex flex-col justify-between gap-20 h-full font-mulish font-medium p-6">
     <!--Chat area-->
     <div class="flex-1 overflow-y-auto p-5 space-y-4 bg-white">
         {#each $chatStore as msg (msg.id)}
@@ -111,13 +112,22 @@
                                 onchange={handleFileChange}
                             />
                         </div>
-                                <!-- Mic Button -->
-                        <button
-                            class="p-2 h-[48px] w-[48px] border rounded-full hover:bg-gray-100"
-                            onclick={handleSend}
-                        >
-                            <img src={send} class="mx-auto" width="20" height="20" alt="send icon">
-                        </button>
+                        {#if newMessage.length === 0}
+                               <!-- Mic Button -->
+                                <button
+                                    class="p-2 h-[48px] w-[48px] border rounded-full hover:bg-gray-100"
+                                    onclick={handleSend}
+                                >
+                                    <img src={mic} class="mx-auto" width="20" height="20" alt="mic icon">
+                                </button>
+                            {:else}
+                                <button
+                                    class="p-2 h-[48px] w-[48px] border rounded-full hover:bg-gray-100"
+                                    onclick={handleSend}
+                                >
+                                    <img src={send} class="mx-auto" width="20" height="20" alt="send icon">
+                                </button>
+                        {/if}
                 </div>
             </div>
         </div>
