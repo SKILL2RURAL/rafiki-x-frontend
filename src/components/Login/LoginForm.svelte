@@ -1,4 +1,5 @@
 <script>
+	import { goto } from '$app/navigation';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import Checkbox from '$lib/components/ui/checkbox/checkbox.svelte';
 	import Input from '$lib/components/ui/input/input.svelte';
@@ -7,7 +8,9 @@
 		email: '',
 		password: ''
 	};
-	function handleSubmit() {}
+	function handleSubmit() {
+		goto('/');
+	}
 </script>
 
 <form class="space-y-5" on:submit|preventDefault={handleSubmit}>
