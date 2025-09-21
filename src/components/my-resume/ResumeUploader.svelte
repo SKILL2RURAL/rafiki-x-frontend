@@ -80,14 +80,10 @@
 		}}>Add text Content</Button
 	>
 
-<<<<<<< HEAD
-    <Button class="md:w-[611px] h-[48px] rounded-[8px] border p-2.5 bg-[#F7FBFD] text-black mt-4 hover:bg-gray-200" onclick={onAddText}>Add text Content</Button>
-=======
 	<!-- <Button
 		class="md:w-[611px] h-[48px] rounded-[8px] border p-2.5 bg-[#F7FBFD] text-black mt-4"
 		onclick={onAddText}>Add text Content</Button
 	> -->
->>>>>>> main
 
 	<ul class="flex flex-col gap-4 mt-6">
 		{#each files as file, index}
