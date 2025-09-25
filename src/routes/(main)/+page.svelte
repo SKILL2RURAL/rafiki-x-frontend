@@ -10,5 +10,4 @@
 		<img src={logo} alt="Rafiki X" width="38" height="38" class="mb-5" />
 		<WelcomeScreen />
 	</div>
-	<Messaging />
 </Layout>
