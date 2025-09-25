@@ -28,7 +28,7 @@
 		<label for="password" class="text-sm">Password</label>
 		<div class="mt-2 border border-[#D0D5DD] h-[40px] rounded-[8px] bg-[#FFFFFF4D] flex gap-2 p-2">
 			<input
-				type="email"
+				type="text"
 				bind:value={formData.password}
 				placeholder="Enter Password"
 				class="w-full outline-none placeholder:text-white placeholder:font-satoshi-regular"
