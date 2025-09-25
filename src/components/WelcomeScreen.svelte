@@ -15,7 +15,7 @@
 </script>
 
 <div
-	class="bg-gradient-to-b px-3 py-10 lg:p-10 rounded-[20px] from-[#928bb8] via-[#ebdef8] to-[#FFFFFF] text-center font-mulish text-white relative"
+	class="bg-gradient-to-b px-3 py-10 lg:p-10 rounded-[20px] from-[#928bb8] via-[#ebdef8] to-[#FFFFFF] text-center font-mulish text-white relative flex flex-col items-center"
 >
 	<div
 		class="absolute top-4 lg:top-7 right-5 cursor-pointer bg-white h-[35px] w-[35px] flex items-center justify-center text-[18px] rounded-full text-[#1E1E1E]"
@@ -36,7 +36,7 @@
 	</p>
 
 	<div
-		class="bg-white px-5 lg:p-10 py-10 lg:py-15 shadow-md rounded-[20px] my-5 lg:my-10 max-w-[350px] sm:max-w-[330px] lg:max-w-full"
+		class="bg-white px-5 lg:p-10 py-10 lg:py-15 shadow-md rounded-[20px] my-5 lg:my-10 max-w-[90vw] sm:max-w-full lg:max-w-full"
 	>
 		<div class="border border-[#E8E8E8] rounded-[100px] flex px-4 py-2">
 			<img src={searchIcon} alt="Search Icon" width="20" height="20" />

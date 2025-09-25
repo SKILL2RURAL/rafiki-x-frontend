@@ -25,7 +25,7 @@
 		<img src={logo} alt="Rafki-X logo" width={38} height={38} />
 
 		<div
-			class="lg:w-[856px] lg:h-[616px] space-y-10 pt-9 flex flex-col items-center rounded-[20px] bg-gradient-to-b from-[#928bb8] via-[#ebdef8] to-[#FFFFFF] mt-10 px-5"
+			class="lg:w-[856px] lg:h-[616px] space-y-10 pt-9 flex flex-col items-center rounded-[20px] bg-gradient-to-b from-[#928bb8] via-[#ebdef8] to-[#FFFFFF] mt-10 px-5 w-full"
 		>
 			<h1 class="text-[24px] font-bold font-mulish text-white">My Resume</h1>
 			<!-- {#if files.length === 0} -->
