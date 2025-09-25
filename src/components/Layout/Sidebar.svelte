@@ -116,6 +116,7 @@
 		<div class="mt-3">
 			<button
 				class="w-full flex items-center justify-between border rounded-[10px] py-3 px-2 mb-10"
+				onclick={() => goto('/learn-more')}
 			>
 				<p class="text-[16px]">Learn more</p>
 				<div class="rounded-full bg-gradient p-1">

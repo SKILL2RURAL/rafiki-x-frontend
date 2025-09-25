@@ -1,5 +1,6 @@
 <script>
 	import Layout from '../../components/Layout/Layout.svelte';
+	import Messaging from '../../components/Chat/Messaging.svelte';
 	import WelcomeScreen from '../../components/WelcomeScreen.svelte';
 	import logo from '$lib/assets/icons/logo-gradient.png';
 </script>
@@ -9,4 +10,5 @@
 		<img src={logo} alt="Rafiki X" width="38" height="38" class="mb-5" />
 		<WelcomeScreen />
 	</div>
+	<Messaging />
 </Layout>
