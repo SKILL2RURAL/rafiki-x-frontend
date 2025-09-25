@@ -3,17 +3,17 @@
 
 </script>
 
-<div class="p-12 mx-auto font-mulish w-[856px] h-[1063px] rounded-[20px] bg-gradient-to-b from-[#928bb8] via-[#ebdef8] to-[#FFFFFF] relative">
+<div class="p-12 mx-auto font-mulish w-[370px] height-[716px] md:w-[856px] md:h-[1063px] rounded-[20px] bg-gradient-to-b from-[#928bb8] via-[#ebdef8] to-[#FFFFFF] relative">
     <div class="flex justify-center gap-3 mb-7">
-        <h2 class="font-[700] text-[24px] justify-center text-white">Learn more about rafiki X</h2>
+        <h2 class="font-[700] text-lg md:text-[24px] justify-center text-white">Learn more about rafiki X</h2>
         <div
-            class="absolute top-4 lg:top-7 right-5 cursor-pointer bg-white h-[35px] w-[35px] flex items-center justify-center text-[18px] rounded-full text-[#1E1E1E]"
+            class="absolute top-4 lg:top-7 right-5 cursor-pointer bg-white h-[26px] w-[26px] md:h-[35px] md:w-[35px] flex items-center justify-center text-[12px] md:text-[18px]  rounded-full text-[#1E1E1E]"
         >
             X
         </div>
     </div>
-    <div class="flex flex-col gap-8">
-        <p class="font-[700] text-[18px] text-white">Last updated: February 20th, 2024</p>
+    <div class="flex flex-col text-[14px] md:text-[18px] gap-8">
+        <p class="font-[700] text-white">Last updated: February 20th, 2024</p>
         <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Ab, nihil molestias! Nisi, rerum dolorum eius aliquid repellat harum. Animi excepturi eligendi omnis quisquam voluptatem ut explicabo possimus ducimus nobis sint.
         Dolore perferendis fugiat labore placeat aut, quo quibusdam accusamus reprehenderit, asperiores qui illum in itaque nostrum quidem totam cum ipsum consectetur eveniet saepe odio? Non dolorem adipisci deserunt nihil suscipit!
         In itaque modi animi quos expedita nam explicabo ea qui ipsa hic quibusdam minima magni beatae doloremque, sed quidem amet similique id repellendus corrupti sapiente! Recusandae rem minima sunt dolore.

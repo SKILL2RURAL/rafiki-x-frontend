@@ -162,7 +162,7 @@
 					onclick={() => (isDrawerOpen = false)}
 					class="border bg-gradient-to-r from-[#51A3DA] to-[#60269E] p-[1px] rounded-[8px]"
 				>
-					<div class="bg-white h-[50px] w-[185px] flex items-center justify-center rounded-[9px]">
+					<div class="bg-white h-[40px] w-[120px] md:h-[55px] md:w-[185px] flex items-center justify-center rounded-[9px]">
 						<p
 							class="bg-gradient-to-r from-[#51A3DA] to-[#60269E] bg-clip-text text-transparent font-mulish font-semibold"
 						>
@@ -171,7 +171,7 @@
 					</div>
 				</button>
 				<Button
-					class="bg-gradient-to-t from-[#51A3DA] to-[#60269E] h-[55px] w-[185px] font-mulish font-semibold rounded-[8px]"
+					class="bg-gradient-to-t from-[#51A3DA] to-[#60269E] h-[42px] w-[120px] md:h-[55px] md:w-[185px] font-mulish font-semibold rounded-[8px]"
 					>Save</Button
 				>
 			</div>

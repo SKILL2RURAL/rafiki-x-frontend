@@ -3,7 +3,6 @@
 	import Messaging from '../../components/Chat/Messaging.svelte';
 	import WelcomeScreen from '../../components/WelcomeScreen.svelte';
 	import logo from '$lib/assets/icons/logo-gradient.png';
-	import LearnMore from '../../components/LearnMore/LearnMore.svelte';
 </script>
 
 <Layout>
@@ -13,5 +12,4 @@
 		<WelcomeScreen />
 	</div>
 	<Messaging />
-	<LearnMore />
 </Layout>
