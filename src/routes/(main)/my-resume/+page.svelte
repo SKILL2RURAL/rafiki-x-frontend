@@ -3,6 +3,7 @@
 	import ResumeUploader from '../../../components/my-resume/ResumeUploader.svelte';
 	import logo from '$lib/assets/icons/logo-gradient.png';
 	import { fileIcons } from '$lib';
+	import { goto } from '$app/navigation';
 
 	// files + history store
 	let files: Array<{ name: string; size: string; type: string; icon?: string }> = [];
@@ -25,8 +26,16 @@
 		<img src={logo} alt="Rafki-X logo" width={38} height={38} />
 
 		<div
-			class="lg:w-[856px] lg:h-[616px] space-y-10 pt-9 flex flex-col items-center rounded-[20px] bg-gradient-to-b from-[#928bb8] via-[#ebdef8] to-[#FFFFFF] mt-10 px-5 w-full"
+			class="lg:w-[856px] lg:h-[616px] space-y-10 pt-9 flex flex-col items-center rounded-[20px] bg-gradient-to-b from-[#928bb8] via-[#ebdef8] to-[#FFFFFF] mt-10 px-5 w-full relative"
 		>
+			<button
+				onclick={() => {
+					goto('/');
+				}}
+				class="absolute top-7 right-5 cursor-pointer bg-white h-[35px] w-[35px] flex items-center justify-center text-[18px] rounded-full text-[#1E1E1E]"
+			>
+				X
+			</button>
 			<h1 class="text-[24px] font-bold font-mulish text-white">My Resume</h1>
 			<!-- {#if files.length === 0} -->
 			<ResumeUploader onUpload={handleUpload} {files} />

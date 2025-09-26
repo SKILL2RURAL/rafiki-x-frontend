@@ -5,6 +5,7 @@
 	import * as Select from '$lib/components/ui/select/index.js';
 	import Checkbox from '$lib/components/ui/checkbox/checkbox.svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
+	import { countries } from '$lib/countries';
 
 	let formData = {
 		firstName: '',
@@ -16,8 +17,12 @@
 		gender: '',
 		ageGroup: ''
 	};
-
+	let searchQuery = '';
 	let isPasswordVisible = false;
+
+	$: filteredCountries = countries.filter((country) =>
+		country.toLowerCase().includes(searchQuery.toLowerCase())
+	);
 
 	const passwordRequirements = [
 		'One Special Character',
@@ -78,10 +83,35 @@
 			>
 				{formData.country ? formData.country : 'Select your country'}
 			</Select.Trigger>
-			<Select.Content>
-				<Select.Item value="USA">USA</Select.Item>
-				<Select.Item value="Canada">Canada</Select.Item>
-				<Select.Item value="Other">Other</Select.Item>
+			<Select.Content class="max-h-[500px] overflow-auto">
+				<!-- <Input type="search" placeholder="Search country" class="ring-0 outline-none" />
+				{#each countries as country}
+					<Select.Item value={country}>{country}</Select.Item>
+				{/each} -->
+
+				<Select.Content class="max-h-[400px] overflow-hidden">
+					<!-- Sticky search input -->
+					<div class="sticky top-0 bg-white z-10 p-1 border-b">
+						<Input
+							type="text"
+							placeholder="Search country"
+							class="w-full ring-0 outline-none text-sm p-1"
+							bind:value={searchQuery}
+						/>
+					</div>
+
+					<!-- Scrollable country list -->
+					<div class="overflow-y-auto max-h-[160px]">
+						{#each filteredCountries as country}
+							<Select.Item value={country} class="p-2 hover:bg-gray-100 cursor-pointer">
+								{country}
+							</Select.Item>
+						{/each}
+						{#if filteredCountries.length === 0}
+							<div class="p-2 text-gray-500 text-sm">No countries found</div>
+						{/if}
+					</div>
+				</Select.Content>
 			</Select.Content>
 		</Select.Root>
 	</div>
@@ -92,7 +122,7 @@
 			<label for="country" class="text-sm">Gender</label>
 			<Select.Root type="single" name="country" bind:value={formData.gender}>
 				<Select.Trigger
-					class="mt-2 border border-[#D0D5DD] h-[40px] rounded-[8px] bg-[#FFFFFF4D] placeholder:text-white text-white w-full data-[placeholder]:text-white placeholder:font-satoshi-regular placeholder:text-[14px]:"
+					class="capitalize mt-2 border border-[#D0D5DD] h-[40px] rounded-[8px] bg-[#FFFFFF4D] placeholder:text-white text-white w-full data-[placeholder]:text-white placeholder:font-satoshi-regular placeholder:text-[14px]:"
 				>
 					{formData.gender ? formData.gender : 'Select gender'}
 				</Select.Trigger>
@@ -112,9 +142,11 @@
 					{formData.ageGroup ? formData.ageGroup : 'Select age group'}
 				</Select.Trigger>
 				<Select.Content>
-					<Select.Item value="USA">USA</Select.Item>
-					<Select.Item value="Canada">Canada</Select.Item>
-					<Select.Item value="Other">Other</Select.Item>
+					<Select.Item value="12-15 years">12-15 years</Select.Item>
+					<Select.Item value="16-21 years">16-21 years</Select.Item>
+					<Select.Item value="22-26 years">22-26 years</Select.Item>
+					<Select.Item value="27-35 years">27-35 years</Select.Item>
+					<Select.Item value="36 above">36 above</Select.Item>
 				</Select.Content>
 			</Select.Root>
 		</div>

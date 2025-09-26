@@ -16,10 +16,10 @@
 		alt="Rafiki X"
 		width="100%"
 		height="100%"
-		class="h-full lg:h-screen w-screen z-[-1] top-0 left-0 opacity-50"
+		class="h-screen w-screen z-[-1] top-0 left-0 opacity-50"
 	/>
 	<div
-		class="absolute top-0 left-0 overflow-scroll bg-gradient lg:h-screen w-screen flex flex-col items-center justify-center lg:grid grid-cols-2 gap-5 pt-10"
+		class="absolute top-0 left-0 overflow-scroll lg:h-screen w-screen flex flex-col items-center justify-center lg:grid grid-cols-2 gap-5 pt-10 z-50"
 	>
 		<div class="flex justify-center items-center">
 			<img

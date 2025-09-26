@@ -24,7 +24,7 @@
 	<div class="w-full h-[100vh]">
 		<Navbar />
 		<!-- svelte-ignore slot_element_deprecated -->
-		<main class="p-5 h-[90vh] w-full overflow-auto">
+		<main class="p-5 max-h-[90vh] w-full overflow-auto">
 			<slot />
 		</main>
 	</div>

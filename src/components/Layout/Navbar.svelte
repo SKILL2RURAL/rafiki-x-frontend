@@ -21,7 +21,7 @@
 </script>
 
 <nav
-	class="h-[var(--navbar-height)] flex justify-between items-center p-5 bg-[#FCFCFC] border-b-[0.5] border-[#C8CCD0]"
+	class="h-[var(--navbar-height)] flex justify-between lg:justify-end items-center p-5 border-b-[0.5px]"
 >
 	<div class="flex lg:hidden items-center justify-between w-full">
 		<button
