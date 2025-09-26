@@ -46,6 +46,7 @@
 			<div class="mr-3">
 				<button
 					class="w-full flex items-center justify-between border custom-border-gradient rounded-[10px] py-4 px-3 mb-5"
+					onclick={() => goto('/learn-more')}
 				>
 					<p
 						class="text-[16px] font-bold bg-gradient-to-r from-[#51A3DA] to-[#60269E] text-transparent bg-clip-text"

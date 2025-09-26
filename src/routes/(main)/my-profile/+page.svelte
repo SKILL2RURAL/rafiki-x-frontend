@@ -55,7 +55,7 @@
 				<div class="flex space-x-5 items-center">
 					<Mail color="#808990" />
 					<div>
-						<h5 class="text-[#253B4B] text-[18px] font-medium max-w-[200px] lg:w-full truncate">
+						<h5 class="text-[#253B4B] text-[18px] font-medium max-w-[200px] md:w-full truncate">
 							emmanueladebayo@gmail.com
 						</h5>
 						<p class="text-[#808990] text-[14px] font-satoshi-regular">Email address</p>

@@ -51,7 +51,7 @@
 </script>
 
 <div
-	class="w-full lg:w-[677px] rounded-[20px] p-6 bg-whte flex flex-col items-center shadow-[0_4px_8px_4px_rgba(112,144,176,0.1)]"
+	class="w-full lg:w-[677px] rounded-[20px] p-6 bg-whte flex flex-col items-center bg-white shadow-[0_4px_8px_4px_rgba(112,144,176,0.1)]"
 >
 	<div
 		class="w-full md:h-[190px] rounded-[6px] bg-[#F7FBFD] font-satoshi-regular space-y-6 pt-5 text-center p-5"
@@ -162,7 +162,9 @@
 					onclick={() => (isDrawerOpen = false)}
 					class="border bg-gradient-to-r from-[#51A3DA] to-[#60269E] p-[1px] rounded-[8px]"
 				>
-					<div class="bg-white h-[40px] w-[120px] md:h-[55px] md:w-[185px] flex items-center justify-center rounded-[9px]">
+					<div
+						class="bg-white h-[40px] w-[120px] md:h-[55px] md:w-[185px] flex items-center justify-center rounded-[9px]"
+					>
 						<p
 							class="bg-gradient-to-r from-[#51A3DA] to-[#60269E] bg-clip-text text-transparent font-mulish font-semibold"
 						>

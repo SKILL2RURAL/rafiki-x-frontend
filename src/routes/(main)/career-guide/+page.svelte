@@ -6,6 +6,7 @@
 	import Image3 from '$lib/assets/icons/career3.svg';
 	import Image4 from '$lib/assets/icons/career4.svg';
 	import logo from '$lib/assets/icons/logo-gradient.png';
+	import { goto } from '$app/navigation';
 
 	const lists = [
 		{
@@ -32,16 +33,19 @@
 		<img src={logo} alt="Rafki-X logo" width={38} height={38} />
 
 		<div
-			class="bg-gradient-to-b px-3 py-10 lg:p-10 rounded-[20px] from-[#928bb8] via-[#ebdef8] to-[#FFFFFF] text-center font-mulish text-white relative mt-5 lg:mt-10"
+			class="bg-gradient-to-b px-3 py-10 min-w-full lg:min-w-fit lg:p-10 rounded-[20px] from-[#928bb8] via-[#ebdef8] to-[#FFFFFF] text-center font-mulish text-white relative mt-5 lg:mt-10"
 		>
-			<div
+			<button
+				onclick={() => {
+					goto('/');
+				}}
 				class="absolute top-7 right-5 cursor-pointer bg-white h-[35px] w-[35px] flex items-center justify-center text-[18px] rounded-full text-[#1E1E1E]"
 			>
 				X
-			</div>
+			</button>
 			<h2 class="font-bold text-[24px] text-white mb-5">Career Guide</h2>
 			<div
-				class="bg-white rounded-[20px] p-10 pb-15 lg:pb-30 shadow-md flex lg:grid grid-cols-4 gap-5 overflow-x-auto no-scrollbar max-w-[350px] sm:max-w-[330px] lg:max-w-full"
+				class="bg-white rounded-[20px] p-10 pb-15 lg:pb-30 shadow-md flex lg:grid grid-cols-4 gap-5 overflow-x-auto no-scrollbar max-w-[90vw] sm:max-w-[90vw] lg:max-w-full"
 			>
 				{#each lists as item, index}
 					<CareerGuideCard title={item.title} image={item.image} />
