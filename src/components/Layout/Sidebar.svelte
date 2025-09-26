@@ -16,15 +16,20 @@
 	import noChat from '$lib/assets/icons/empty-state.png';
 	import { history } from '$lib';
 	import greaterArrow from '$lib/assets/icons/greaterArrow.png';
+	import { browser } from '$app/environment';
 
 	const todayHistory = history.find((item) => item.day === 'TODAY');
 
-	let isSidebarOpen = $state<boolean>(localStorage.getItem('isSidebarOpen') === 'true');
+	let isSidebarOpen = $state<boolean>(
+		browser ? localStorage.getItem('isSidebarOpen') === 'true' : false
+	);
 	let { openHistory }: { openHistory: () => void } = $props();
 
 	function toogleSidebar() {
 		isSidebarOpen = !isSidebarOpen;
-		localStorage.setItem('isSidebarOpen', JSON.stringify(isSidebarOpen));
+		if (browser) {
+			localStorage.setItem('isSidebarOpen', JSON.stringify(isSidebarOpen));
+		}
 	}
 </script>
 
