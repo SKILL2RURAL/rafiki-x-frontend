@@ -119,7 +119,7 @@
 	<div class="grid md:grid-cols-2 gap-5">
 		<!-- GENDER  -->
 		<div>
-			<label for="country" class="text-sm">Gender</label>
+			<label for="gender" class="text-sm">Gender</label>
 			<Select.Root type="single" name="country" bind:value={formData.gender}>
 				<Select.Trigger
 					class="capitalize mt-2 border border-[#D0D5DD] h-[40px] rounded-[8px] bg-[#FFFFFF4D] placeholder:text-white text-white w-full data-[placeholder]:text-white placeholder:font-satoshi-regular placeholder:text-[14px]:"
@@ -134,7 +134,7 @@
 		</div>
 
 		<div>
-			<label for="country" class="text-sm">Age Group</label>
+			<label for="age group" class="text-sm">Age Group</label>
 			<Select.Root type="single" name="country" bind:value={formData.ageGroup}>
 				<Select.Trigger
 					class="mt-2 border border-[#D0D5DD] h-[40px] rounded-[8px] bg-[#FFFFFF4D] placeholder:text-white text-white w-full data-[placeholder]:text-white placeholder:font-satoshi-regular placeholder:text-[14px]:"
