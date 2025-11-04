@@ -1,38 +1,40 @@
-import { writable } from "svelte/store";
+import { api } from '$lib/api';
+import type { ChatState, MessagePayload } from '$lib/types/chat';
+import { writable } from 'svelte/store';
 
-export type Message = {
-    id: number;
-    sender: 'user' | 'bot';
-    text?: string;
-    file?: File;
-    timestamp: Date;
-}
+const initialState: ChatState = {
+	chats: [],
+	activeChatId: null,
+	isLoading: false,
+	error: null,
+	isSending: false
+};
 
 function createChatStore() {
-    const {subscribe, update, set } = writable<Message[]>([]);
-    let idCounter = 0;
+	const { subscribe, update } = writable<ChatState>(initialState);
+	return {
+		subscribe,
 
-    return {
-        subscribe,
-        sendMessage: (text: string) => {
-            update((messages) => [
-                ...messages,
-                {id: ++idCounter, sender: 'user', text, timestamp: new Date()}
-            ])
-        },
-        sendFile: (file: File) => {
-            update(messages => [...messages, {id: ++idCounter, sender: 'user', file, timestamp: new Date()}])
-        },
+		// Send Message
+		sendMessage: async ({ message, createNewConversation = false }: MessagePayload) => {
+			update((state) => ({ ...state, isLoading: true }));
 
-        receiveMessage: (text: string) => {
-            update((messages) => [
-                ...messages,
-                {id: ++idCounter, sender: 'bot', text, timestamp: new Date()}
-            ]);
-        },
-        clear: () => set([])
-    }
- }
+			try {
+				const { data } = await api.post('/chat/send-message', { message, createNewConversation });
+				console.log(data);
+				update((state) => ({
+					...state,
+					isLoading: false,
+					chats: [...state.chats, data.data.message]
+				}));
+			} catch (error) {
+				console.log(error);
+				throw error;
+			} finally {
+				update((state) => ({ ...state, isLoading: false }));
+			}
+		}
+	};
+}
 
-
- export const chatStore = createChatStore();
+export const chatStore = createChatStore();

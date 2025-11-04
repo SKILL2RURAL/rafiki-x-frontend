@@ -9,10 +9,6 @@
 
 	let isSidebarOpen = $state(false);
 
-	$effect(() => {
-		console.log(isSidebarOpen);
-	});
-
 	let links = [
 		{ name: 'My Resume', href: '/my-resume' },
 		{ name: 'Chat', href: '/' },
