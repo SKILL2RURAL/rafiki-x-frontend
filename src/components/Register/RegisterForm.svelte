@@ -1,13 +1,26 @@
-<script>
+<script lang="ts">
 	import { goto } from '$app/navigation';
 	import Input from '$lib/components/ui/input/input.svelte';
 	import { Eye, EyeOff } from 'lucide-svelte';
 	import * as Select from '$lib/components/ui/select/index.js';
 	import Checkbox from '$lib/components/ui/checkbox/checkbox.svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
-	import { countries } from '$lib/countries';
+	import { onMount } from 'svelte';
+	import { auth, getCountries, isLoading, register } from '$lib/stores/authStore';
+	import { toast } from 'svelte-sonner';
+	import type { RegisterPayload } from '../../types/AuthTypes';
+	import Spinner from '$lib/components/ui/spinner/spinner.svelte';
+	import { AxiosError } from 'axios';
 
-	let formData = {
+	// Get List of countries on mount
+	onMount(async () => {
+		if (!$auth.countries) await getCountries();
+	});
+
+	$: countries = $auth.countries ?? [];
+
+	// form state
+	let formData: RegisterPayload = {
 		firstName: '',
 		lastName: '',
 		email: '',
@@ -20,8 +33,8 @@
 	let searchQuery = '';
 	let isPasswordVisible = false;
 
-	$: filteredCountries = countries.filter((country) =>
-		country.toLowerCase().includes(searchQuery.toLowerCase())
+	$: filteredCountries = countries.filter((country: { code: string; name: string }) =>
+		country.name.toLowerCase().includes(searchQuery.toLowerCase())
 	);
 
 	const passwordRequirements = [
@@ -32,9 +45,59 @@
 		'One Lowercase character'
 	];
 
-	function handleSubmit() {
+	async function handleSubmit() {
 		console.log(formData);
-		goto('/');
+		if (!formData.firstName) {
+			toast.error('First name is required');
+			return;
+		}
+		if (!formData.lastName) {
+			toast.error('Last name is required');
+			return;
+		}
+		if (!formData.email) {
+			toast.error('Email is required');
+			return;
+		}
+		if (!formData.country) {
+			toast.error('Country is required');
+			return;
+		}
+		if (!formData.gender || (formData.gender !== 'male' && formData.gender !== 'female')) {
+			toast.error('Gender is required');
+			return;
+		}
+		if (!formData.ageGroup) {
+			toast.error('Age group is required');
+			return;
+		}
+		if (!formData.password) {
+			toast.error('Password is required');
+			return;
+		}
+
+		if (!formData.agree) {
+			toast.error('You must agree to the terms and conditions');
+			return;
+		}
+
+		const country =
+			countries && countries.find((country) => country.name === formData.country)?.code;
+
+		if (!country) {
+			toast.error('Country is required');
+			return;
+		}
+
+		try {
+			await register(formData);
+			goto('/');
+		} catch (error: any) {
+			if (error instanceof AxiosError) {
+				toast.error(error.response?.data.message);
+			}
+			console.log(error);
+		}
 	}
 
 	function togglePasswordVisibility() {
@@ -42,6 +105,7 @@
 	}
 </script>
 
+<!-- svelte-ignore component_name_lowercase -->
 <form class="space-y-5 mt-5 text-white" on:submit|preventDefault={handleSubmit}>
 	<div class="grid md:grid-cols-2 gap-5">
 		<div>
@@ -95,7 +159,7 @@
 						<Input
 							type="text"
 							placeholder="Search country"
-							class="w-full ring-0 outline-none text-sm p-1"
+							class="w-full ring-0 outline-none text-sm p-1 px-2"
 							bind:value={searchQuery}
 						/>
 					</div>
@@ -103,12 +167,12 @@
 					<!-- Scrollable country list -->
 					<div class="overflow-y-auto max-h-[160px]">
 						{#each filteredCountries as country}
-							<Select.Item value={country} class="p-2 hover:bg-gray-100 cursor-pointer">
-								{country}
+							<Select.Item value={country.name} class="p-2 hover:bg-gray-100 cursor-pointer">
+								{country.name}
 							</Select.Item>
 						{/each}
 						{#if filteredCountries.length === 0}
-							<div class="p-2 text-gray-500 text-sm">No countries found</div>
+							<div class="p-2 text-gray-500 text-sm">No countries available</div>
 						{/if}
 					</div>
 				</Select.Content>
@@ -120,7 +184,7 @@
 		<!-- GENDER  -->
 		<div>
 			<label for="gender" class="text-sm">Gender</label>
-			<Select.Root type="single" name="country" bind:value={formData.gender}>
+			<Select.Root type="single" name="gender" bind:value={formData.gender}>
 				<Select.Trigger
 					class="capitalize mt-2 border border-[#D0D5DD] h-[40px] rounded-[8px] bg-[#FFFFFF4D] placeholder:text-white text-white w-full data-[placeholder]:text-white placeholder:font-satoshi-regular placeholder:text-[14px]:"
 				>
@@ -134,8 +198,8 @@
 		</div>
 
 		<div>
-			<label for="age group" class="text-sm">Age Group</label>
-			<Select.Root type="single" name="country" bind:value={formData.ageGroup}>
+			<label for="ageGroup" class="text-sm">Age Group</label>
+			<Select.Root type="single" name="ageGroup" bind:value={formData.ageGroup}>
 				<Select.Trigger
 					class="mt-2 border border-[#D0D5DD] h-[40px] rounded-[8px] bg-[#FFFFFF4D] placeholder:text-white text-white w-full data-[placeholder]:text-white placeholder:font-satoshi-regular placeholder:text-[14px]:"
 				>
@@ -190,6 +254,12 @@
 	</div>
 	<Button
 		class="bg-gradient w-full rounded-[8px] mt-5 border border-[#FFFFFF] h-[50px]"
-		type="submit">Sign up</Button
+		type="submit"
 	>
+		{#if $isLoading}
+			<Spinner />
+		{:else}
+			Sign up
+		{/if}
+	</Button>
 </form>

@@ -1,13 +1,8 @@
 <script lang="ts">
 	import AshBackground from '$lib/assets/img/ash-background.png';
 	import logo from '$lib/assets/img/logo-white.png';
-	import google from '../../../lib/assets/icons/google.png';
-	import Input from '$lib/components/ui/input/input.svelte';
-	import Checkbox from '$lib/components/ui/checkbox/checkbox.svelte';
-	import Button from '$lib/components/ui/button/button.svelte';
-	import { EyeOff } from 'lucide-svelte';
-	import * as Select from '$lib/components/ui/select/index.js';
 	import RegisterForm from '../../../components/Register/RegisterForm.svelte';
+	import google from '../../../lib/assets/icons/google.png';
 </script>
 
 <div class="bg-gradient">
