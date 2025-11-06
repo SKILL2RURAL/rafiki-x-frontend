@@ -5,6 +5,10 @@
 	import pdf from '$lib/assets/icons/file-pdf.svg';
 	import send from '$lib/assets/icons/send.svg';
 	import { goto } from '$app/navigation';
+	import { chatStore, sendingMessage } from '$lib/stores/chatStore';
+	import Spinner from '$lib/components/ui/spinner/spinner.svelte';
+
+	const { sendMessage } = chatStore;
 
 	function handleFocus() {
 		setTimeout(() => {
@@ -17,8 +21,14 @@
 
 	let text = '';
 
-	function handleSend() {
-		goto(`/2`);
+	async function handleSend() {
+		await sendMessage({
+			message: text,
+			createNewConversation: true
+		}).then((res) => {
+			goto(`/${res.conversationId}`);
+		});
+		// goto(`/2`);
 	}
 </script>
 
@@ -55,19 +65,21 @@
 			<div>
 				{#if text.length === 0}
 					<!-- Mic Button -->
-					<button
-						class="p-2 h-[48px] w-[48px] border rounded-full hover:bg-gray-100"
-						onclick={handleSend}
-					>
+					<button class="p-2 h-[48px] w-[48px] border rounded-full hover:bg-gray-100">
 						<img src={mic} class="mx-auto" width="20" height="20" alt="mic icon" />
 					</button>
 				{:else}
 					<!-- Send Button -->
 					<button
-						class="p-2 h-[48px] w-[48px] border rounded-full hover:bg-gray-100"
+						class="p-2 h-[48px] w-[48px] border rounded-full hover:bg-gray-100 flex items-center justify-center"
+						disabled={$sendingMessage}
 						onclick={handleSend}
 					>
-						<img src={send} class="mx-auto" width="20" height="20" alt="send icon" />
+						{#if $sendingMessage}
+							<Spinner color="black" size="md" />
+						{:else}
+							<img src={send} class="mx-auto" width="20" height="20" alt="send icon" />
+						{/if}
 					</button>
 				{/if}
 			</div>
