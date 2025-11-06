@@ -17,8 +17,14 @@
 	import { history } from '$lib';
 	import greaterArrow from '$lib/assets/icons/greaterArrow.png';
 	import { browser } from '$app/environment';
+	import { onMount } from 'svelte';
+	import { chats, chatStore } from '$lib/stores/chatStore';
 
 	const todayHistory = history.find((item) => item.day === 'TODAY');
+
+	onMount(() => {
+		chatStore.getConversations({});
+	});
 
 	let isSidebarOpen = $state<boolean>(
 		browser ? localStorage.getItem('isSidebarOpen') === 'true' : false
@@ -88,10 +94,26 @@
 			<!-- Links end  -->
 
 			<!-- Chat history  -->
-			<div class="flex flex-col justify-center items-center mt-10">
+			<div class="flex-col mt-10">
 				{#if isSidebarOpen}
-					<img src={noChat} alt="" width="80" height="80" />
-					<p class="text-sm font-semibold text-[#80899A]">No Chat history</p>
+					<div>
+						{#if chats && $chats.length > 0}
+							<div class="space-y-3">
+								{#each $chats.splice(0, 3) as chat}
+									<button
+										class="flex justify-between items-center cursor-pointer w-full"
+										onclick={() => goto(`/${chat.id}`)}
+									>
+										<p class="line-clamp-1 text-[#253B4B] text-[16px]">{chat.title}</p>
+										<img src={greaterArrow} alt="direction icon" width="7" height="13" />
+									</button>
+								{/each}
+							</div>
+						{:else}
+							<img src={noChat} alt="" width="80" height="80" />
+							<p class="text-sm font-semibold text-[#80899A]">No Chat history</p>
+						{/if}
+					</div>
 				{/if}
 			</div>
 

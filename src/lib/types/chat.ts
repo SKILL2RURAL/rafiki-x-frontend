@@ -1,9 +1,9 @@
 export interface Message {
 	id: string;
-	text: string;
-	sender: 'user' | 'ai' | 'system';
-	timestamp: string;
-	read?: boolean;
+	role: 'USER' | 'ASSISTANT';
+	content: string;
+	createdAt: string;
+	tokenCount: string | null;
 }
 
 export interface Chat {
@@ -21,9 +21,23 @@ export interface ChatState {
 	isLoading: boolean;
 	error: string | null;
 	isSending: boolean;
+	conversations: Conversation[];
+	conversation: Conversation | null;
 }
 
 export interface MessagePayload {
 	message: string;
 	createNewConversation?: boolean;
+	conversationId?: number;
+}
+
+export interface Conversation {
+	id: number;
+	title: string;
+	summary: string | null;
+	messageCount: number;
+	isActive: boolean;
+	createdAt: string;
+	updatedAt: string;
+	messages: Message[] | null;
 }

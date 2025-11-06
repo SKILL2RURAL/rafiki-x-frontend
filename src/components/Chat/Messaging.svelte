@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { chatStore } from '$lib/stores/chatStore';
+	import { chatStore, messages, sendingMessage } from '$lib/stores/chatStore';
 	import { onMount } from 'svelte';
 	import { get } from 'svelte/store';
 	import send from '$lib/assets/icons/send.svg';
@@ -11,31 +11,22 @@
 	import thumDown from '$lib/assets/icons/thumbDown.png';
 	import megaphone from '$lib/assets/icons/megaphone.png';
 	import mic from '$lib/assets/icons/mic.png';
+	import MarkdownContent from './MarkdownContent.svelte';
+	import Spinner from '$lib/components/ui/spinner/spinner.svelte';
+	import { page } from '$app/state';
 
 	let newMessage = '';
 	let selectedFile: File | null = null;
 	let fileInput: HTMLInputElement;
 
-	function handleSend() {
-		if (!newMessage.trim() && !selectedFile) return;
-
-		// Send text if available
-		if (newMessage.trim()) {
-			chatStore.sendMessage(newMessage);
-		}
-
-		// Send file available
-		if (selectedFile) {
-			chatStore.sendFile(selectedFile);
-			selectedFile = null;
-		}
-
+	async function handleSend() {
+		await chatStore.sendMessage({
+			message: newMessage.trim(),
+			createNewConversation: false,
+			conversationId: Number(page.params.chatId)
+		});
+		await chatStore.getSingleConversation(Number(page.params.chatId));
 		newMessage = '';
-
-		//simulate Ai response
-		setTimeout(() => {
-			chatStore.receiveMessage("Got it! I'll help you with that 👍");
-		}, 800);
 	}
 
 	function triggerFileUpload() {
@@ -53,16 +44,21 @@
 <div class="flex flex-col justify-between gap-20 h-[86vh] font-mulish font-medium">
 	<!--Chat area-->
 	<div class="flex-1 overflow-y-auto lg:p-5 space-y-4 bg-white">
-		{#each $chatStore as msg (msg.id)}
-			<div class="flex {msg.sender === 'user' ? 'justify-end' : 'justify-start'}">
+		{#each $messages as msg (msg.id)}
+			<div class="flex {msg.role === 'USER' ? 'justify-end' : 'justify-start'}">
 				<div class="px-4 py-2 max-w-[70%]">
-					{#if msg.sender === 'bot'}
-						<div class="flex gap-4">
+					{#if msg.role === 'ASSISTANT'}
+						<div class="flex gap-4 items-start">
 							<img src={botLogo} width="16" height="16" class="object-contain" alt="bot logo" />
-							<div class="space-y-2 mt-6">
-								<p class="px-4 py-2 text-sm bg-gray-100 rounded-lg rounded-bl-none text-[#808990]">
-									{msg.text}
-								</p>
+							<div class="space-y-2">
+								<!-- COntent  -->
+								<div
+									class="px-4 py-2 text-sm bg-gray-100 rounded-lg rounded-bl-none text-[#808990]"
+								>
+									<!-- {msg.content} -->
+									<MarkdownContent raw={msg.content} />
+								</div>
+								<!-- Icons  -->
 								<div class="flex gap-4 items-center">
 									<img
 										src={copyIcon}
@@ -91,7 +87,7 @@
 						</div>
 					{:else}
 						<div class="flex flex-col">
-							<p class="px-4 py-2 text-sm rounded-lg bg-[#F7F6F5] rounded-br-none">{msg.text}</p>
+							<p class="px-4 py-2 text-sm rounded-lg bg-[#F7F6F5] rounded-br-none">{msg.content}</p>
 							<img
 								src={copyIcon}
 								class="self-end mt-1 cursor-pointer"
@@ -147,10 +143,14 @@
 						</button>
 					{:else}
 						<button
-							class="p-2 h-[48px] w-[48px] border rounded-full hover:bg-gray-100"
+							class="p-2 h-[48px] w-[48px] border rounded-full hover:bg-gray-100 flex items-center justify-center"
 							onclick={handleSend}
 						>
-							<img src={send} class="mx-auto" width="20" height="20" alt="send icon" />
+							{#if $sendingMessage}
+								<Spinner color="black" size="lg" />
+							{:else}
+								<img src={send} class="mx-auto" width="20" height="20" alt="send icon" />
+							{/if}
 						</button>
 					{/if}
 				</div>
