@@ -40,6 +40,12 @@
 		font-weight: 700;
 		font-size: 1rem;
 	}
+
+	:global(h3) {
+		margin: 0.5rem 0;
+		font-weight: 500;
+		font-size: 1rem;
+	}
 	:global(ol, ul) {
 		margin-left: 1.5rem;
 	}

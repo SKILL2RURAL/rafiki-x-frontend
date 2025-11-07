@@ -68,9 +68,9 @@
 	}
 </script>
 
-<div class="flex flex-col justify-between gap-20 h-[86vh] font-mulish font-medium">
+<div class="flex flex-col justify-between gap-20 font-mulish font-medium">
 	<!--Chat area-->
-	<div class="flex-1 overflow-y-auto lg:p-5 space-y-4 bg-white" bind:this={chatContainer}>
+	<div class="h-full overflow-y-auto lg:p-5 space-y-4 bg-white" bind:this={chatContainer}>
 		{#each $messages as msg, i}
 			<div class="flex {msg.role === 'USER' ? 'justify-end' : 'justify-start'}">
 				<div class="px-4 py-2 max-w-[70%]">
@@ -140,7 +140,7 @@
 						type="text"
 						placeholder="Ask Rafiki..."
 						bind:value={newMessage}
-						class="flex-1 px-2 text-sm bg-transparent outline-none"
+						class=" px-2 text-sm bg-transparent outline-none"
 						onkeydown={(e) => e.key === 'Enter' && handleSend()}
 					/>
 				</div>
