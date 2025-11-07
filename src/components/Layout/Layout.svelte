@@ -8,6 +8,7 @@
 	import { browser } from '$app/environment';
 	import { auth } from '$lib/stores/authStore';
 	import { goto } from '$app/navigation';
+	import { getCookie } from '$lib/utils/cookies';
 
 	let showFeedback = $state(false);
 	let isFeedbackInput = $state(false);
@@ -21,7 +22,7 @@
 
 	onMount(() => {
 		if (browser) {
-			const storedToken = localStorage.getItem('accessToken');
+			const storedToken = getCookie('accessToken');
 			if (!storedToken) {
 				loading = false;
 				goto('/login');

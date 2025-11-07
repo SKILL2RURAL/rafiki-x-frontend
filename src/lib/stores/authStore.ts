@@ -2,6 +2,7 @@ import { derived, get, writable, type Writable } from 'svelte/store';
 import type { LoginPayload, RegisterPayload } from '../types/auth';
 import { api } from '$lib/api';
 import { browser } from '$app/environment';
+import { setCookie } from '$lib/utils/cookies';
 
 // Persistent Stores
 function createPersisted<T>(key: string, start: T): Writable<T> {
@@ -70,7 +71,7 @@ export async function login(payload: LoginPayload) {
 			accessToken: data.data.token
 		}));
 		if (browser) {
-			localStorage.setItem('accessToken', data.data.token);
+			setCookie('accessToken', data.data.token);
 		}
 	} catch (err) {
 		console.log(err);
@@ -96,7 +97,7 @@ export async function register(payload: RegisterPayload) {
 			accessToken: data.data.token
 		}));
 		if (browser) {
-			localStorage.setItem('accessToken', data.data.token);
+			setCookie('accessToken', data.data.token);
 		}
 	} catch (err) {
 		console.log(err);
