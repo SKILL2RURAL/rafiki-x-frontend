@@ -34,6 +34,9 @@
 	:global(hr) {
 		margin: 1rem 0;
 	}
+	:global(pre) {
+		margin: 1rem 0;
+	}
 
 	:global(h2) {
 		margin-bottom: 1rem;

@@ -130,7 +130,7 @@
 		{/each}
 	</div>
 	<!-- Input Area -->
-	<div class="sticky bottom-0 bg-white flex flex-col gap-4">
+	<div class="sticky bottom-0 bg-white flex flex-col gap-4 p-5">
 		<div class="border border-[#E8E8E8] rounded-[20px] p-4 bg-white shadow-md">
 			<div class="flex flex-col px-3 py-2 gap-4">
 				<div class="flex">
