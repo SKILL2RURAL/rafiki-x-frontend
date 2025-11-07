@@ -60,7 +60,7 @@
 		<div class={`absolute top-1/2 -translate-y-1/2 right-0 hidden lg:flex`}>
 			<button
 				aria-label="feedback"
-				class=" bg-gradient-to-r from-[#51A3DA] to-[#60269E] rounded-l-full p-1 h-[320px]"
+				class=" bg-linear-to-r from-[#51A3DA] to-[#60269E] rounded-l-full p-1 h-[320px]"
 				onclick={() => (showFeedback = !showFeedback)}
 			>
 				<img src={arrowIcon} alt="arrow icon" width="20" height="20" />
