@@ -14,7 +14,7 @@
 		class="h-screen w-screen z-[-1] top-0 left-0 opacity-50"
 	/>
 	<div
-		class="absolute top-0 left-0 z-[50] h-screen w-screen flex flex-col items-center justify-center lg:grid grid-cols-2 gap-5"
+		class="absolute top-0 left-0 z-50 h-screen w-screen flex flex-col items-center justify-center lg:grid grid-cols-2 gap-5"
 	>
 		<div class="flex justify-center items-center px-10">
 			<img
@@ -33,15 +33,19 @@
 				<p class="text-sm font-satoshi-regular text-center lg:text-left">
 					Please provide your login credentials
 				</p>
-				<button
+
+				<!-- Login with google has been commented out for now  -->
+				<!-- <button
 					class="my-5 bg-white rounded-[12px] p-4 py-3 w-full flex gap-2 justify-center items-center"
 				>
 					<img src={google} alt="Google" width="20" height="20" />
 					<p class="text-sm font-plus-jakarta-sans-medium text-primary-color">log in with Google</p>
-				</button>
+				</button> -->
 
-				<hr class="my-3 border-[#C8CCD0]" />
-				<p class="text-center font-plus-jakarta-sans-medium text-sm">Or Continue with</p>
+				<!-- <hr class="my-3 border-[#C8CCD0]" /> -->
+				<!-- <p class="text-center font-plus-jakarta-sans-medium text-sm">Or Continue with</p> -->
+
+				<div class="h-10"></div>
 
 				<LoginForm />
 				<a href="/register">

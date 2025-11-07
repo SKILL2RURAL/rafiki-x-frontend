@@ -33,7 +33,9 @@
 				<p class="text-sm font-satoshi-regular text-center lg:text-left">
 					Getting started is easy and only takes a few seconds.
 				</p>
-				<button
+
+				<!-- Register with google commented out for now  -->
+				<!-- <button
 					class="my-5 bg-white rounded-[12px] p-4 py-3 w-full flex gap-2 justify-center items-center"
 				>
 					<img src={google} alt="Google" width="20" height="20" />
@@ -43,7 +45,10 @@
 				</button>
 
 				<hr class="my-3 border-[#C8CCD0]" />
-				<p class="text-center font-plus-jakarta-sans-medium text-sm">Or Continue with</p>
+				<p class="text-center font-plus-jakarta-sans-medium text-sm">Or Continue with</p> -->
+
+				<div class="h-7"></div>
+
 				<RegisterForm />
 
 				<a href="/login">

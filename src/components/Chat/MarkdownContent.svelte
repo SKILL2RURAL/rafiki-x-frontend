@@ -9,21 +9,6 @@
 	/** Sanitized HTML */
 	let html = '';
 
-	/** Configure marked */
-	const renderer = new marked.Renderer();
-
-	//   // Optional: make tables responsive
-	//   renderer.table = (header: string, body: string) =>
-	//     `<div class="overflow-x-auto"><table class="table table-zebra w-full">${header}${body}</table></div>`;
-
-	//   marked.setOptions({
-	//     renderer,
-	//     gfm: true,
-	//     breaks: false,
-	//     headerIds: true,
-	//     mangle: false,
-	//   });
-
 	$: {
 		// Re‑render when `raw` changes
 		html = marked.parse(raw) as string;
@@ -44,3 +29,75 @@
 <article class="prose prose-lg max-w-none prose-headings:scroll-mt-24">
 	{@html html}
 </article>
+
+<style>
+	:global(hr) {
+		margin: 1rem 0;
+	}
+
+	:global(h2) {
+		margin-bottom: 1rem;
+		font-weight: 700;
+		font-size: 1rem;
+	}
+	:global(ol, ul) {
+		margin-left: 1.5rem;
+	}
+	:global(li) {
+		list-style-type: disc;
+		margin-bottom: 0.5rem;
+	}
+
+	:global(article table) {
+		width: 100%;
+		border-collapse: collapse;
+		margin: 1rem 0;
+		font-size: 0.875rem;
+	}
+
+	:global(article th),
+	:global(article td) {
+		padding: 0.75rem 1rem;
+		border: 1px solid #e5e7eb;
+		text-align: left;
+	}
+
+	:global(article th) {
+		background-color: #f9fafb;
+		font-weight: 600;
+		color: #374151;
+	}
+
+	:global(article tr:nth-child(even)) {
+		background-color: #f9fafb;
+	}
+
+	:global(article tr:hover) {
+		background-color: #f3f4f6;
+	}
+
+	:global(article .overflow-x-auto) {
+		overflow-x: auto;
+		margin: 1rem 0;
+	}
+
+	/* Dark mode styles */
+	:global(.dark article th) {
+		background-color: #374151;
+		color: #f9fafb;
+		border-color: #4b5563;
+	}
+
+	:global(.dark article td) {
+		border-color: #4b5563;
+		color: #e5e7eb;
+	}
+
+	:global(.dark article tr:nth-child(even)) {
+		background-color: #374151;
+	}
+
+	:global(.dark article tr:hover) {
+		background-color: #4b5563;
+	}
+</style>

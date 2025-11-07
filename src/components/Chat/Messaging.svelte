@@ -1,7 +1,6 @@
 <script lang="ts">
+	import { tick } from 'svelte';
 	import { chatStore, messages, sendingMessage } from '$lib/stores/chatStore';
-	import { onMount } from 'svelte';
-	import { get } from 'svelte/store';
 	import send from '$lib/assets/icons/send.svg';
 	import search from '$lib/assets/icons/search.svg';
 	import paperclip from '$lib/assets/icons/paperclip.png';
@@ -12,21 +11,36 @@
 	import megaphone from '$lib/assets/icons/megaphone.png';
 	import mic from '$lib/assets/icons/mic.png';
 	import MarkdownContent from './MarkdownContent.svelte';
+	import Typewriter from './Typewriter.svelte';
 	import Spinner from '$lib/components/ui/spinner/spinner.svelte';
 	import { page } from '$app/state';
+	import type { Message } from '$lib/types/chat';
 
 	let newMessage = '';
 	let selectedFile: File | null = null;
 	let fileInput: HTMLInputElement;
+	let chatContainer: HTMLDivElement;
+	let hasSentMessage = false;
 
 	async function handleSend() {
-		await chatStore.sendMessage({
+		const updatedMessage: Message[] = [...$messages];
+
+		updatedMessage.push({
+			id: new Date().getTime(),
+			role: 'USER',
+			content: newMessage.trim(),
+			createdAt: new Date().toISOString()
+		});
+
+		chatStore.setMessages(updatedMessage);
+
+		chatStore.sendMessage({
 			message: newMessage.trim(),
 			createNewConversation: false,
 			conversationId: Number(page.params.chatId)
 		});
-		await chatStore.getSingleConversation(Number(page.params.chatId));
 		newMessage = '';
+		hasSentMessage = true;
 	}
 
 	function triggerFileUpload() {
@@ -39,24 +53,38 @@
 			selectedFile = target.files[0];
 		}
 	}
+
+	$: console.log($messages);
+
+	async function scrollToBottom() {
+		await tick();
+		if (chatContainer) {
+			chatContainer.scrollTo({ top: chatContainer.scrollHeight, behavior: 'smooth' });
+		}
+	}
+
+	$: if ($messages) {
+		scrollToBottom();
+	}
 </script>
 
 <div class="flex flex-col justify-between gap-20 h-[86vh] font-mulish font-medium">
 	<!--Chat area-->
-	<div class="flex-1 overflow-y-auto lg:p-5 space-y-4 bg-white">
-		{#each $messages as msg (msg.id)}
+	<div class="flex-1 overflow-y-auto lg:p-5 space-y-4 bg-white" bind:this={chatContainer}>
+		{#each $messages as msg, i}
 			<div class="flex {msg.role === 'USER' ? 'justify-end' : 'justify-start'}">
 				<div class="px-4 py-2 max-w-[70%]">
 					{#if msg.role === 'ASSISTANT'}
 						<div class="flex gap-4 items-start">
 							<img src={botLogo} width="16" height="16" class="object-contain" alt="bot logo" />
 							<div class="space-y-2">
-								<!-- COntent  -->
-								<div
-									class="px-4 py-2 text-sm bg-gray-100 rounded-lg rounded-bl-none text-[#808990]"
-								>
-									<!-- {msg.content} -->
-									<MarkdownContent raw={msg.content} />
+								<!-- Content  -->
+								<div class="px-4 py-2 text-sm rounded-lg rounded-bl-none text-[#808990]">
+									{#if i === $messages.length - 1 && hasSentMessage}
+										<Typewriter text={msg.content} />
+									{:else}
+										<MarkdownContent raw={msg.content} />
+									{/if}
 								</div>
 								<!-- Icons  -->
 								<div class="flex gap-4 items-center">

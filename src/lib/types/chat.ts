@@ -1,9 +1,9 @@
 export interface Message {
-	id: string;
+	id?: number;
 	role: 'USER' | 'ASSISTANT';
 	content: string;
 	createdAt: string;
-	tokenCount: string | null;
+	tokenCount?: string | null;
 }
 
 export interface Chat {
@@ -23,6 +23,7 @@ export interface ChatState {
 	isSending: boolean;
 	conversations: Conversation[];
 	conversation: Conversation | null;
+	messages: Message[];
 }
 
 export interface MessagePayload {
