@@ -6,17 +6,21 @@ import textIcon from '$lib/assets/icons/textIcon.png';
 //fileIcon.ts
 
 export const fileIcons: Record<string, string> = {
-    "application/pdf": pdfIcon,
-    "application/msword": "",
-    "application/vnd.openxmlformats-officedocument.wordprocessingml.document": "",
-    "text/plain": textIcon,
-    "image/png": "",
-    "image/jpeg": "",
-    "default": ""
-}
+	'application/pdf': pdfIcon,
+	'application/msword': '',
+	'application/vnd.openxmlformats-officedocument.wordprocessingml.document': '',
+	'text/plain': textIcon,
+	'image/png': '',
+	'image/jpeg': '',
+	default: ''
+};
 
 export const history = [
-        {id: 1, day: 'TODAY', subject: ['Career story generation']},
-        {id: 2, day: 'YESTERDAY', subject: ['Career story generation']},
-        {id: 3, day: 'RECENT', subject: ['Career story generation', 'Career story generation', 'Career story generation']}
-    ]
+	{ id: 1, day: 'TODAY', subject: ['Career story generation'] },
+	{ id: 2, day: 'YESTERDAY', subject: ['Career story generation'] },
+	{
+		id: 3,
+		day: 'RECENT',
+		subject: ['Career story generation', 'Career story generation', 'Career story generation']
+	}
+];

@@ -54,8 +54,6 @@
 		}
 	}
 
-	$: console.log($messages);
-
 	async function scrollToBottom() {
 		await tick();
 		if (chatContainer) {
@@ -68,18 +66,18 @@
 	}
 </script>
 
-<div class="flex flex-col justify-between gap-20 font-mulish font-medium">
+<div class="flex flex-col mx-auto justify-between gap-20 font-mulish font-medium lg:max-w-[70vw]">
 	<!--Chat area-->
-	<div class="h-full overflow-y-auto lg:p-5 space-y-4 bg-white" bind:this={chatContainer}>
+	<div class="h-full overflow-y-auto space-y-4 bg-white" bind:this={chatContainer}>
 		{#each $messages as msg, i}
 			<div class="flex {msg.role === 'USER' ? 'justify-end' : 'justify-start'}">
-				<div class="px-4 py-2 max-w-[70%]">
+				<div class="px-4 py-2 w-[70vw] lg:max-w-[50vw]">
 					{#if msg.role === 'ASSISTANT'}
 						<div class="flex gap-4 items-start">
 							<img src={botLogo} width="16" height="16" class="object-contain" alt="bot logo" />
 							<div class="space-y-2">
 								<!-- Content  -->
-								<div class="px-4 py-2 text-sm rounded-lg rounded-bl-none text-[#808990]">
+								<div class="px-4 text-sm rounded-lg rounded-bl-none text-[#808990]">
 									{#if i === $messages.length - 1 && hasSentMessage}
 										<Typewriter text={msg.content} />
 									{:else}
@@ -114,7 +112,7 @@
 							</div>
 						</div>
 					{:else}
-						<div class="flex flex-col">
+						<div class="flex flex-col items-end">
 							<p class="px-4 py-2 text-sm rounded-lg bg-[#F7F6F5] rounded-br-none">{msg.content}</p>
 							<img
 								src={copyIcon}
@@ -130,7 +128,7 @@
 		{/each}
 	</div>
 	<!-- Input Area -->
-	<div class="sticky bottom-0 bg-white flex flex-col gap-4 p-5">
+	<div class="sticky bottom-0 flex flex-col gap-4">
 		<div class="border border-[#E8E8E8] rounded-[20px] p-4 bg-white shadow-md">
 			<div class="flex flex-col px-3 py-2 gap-4">
 				<div class="flex">
@@ -140,7 +138,7 @@
 						type="text"
 						placeholder="Ask Rafiki..."
 						bind:value={newMessage}
-						class=" px-2 text-sm bg-transparent outline-none"
+						class=" px-2 text-sm bg-transparent outline-none w-full"
 						onkeydown={(e) => e.key === 'Enter' && handleSend()}
 					/>
 				</div>
@@ -184,8 +182,8 @@
 				</div>
 			</div>
 		</div>
-		<p class="font-satoshi-regular font-light text-[14px] text-[#686868] self-center">
+		<!-- <p class="font-satoshi-regular font-light text-[14px] text-[#686868] self-center">
 			By messaging RafikiX, you agree to our Terms and Conditions
-		</p>
+		</p> -->
 	</div>
 </div>

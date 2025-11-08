@@ -207,8 +207,7 @@ button {
 	scrollbar-width: none; /* Firefox */
 }
 
-
 .custom-border-gradient {
-  border-image: linear-gradient(to right, #51A3DA, #60269E) 1;
-  border-radius: 8px !important;
+	border-image: linear-gradient(to right, #51a3da, #60269e) 1;
+	border-radius: 8px !important;
 }
