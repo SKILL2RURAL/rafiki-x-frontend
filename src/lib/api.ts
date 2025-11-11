@@ -22,7 +22,6 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
 	(res) => res,
 	async (err) => {
-		console.log(err);
 		if (err.code === 'ERR_NETWORK') {
 			toast.error('Network Error. Please check your internet connection.');
 			return Promise.reject(err);

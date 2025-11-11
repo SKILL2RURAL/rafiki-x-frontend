@@ -8,7 +8,7 @@
 	import { onMount } from 'svelte';
 	import { auth, getCountries, isLoading, register } from '$lib/stores/authStore';
 	import { toast } from 'svelte-sonner';
-	import type { RegisterPayload } from '../../types/AuthTypes';
+	import type { RegisterPayload } from '$lib/types/auth';
 	import Spinner from '$lib/components/ui/spinner/spinner.svelte';
 	import { AxiosError } from 'axios';
 
@@ -27,8 +27,8 @@
 		password: '',
 		country: '',
 		agree: false,
-		gender: '',
-		ageGroup: ''
+		gender: undefined,
+		ageGroup: undefined
 	};
 	let searchQuery = '';
 	let isPasswordVisible = false;
@@ -46,7 +46,6 @@
 	];
 
 	async function handleSubmit() {
-		console.log(formData);
 		if (!formData.firstName) {
 			toast.error('First name is required');
 			return;
@@ -91,7 +90,7 @@
 
 		try {
 			await register(formData);
-			goto('/');
+			goto('/verify-email');
 		} catch (error: any) {
 			if (error instanceof AxiosError) {
 				toast.error(error.response?.data.message);

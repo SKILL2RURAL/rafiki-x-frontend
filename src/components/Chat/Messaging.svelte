@@ -1,7 +1,6 @@
 <script lang="ts">
+	import { tick } from 'svelte';
 	import { chatStore, messages, sendingMessage } from '$lib/stores/chatStore';
-	import { onMount } from 'svelte';
-	import { get } from 'svelte/store';
 	import send from '$lib/assets/icons/send.svg';
 	import search from '$lib/assets/icons/search.svg';
 	import paperclip from '$lib/assets/icons/paperclip.png';
@@ -12,21 +11,36 @@
 	import megaphone from '$lib/assets/icons/megaphone.png';
 	import mic from '$lib/assets/icons/mic.png';
 	import MarkdownContent from './MarkdownContent.svelte';
+	import Typewriter from './Typewriter.svelte';
 	import Spinner from '$lib/components/ui/spinner/spinner.svelte';
 	import { page } from '$app/state';
+	import type { Message } from '$lib/types/chat';
 
 	let newMessage = '';
 	let selectedFile: File | null = null;
 	let fileInput: HTMLInputElement;
+	let chatContainer: HTMLDivElement;
+	let hasSentMessage = false;
 
 	async function handleSend() {
-		await chatStore.sendMessage({
+		const updatedMessage: Message[] = [...$messages];
+
+		updatedMessage.push({
+			id: new Date().getTime(),
+			role: 'USER',
+			content: newMessage.trim(),
+			createdAt: new Date().toISOString()
+		});
+
+		chatStore.setMessages(updatedMessage);
+
+		chatStore.sendMessage({
 			message: newMessage.trim(),
 			createNewConversation: false,
 			conversationId: Number(page.params.chatId)
 		});
-		await chatStore.getSingleConversation(Number(page.params.chatId));
 		newMessage = '';
+		hasSentMessage = true;
 	}
 
 	function triggerFileUpload() {
@@ -39,24 +53,36 @@
 			selectedFile = target.files[0];
 		}
 	}
+
+	async function scrollToBottom() {
+		await tick();
+		if (chatContainer) {
+			chatContainer.scrollTo({ top: chatContainer.scrollHeight, behavior: 'smooth' });
+		}
+	}
+
+	$: if ($messages) {
+		scrollToBottom();
+	}
 </script>
 
-<div class="flex flex-col justify-between gap-20 h-[86vh] font-mulish font-medium">
+<div class="flex flex-col mx-auto justify-between gap-20 font-mulish font-medium lg:max-w-[70vw]">
 	<!--Chat area-->
-	<div class="flex-1 overflow-y-auto lg:p-5 space-y-4 bg-white">
-		{#each $messages as msg (msg.id)}
+	<div class="h-full overflow-y-auto space-y-4 bg-white" bind:this={chatContainer}>
+		{#each $messages as msg, i}
 			<div class="flex {msg.role === 'USER' ? 'justify-end' : 'justify-start'}">
-				<div class="px-4 py-2 max-w-[70%]">
+				<div class="px-4 py-2 w-[70vw] lg:max-w-[50vw]">
 					{#if msg.role === 'ASSISTANT'}
 						<div class="flex gap-4 items-start">
 							<img src={botLogo} width="16" height="16" class="object-contain" alt="bot logo" />
 							<div class="space-y-2">
-								<!-- COntent  -->
-								<div
-									class="px-4 py-2 text-sm bg-gray-100 rounded-lg rounded-bl-none text-[#808990]"
-								>
-									<!-- {msg.content} -->
-									<MarkdownContent raw={msg.content} />
+								<!-- Content  -->
+								<div class="px-4 text-sm rounded-lg rounded-bl-none text-[#808990]">
+									{#if i === $messages.length - 1 && hasSentMessage}
+										<Typewriter text={msg.content} />
+									{:else}
+										<MarkdownContent raw={msg.content} />
+									{/if}
 								</div>
 								<!-- Icons  -->
 								<div class="flex gap-4 items-center">
@@ -86,7 +112,7 @@
 							</div>
 						</div>
 					{:else}
-						<div class="flex flex-col">
+						<div class="flex flex-col items-end">
 							<p class="px-4 py-2 text-sm rounded-lg bg-[#F7F6F5] rounded-br-none">{msg.content}</p>
 							<img
 								src={copyIcon}
@@ -102,7 +128,7 @@
 		{/each}
 	</div>
 	<!-- Input Area -->
-	<div class="sticky bottom-0 bg-white flex flex-col gap-4">
+	<div class="sticky bottom-0 flex flex-col gap-4">
 		<div class="border border-[#E8E8E8] rounded-[20px] p-4 bg-white shadow-md">
 			<div class="flex flex-col px-3 py-2 gap-4">
 				<div class="flex">
@@ -112,7 +138,7 @@
 						type="text"
 						placeholder="Ask Rafiki..."
 						bind:value={newMessage}
-						class="flex-1 px-2 text-sm bg-transparent outline-none"
+						class=" px-2 text-sm bg-transparent outline-none w-full"
 						onkeydown={(e) => e.key === 'Enter' && handleSend()}
 					/>
 				</div>
@@ -156,8 +182,8 @@
 				</div>
 			</div>
 		</div>
-		<p class="font-satoshi-regular font-light text-[14px] text-[#686868] self-center">
+		<!-- <p class="font-satoshi-regular font-light text-[14px] text-[#686868] self-center">
 			By messaging RafikiX, you agree to our Terms and Conditions
-		</p>
+		</p> -->
 	</div>
 </div>
