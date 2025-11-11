@@ -2,7 +2,7 @@
 	import AshBackground from '$lib/assets/img/ash-background.png';
 	import logo from '$lib/assets/img/logo-white.png';
 	import RegisterForm from '../../../components/Register/RegisterForm.svelte';
-	import google from '../../../lib/assets/icons/google.png';
+	// import google from '../../../lib/assets/icons/google.png';
 </script>
 
 <div class="bg-gradient">
@@ -34,7 +34,7 @@
 					Getting started is easy and only takes a few seconds.
 				</p>
 
-				<!-- Register with google commented out for now  -->
+				<!-- REGISTER WITH GOOGLE HAS BEEN COMMENTED OUT FOR NOW  -->
 				<!-- <button
 					class="my-5 bg-white rounded-[12px] p-4 py-3 w-full flex gap-2 justify-center items-center"
 				>

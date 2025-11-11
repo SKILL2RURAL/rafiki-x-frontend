@@ -3,9 +3,10 @@ export interface RegisterPayload {
 	lastName: string;
 	email: string;
 	country: string;
-	gender: 'male' | 'female';
-	ageGroup: '12-15' | '16-21' | '22-26' | '27-35' | '36 above';
+	gender?: 'male' | 'female';
+	ageGroup?: '12-15' | '16-21' | '22-26' | '27-35' | '36 above';
 	password: string;
+	agree: boolean;
 }
 
 export interface LoginPayload {

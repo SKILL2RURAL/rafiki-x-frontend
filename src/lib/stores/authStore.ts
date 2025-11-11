@@ -1,8 +1,9 @@
+import { browser } from '$app/environment';
+import { api } from '$lib/api';
+import { setCookie } from '$lib/utils/cookies';
 import { derived, get, writable, type Writable } from 'svelte/store';
 import type { LoginPayload, RegisterPayload } from '../types/auth';
-import { api } from '$lib/api';
-import { browser } from '$app/environment';
-import { setCookie } from '$lib/utils/cookies';
+import { toast } from 'svelte-sonner';
 
 // Persistent Stores
 function createPersisted<T>(key: string, start: T): Writable<T> {
@@ -57,6 +58,10 @@ const initial: AuthState = {
 export const auth = createPersisted<AuthState>('auth', initial);
 
 export const isLoading = derived(auth, ($auth) => $auth.isLoading);
+export const user = derived(auth, ($auth) => ({
+	email: $auth.email,
+	name: $auth.firstName
+}));
 
 // Actions
 export async function login(payload: LoginPayload) {
@@ -73,9 +78,6 @@ export async function login(payload: LoginPayload) {
 		if (browser) {
 			setCookie('accessToken', data.data.token);
 		}
-	} catch (err) {
-		console.log(err);
-		throw err;
 	} finally {
 		auth.update((state) => ({
 			...state,
@@ -93,12 +95,12 @@ export async function register(payload: RegisterPayload) {
 		auth.update((state) => ({
 			...state,
 			firstName: data.data.firstName,
-			email: data.data.email,
-			accessToken: data.data.token
+			email: data.data.email
+			// accessToken: data.data.token
 		}));
-		if (browser) {
-			setCookie('accessToken', data.data.token);
-		}
+		// if (browser) {
+		// 	setCookie('accessToken', data.data.token);
+		// }
 	} catch (err) {
 		console.log(err);
 		throw err;
@@ -107,6 +109,31 @@ export async function register(payload: RegisterPayload) {
 			...state,
 			isLoading: false
 		}));
+	}
+}
+
+export async function verifyEmail({ email, code }: { email: string; code: string }) {
+	auth.update((state) => ({ ...state, isLoading: true }));
+
+	try {
+		const { data } = await api.post('/auth/verify-email', { email, code });
+
+		console.log(data);
+	} catch (error) {
+		console.log(error);
+		throw error;
+	} finally {
+		auth.update((state) => ({
+			...state,
+			isLoading: false
+		}));
+	}
+}
+
+export async function resendCode(email: string) {
+	const { data } = await api.post('/auth/resend-verification', { email });
+	if (data.success) {
+		toast.success('Verification code resent successfully');
 	}
 }
 
