@@ -1,8 +1,7 @@
 <script>
-	import Layout from '../../components/Layout/Layout.svelte';
-	import Messaging from '../../components/Chat/Messaging.svelte';
-	import WelcomeScreen from '../../components/WelcomeScreen.svelte';
 	import logo from '$lib/assets/icons/logo-gradient.png';
+	import Layout from '../../components/Layout/Layout.svelte';
+	import WelcomeScreen from '../../components/WelcomeScreen.svelte';
 </script>
 
 <Layout>

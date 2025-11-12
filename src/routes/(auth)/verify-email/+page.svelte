@@ -5,7 +5,7 @@
 	import Button from '$lib/components/ui/button/button.svelte';
 	import Input from '$lib/components/ui/input/input.svelte';
 	import Spinner from '$lib/components/ui/spinner/spinner.svelte';
-	import { resendCode, user, verifyEmail } from '$lib/stores/authStore';
+	import { auth, resendCode, user, verifyEmail } from '$lib/stores/authStore';
 	import { onMount } from 'svelte';
 	import { toast } from 'svelte-sonner';
 
@@ -23,7 +23,9 @@
 		try {
 			await verifyEmail({ email: $user.email, code: verificationCode });
 			toast.success('Email verified successfully');
-			goto('/login');
+			if ($auth.accessToken) {
+				goto('/');
+			}
 		} catch (error) {
 			console.log(error);
 		} finally {

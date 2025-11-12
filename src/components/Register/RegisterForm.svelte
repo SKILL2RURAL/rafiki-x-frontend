@@ -205,11 +205,11 @@
 					{formData.ageGroup ? formData.ageGroup : 'Select age group'}
 				</Select.Trigger>
 				<Select.Content>
-					<Select.Item value="12-15 years">12-15 years</Select.Item>
-					<Select.Item value="16-21 years">16-21 years</Select.Item>
-					<Select.Item value="22-26 years">22-26 years</Select.Item>
-					<Select.Item value="27-35 years">27-35 years</Select.Item>
-					<Select.Item value="36 above">36 above</Select.Item>
+					<Select.Item value="AGE_12_15">12-15 years</Select.Item>
+					<Select.Item value="AGE_16_21">16-21 years</Select.Item>
+					<Select.Item value="AGE_22_26">22-26 years</Select.Item>
+					<Select.Item value="AGE_27_35">27-35 years</Select.Item>
+					<Select.Item value="AGE_36_ABOVE">36 above</Select.Item>
 				</Select.Content>
 			</Select.Root>
 		</div>
