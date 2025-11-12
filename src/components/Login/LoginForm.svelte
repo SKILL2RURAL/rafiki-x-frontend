@@ -23,6 +23,7 @@
 			if (error instanceof AxiosError) {
 				if (error.response?.data.message === 'Please verify your email before logging in') {
 					goto('/verify-email');
+					auth.update((state) => ({ ...state, isLoading: false, email: formData.email }));
 					toast.error('Please verify your email before logging in');
 				} else {
 					toast.error(error.response?.data.message);

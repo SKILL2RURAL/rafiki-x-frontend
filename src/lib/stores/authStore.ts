@@ -78,6 +78,9 @@ export async function login(payload: LoginPayload) {
 		if (browser) {
 			setCookie('accessToken', data.data.token);
 		}
+	} catch (err) {
+		console.log(err);
+		throw err;
 	} finally {
 		auth.update((state) => ({
 			...state,
@@ -117,8 +120,10 @@ export async function verifyEmail({ email, code }: { email: string; code: string
 
 	try {
 		const { data } = await api.post('/auth/verify-email', { email, code });
-
-		console.log(data);
+		auth.update((state) => ({ ...state, email: data.data.email, accessToken: data.data.token }));
+		if (browser) {
+			setCookie('accessToken', data.data.token);
+		}
 	} catch (error) {
 		console.log(error);
 		throw error;
