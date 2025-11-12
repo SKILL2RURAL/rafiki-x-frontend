@@ -1,5 +1,5 @@
 import { api } from '$lib/api';
-import type { ChatState, Conversation, MessagePayload } from '$lib/types/chat';
+import type { ChatState, Conversation, Message, MessagePayload } from '$lib/types/chat';
 import { derived, writable } from 'svelte/store';
 
 const initialState: ChatState = {
@@ -9,7 +9,8 @@ const initialState: ChatState = {
 	error: null,
 	isSending: false,
 	conversations: [],
-	conversation: null
+	conversation: null,
+	messages: []
 };
 
 function createChatStore() {
@@ -31,30 +32,22 @@ function createChatStore() {
 			};
 			if (conversationId) {
 				payload.conversationId = conversationId;
-
-				// update((s) => ({
-				// 	...s,
-				// 	conversation: {
-				// 		...s.conversation,
-				// 		messages: [
-				// 			...s.conversation.messages,
-				// 			{
-				// 				id: 0,
-				// 				content: message,
-				// 				role: 'USER',
-				// 				createdAt: new Date().toISOString()
-				// 			}
-				// 		]
-				// 	}
-				// }));
 			}
 
 			try {
 				const { data } = await api.post('/chat/message', payload);
 				console.log(data);
+
+				const newMessage: Message = {
+					id: new Date().getTime(),
+					content: data.data.message,
+					role: 'ASSISTANT',
+					createdAt: new Date().toISOString()
+				};
 				update((state) => ({
 					...state,
-					chats: [...state.chats, data.data.message]
+					chats: [...state.chats, data.data.message],
+					messages: [...state.messages, newMessage]
 				}));
 				return data.data;
 			} catch (error) {
@@ -75,7 +68,7 @@ function createChatStore() {
 				const { data } = await api.get<{ data: Conversation[] }>('/chat/conversations' + params);
 				update((state) => ({
 					...state,
-					conversations: data.data
+					conversations: data.data ?? []
 				}));
 			} catch (error) {
 				console.log(error);
@@ -93,7 +86,8 @@ function createChatStore() {
 				const { data } = await api.get<{ data: Conversation }>(`/chat/conversations/${id}`);
 				update((state) => ({
 					...state,
-					conversation: data.data
+					conversation: data.data,
+					messages: data.data.messages ?? []
 				}));
 			} catch (error) {
 				console.log(error);
@@ -101,6 +95,14 @@ function createChatStore() {
 			} finally {
 				update((state) => ({ ...state, isLoading: false }));
 			}
+		},
+
+		// set messages
+		setMessages: (messages: Message[]) => {
+			update((state) => ({
+				...state,
+				messages: messages
+			}));
 		}
 	};
 }
@@ -108,5 +110,5 @@ function createChatStore() {
 export const chatStore = createChatStore();
 
 export const chats = derived(chatStore, ($chatStore) => $chatStore.conversations);
-export const messages = derived(chatStore, ($chatStore) => $chatStore.conversation?.messages);
+export const messages = derived(chatStore, ($chatStore) => $chatStore.messages);
 export const sendingMessage = derived(chatStore, ($chatStore) => $chatStore.isSending);

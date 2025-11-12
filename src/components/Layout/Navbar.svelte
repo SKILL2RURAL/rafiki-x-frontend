@@ -17,7 +17,7 @@
 </script>
 
 <nav
-	class="h-[var(--navbar-height)] flex justify-between lg:justify-end items-center p-5 border-b-[0.5px]"
+	class="h-(--navbar-height)] flex justify-between lg:justify-end items-center p-5 border-b-[0.5px]"
 >
 	<div class="flex lg:hidden items-center justify-between w-full">
 		<button
@@ -33,7 +33,7 @@
 			{#each links as link}
 				<a
 					href={link.href}
-					class={`block py-1 text-center ${pathname === link.href ? 'bg-gradient-to-r from-[#51A3DA] to-[#60269E] bg-clip-text text-transparent border-b border-[#51A3DA]' : 'text-[#808990]'}`}
+					class={`block py-1 text-center ${pathname === link.href ? 'bg-linear-to-r from-[#51A3DA] to-[#60269E] bg-clip-text text-transparent border-b border-[#51A3DA]' : 'text-[#808990]'}`}
 					>{link.name}</a
 				>
 			{/each}

@@ -21,7 +21,12 @@
 			goto('/');
 		} catch (error) {
 			if (error instanceof AxiosError) {
-				toast.error(error.response?.data.message);
+				if (error.response?.data.message === 'Please verify your email before logging in') {
+					goto('/verify-email');
+					toast.error('Please verify your email before logging in');
+				} else {
+					toast.error(error.response?.data.message);
+				}
 			}
 		}
 	}

@@ -40,7 +40,7 @@
 </script>
 
 <aside
-	class={`${isSidebarOpen ? 'w-[var(--sidebar-full-width)]' : 'w-[var(--sidebar-collapsed-width)]'} transition-all duration-200  p-5 py-7 h-screen border-r-[0.4px] font-mulish relative hidden lg:block`}
+	class={`${isSidebarOpen ? 'w-(--sidebar-full-width)' : 'w-(--sidebar-collapsed-width)'} transition-all duration-200  p-5 py-7 h-screen border-r-[0.4px] font-mulish relative hidden lg:block`}
 >
 	<!-- toogle button  -->
 	<button
@@ -51,6 +51,7 @@
 	</button>
 	<div class="flex flex-col h-full justify-between">
 		<div>
+			<!-- Logo  -->
 			<img src={logo} alt="Rafiki X" width="45" height="45" />
 
 			<!-- Links  -->
@@ -98,11 +99,14 @@
 				{#if isSidebarOpen}
 					<div>
 						{#if chats && $chats.length > 0}
-							<div class="space-y-3">
-								{#each $chats.splice(0, 3) as chat}
+							<div class="space-y-3 overflow-y-auto max-h-[40vh]">
+								{#each $chats as chat}
 									<button
 										class="flex justify-between items-center cursor-pointer w-full"
-										onclick={() => goto(`/${chat.id}`)}
+										onclick={() => {
+											goto(`/${chat.id}`);
+											chatStore.getSingleConversation(Number(chat.id));
+										}}
 									>
 										<p class="line-clamp-1 text-[#253B4B] text-[16px]">{chat.title}</p>
 										<img src={greaterArrow} alt="direction icon" width="7" height="13" />
@@ -165,10 +169,10 @@
 			>
 				{#if isSidebarOpen}
 					<p class="text-[16px]">Learn more</p>
+					<div class="rounded-full bg-gradient p-1">
+						<ChevronRight color="white" size={15} />
+					</div>
 				{/if}
-				<div class="rounded-full bg-gradient p-1">
-					<ChevronRight color="white" size={15} />
-				</div>
 			</button>
 
 			{#if isSidebarOpen}
