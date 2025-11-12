@@ -120,7 +120,12 @@ export async function verifyEmail({ email, code }: { email: string; code: string
 
 	try {
 		const { data } = await api.post('/auth/verify-email', { email, code });
-		auth.update((state) => ({ ...state, email: data.data.email, accessToken: data.data.token }));
+		auth.update((state) => ({
+			...state,
+			email: data.data.email,
+			accessToken: data.data.token,
+			firstName: data.data.firstName
+		}));
 		if (browser) {
 			setCookie('accessToken', data.data.token);
 		}
