@@ -32,7 +32,7 @@
 				<p class="text-[#253B4B] text-[18px] font-light mb-3">Profile picture</p>
 				<div class="flex items-cente gap-4 mb-5">
 					<Avatar.Root class="w-20 h-20">
-						<Avatar.Image src={"https://github.com/shadcn.png"} alt={$profile.data.name || "@shadcn"} />
+						<Avatar.Image src={"https://github.com/shadcn.png"} alt={$profile.data.firstName || "@shadcn"} />
 						<Avatar.Fallback>CN</Avatar.Fallback>
 					</Avatar.Root>
 					<div class="space-y-2">
