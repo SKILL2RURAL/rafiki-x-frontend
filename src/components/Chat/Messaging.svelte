@@ -66,9 +66,11 @@
 	}
 </script>
 
-<div class="flex flex-col mx-auto justify-between gap-20 font-mulish font-medium lg:max-w-[70vw]">
+<div
+	class="flex flex-col mx-auto justify-between font-mulish font-medium lg:max-w-[70vw] min-h-full"
+>
 	<!--Chat area-->
-	<div class="h-full overflow-y-auto space-y-4 bg-white" bind:this={chatContainer}>
+	<div class="space-y-4 flex-grow pb-20" bind:this={chatContainer}>
 		{#each $messages as msg, i}
 			<div class="flex {msg.role === 'USER' ? 'justify-end' : 'justify-start'}">
 				<div class="px-4 py-2 w-[70vw] lg:max-w-[50vw]">

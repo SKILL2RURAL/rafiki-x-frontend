@@ -11,7 +11,5 @@
 </script>
 
 <Layout>
-	<div class="">
-		<Messaging />
-	</div>
+	<Messaging />
 </Layout>

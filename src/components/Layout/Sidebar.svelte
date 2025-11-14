@@ -100,9 +100,9 @@
 					<div>
 						{#if chats && $chats.length > 0}
 							<div class="space-y-3 overflow-y-auto max-h-[40vh]">
-								{#each $chats as chat}
+								{#each $chats as chat, index}
 									<button
-										class="flex justify-between items-center cursor-pointer w-full"
+										class={`flex justify-between items-center cursor-pointer w-full gap-5`}
 										onclick={() => {
 											goto(`/${chat.id}`);
 											chatStore.getSingleConversation(Number(chat.id));
@@ -114,8 +114,10 @@
 								{/each}
 							</div>
 						{:else}
-							<img src={noChat} alt="" width="80" height="80" />
-							<p class="text-sm font-semibold text-[#80899A]">No Chat history</p>
+							<div class="flex flex-col items-center">
+								<img src={noChat} alt="" width="80" height="80" />
+								<p class="text-sm font-semibold text-[#80899A]">No Chat history</p>
+							</div>
 						{/if}
 					</div>
 				{/if}

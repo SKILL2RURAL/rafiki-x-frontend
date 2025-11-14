@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import { Input } from '$lib/components/ui/input';
 	import searchIcon from '$lib/assets/icons/search-normal.svg';
 	import mic from '$lib/assets/icons/mic.svg';
@@ -21,14 +21,14 @@
 
 	let text = '';
 
-	async function handleSend() {
+	// FUNCTION TO START A NEW CONVERSATION
+	async function handleSend(value?: string) {
 		await sendMessage({
-			message: text,
+			message: value ? value : text,
 			createNewConversation: true
 		}).then((res) => {
 			goto(`/${res.conversationId}`);
 		});
-		// goto(`/2`);
 	}
 </script>
 
@@ -73,7 +73,7 @@
 					<button
 						class="p-2 h-[48px] w-[48px] border rounded-full hover:bg-gray-100 flex items-center justify-center"
 						disabled={$sendingMessage}
-						onclick={handleSend}
+						onclick={() => handleSend()}
 					>
 						{#if $sendingMessage}
 							<Spinner color="black" size="md" />
@@ -88,19 +88,24 @@
 		<div class="mt-3 lg:mt-5 flex gap-5 w-full overflow-x-auto no-scrollbar pb-1">
 			<button
 				class="shadow-md rounded-[100px] flex items-center justify-center gap-2 px-6 lg:px-4 py-3 w-full whitespace-nowrap"
-				onclick={() => goto('/2')}
+				onclick={() => handleSend('Write a Story')}
+				disabled={$sendingMessage}
 			>
 				<img src={mic} alt="mic" width="20" height="20" />
 				<p class="text-[14px] lg:font-bold text-[#1E1E1E]">Write a Story</p>
 			</button>
 			<button
 				class="shadow-md rounded-[100px] flex items-center justify-center gap-2 px-6 lg:px-4 py-3 w-full whitespace-nowrap"
+				onclick={() => handleSend('Career Chat')}
+				disabled={$sendingMessage}
 			>
 				<img src={pdf} alt="mic" width="20" height="20" />
 				<p class="text-[14px] lg:font-bold text-[#1E1E1E]">Career Chat</p>
 			</button>
 			<button
 				class="shadow-md rounded-[100px] flex items-center justify-center gap-2 px-6 lg:px-4 py-3 w-full whitespace-nowrap"
+				onclick={() => handleSend('Interview Prep')}
+				disabled={$sendingMessage}
 			>
 				<img src={mic} alt="mic" width="20" height="20" />
 				<p class="text-[14px] lg:font-bold text-[#1E1E1E]">Interview Prep</p>

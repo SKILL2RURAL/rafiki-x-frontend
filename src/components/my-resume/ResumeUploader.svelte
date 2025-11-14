@@ -1,27 +1,44 @@
 <script lang="ts">
-	import upload from '$lib/assets/icons/upload.png';
-	import Button from '$lib/components/ui/button/button.svelte';
 	import downloadIcon from '$lib/assets/icons/downloadIcon.png';
 	import threeDot from '$lib/assets/icons/threeDot.png';
+	import upload from '$lib/assets/icons/upload.png';
+	import Button from '$lib/components/ui/button/button.svelte';
+	import { chatStore, resumes } from '$lib/stores/chatStore';
+	import { onMount } from 'svelte';
+	import { toast } from 'svelte-sonner';
 	import Drawer from '../Common/ReuseableDrawer.svelte';
 	import TextEditor from './TextEditor.svelte';
+	// import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index';
 
 	let {
 		onUpload,
-		files
+		files,
+		openEditor
 	}: {
 		onUpload: (files: FileList) => void;
 		files: Array<{ name: string; size: string; type: string; icon?: string }>;
+		openEditor?: boolean;
 	} = $props();
 
+	// GET ALL RESUMES ON MOUNT
+	onMount(async () => {
+		await chatStore.getAllResumes();
+	});
+
+	// GET ALL RESUMES
+	// LOCAL STATES
+	let filesToUpload = $state<File[]>([]);
 	let openMenuIndex = $state<number | null>(null);
 	let isDrawerOpen = $state<boolean>(false);
+	let isUploading = $state<boolean>(false);
 
+	// HANDLE FILE SELECTION
 	function handleFileChange(event: Event) {
 		const files = (event.target as HTMLInputElement).files;
 		if (files && files.length > 0) {
 			onUpload(files);
 			console.log(files);
+			filesToUpload = [...filesToUpload, ...Array.from(files)];
 		}
 	}
 
@@ -47,6 +64,25 @@
 	function viewFile(file: { name: string }) {
 		console.log('View file:', file.name);
 		openMenuIndex = null;
+	}
+
+	// FUNCTION TO UPLOAD RESUME
+	async function handleResumeUpload() {
+		// CHECK IF THERE ARE FILES TO UPLOAD
+		if (!filesToUpload.length) {
+			toast.error('No files to upload, please select a file');
+			return;
+		}
+
+		isUploading = true;
+
+		try {
+			await chatStore.uploadResume(filesToUpload[0]);
+		} catch (error) {
+			toast.error('Failed to upload resume');
+		} finally {
+			isUploading = false;
+		}
 	}
 </script>
 
@@ -86,16 +122,16 @@
 	> -->
 
 	<ul class="flex flex-col gap-4 mt-6">
-		{#each files as file, index}
+		{#each $resumes as file, index}
 			<li class="relative">
 				<div
 					class="md:w-[611px] h-[60px] flex justify-between rounded-[8px] bg-[#F7FBFD] p-3 font-satoshi-regular"
 				>
 					<div class="flex gap-2 items-center">
-						<img src={file.icon} alt="File Icon" class="" width="32" height="32" />
+						<!-- <img src={file.icon} alt="File Icon" class="" width="32" height="32" /> -->
 						<div>
-							<p class="text-[14px] font-medium leading-5">{file.name}</p>
-							<p class="text-[12px] text-[#4D5154] leading-4">{file.size}</p>
+							<p class="text-[14px] font-medium leading-5">{file.fileName}</p>
+							<p class="text-[12px] text-[#4D5154] leading-4">{file.fileSize}</p>
 						</div>
 					</div>
 					<div class="flex gap-2.5 items-center">
@@ -110,8 +146,8 @@
 							>
 							<span class="w-[1px] h-[25px] bg-[#D9D9D9]"></span>
 							<button onclick={() => toggleMenu(index)}
-								><img src={threeDot} alt="more icon" width="24" height="24" /></button
-							>
+								><img src={threeDot} alt="more icon" width="24" height="24" />
+							</button>
 
 							{#if openMenuIndex === index}
 								<div class="absolute right-0 top-10 w-[150px] bg-white rounded-md z-50">
@@ -121,17 +157,12 @@
 									<div
 										class="absolute z-51 w-[150px] bg-white rounded-md shadow-md text-sm font-satoshi-regular"
 									>
-										<button
-											class="block w-full text-left px-4 py-2 hover:bg-gray-100"
-											onclick={() => makeDefault(file)}>Make default</button
+										<button class="block w-full text-left px-4 py-2 hover:bg-gray-100"
+											>Make default</button
 										>
-										<button
-											class="block w-full text-left px-4 py-2 hover:bg-gray-100"
-											onclick={() => viewFile(file)}>View</button
-										>
-										<button
-											class="block w-full text-left px-4 py-2 text-red-500 hover:bg-gray-100"
-											onclick={() => deleteFile(file)}>Delete resume</button
+										<button class="block w-full text-left px-4 py-2 hover:bg-gray-100">View</button>
+										<button class="block w-full text-left px-4 py-2 text-red-500 hover:bg-gray-100"
+											>Delete resume</button
 										>
 									</div>
 								</div>
@@ -142,6 +173,13 @@
 			</li>
 		{/each}
 	</ul>
+	<Button
+		class="bg-gradient w-full rounded-[8px] mt-5 border border-[#FFFFFF] h-[50px] hover:opacity-80"
+		disabled={!files.length || isUploading}
+		onclick={handleResumeUpload}
+	>
+		Go to chat
+	</Button>
 
 	<!-- Drawer  -->
 	<Drawer bind:isOpen={isDrawerOpen} onClose={() => (isDrawerOpen = false)}>

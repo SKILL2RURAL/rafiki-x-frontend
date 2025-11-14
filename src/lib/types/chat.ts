@@ -24,6 +24,16 @@ export interface ChatState {
 	conversations: Conversation[];
 	conversation: Conversation | null;
 	messages: Message[];
+	allResumes: Resume[];
+}
+
+export interface Resume {
+	id: number;
+	fileName: string;
+	fileUrl: string;
+	fileSize: number;
+	status: string;
+	uploadedAt: string;
 }
 
 export interface MessagePayload {

@@ -10,6 +10,8 @@
 	import { goto } from '$app/navigation';
 	import { getCookie } from '$lib/utils/cookies';
 
+	let { children } = $props();
+
 	let showFeedback = $state(false);
 	let isFeedbackInput = $state(false);
 
@@ -49,14 +51,12 @@
 		<Sidebar openHistory={() => {}} />
 		<div class="w-full h-screen">
 			<Navbar />
-			<!-- svelte-ignore slot_element_deprecated -->
 			<main class="p-5 max-h-[90vh] w-full overflow-auto">
-				<slot />
+				{@render children()}
 			</main>
 		</div>
 
 		<!-- FEEDBACK  -->
-
 		<div class={`absolute top-1/2 -translate-y-1/2 right-0 hidden lg:flex`}>
 			<button
 				aria-label="feedback"
