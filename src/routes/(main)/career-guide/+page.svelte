@@ -1,12 +1,12 @@
-<script>
-	import CareerGuideCard from '../../../components/CareerGuideCard.svelte';
-	import Layout from '../../../components/Layout/Layout.svelte';
+<script lang="ts">
+	import { goto } from '$app/navigation';
 	import Image1 from '$lib/assets/icons/career1.svg';
 	import Image2 from '$lib/assets/icons/career2.svg';
 	import Image3 from '$lib/assets/icons/career3.svg';
 	import Image4 from '$lib/assets/icons/career4.svg';
 	import logo from '$lib/assets/icons/logo-gradient.png';
-	import { goto } from '$app/navigation';
+	import CareerGuideCard from '../../../components/CareerGuideCard.svelte';
+	import Layout from '../../../components/Layout/Layout.svelte';
 
 	const lists = [
 		{

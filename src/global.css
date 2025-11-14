@@ -215,3 +215,12 @@ button:disabled {
 	border-image: linear-gradient(to right, #51a3da, #60269e) 1;
 	border-radius: 8px !important;
 }
+
+@keyframes pulse-opacity {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+.animate-pulse-opacity {
+    animation: pulse-opacity 1.5s infinite ease-in-out;
+}
