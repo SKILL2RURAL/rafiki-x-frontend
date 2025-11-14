@@ -95,11 +95,11 @@
 			<!-- Links end  -->
 
 			<!-- Chat history  -->
-			<div class="flex-col mt-10">
+			<div class="flex-col mt-5">
 				{#if isSidebarOpen}
 					<div>
 						{#if chats && $chats.length > 0}
-							<div class="space-y-3 overflow-y-auto max-h-[40vh]">
+							<div class="space-y-3 overflow-y-auto no-scrollbar h-[410px]">
 								{#each $chats as chat, index}
 									<button
 										class={`flex justify-between items-center cursor-pointer w-full gap-5`}
@@ -108,7 +108,7 @@
 											chatStore.getSingleConversation(Number(chat.id));
 										}}
 									>
-										<p class="line-clamp-1 text-[#253B4B] text-[16px]">{chat.title}</p>
+										<p class="text-[#253B4B] text-[16px] text-left line-clamp-1">{chat.title}</p>
 										<img src={greaterArrow} alt="direction icon" width="7" height="13" />
 									</button>
 								{/each}

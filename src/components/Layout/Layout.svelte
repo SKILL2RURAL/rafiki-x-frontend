@@ -51,7 +51,7 @@
 		<Sidebar openHistory={() => {}} />
 		<div class="w-full h-screen">
 			<Navbar />
-			<main class="p-5 max-h-[90vh] w-full overflow-auto">
+			<main class="p-5 h-[90vh] w-full overflow-auto">
 				{@render children()}
 			</main>
 		</div>

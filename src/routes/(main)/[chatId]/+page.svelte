@@ -2,11 +2,26 @@
 	import { onMount } from 'svelte';
 	import Messaging from '../../../components/Chat/Messaging.svelte';
 	import Layout from '../../../components/Layout/Layout.svelte';
-	import { chatStore } from '$lib/stores/chatStore';
+	import { chatStore, initialMessage } from '$lib/stores/chatStore';
 	import { page } from '$app/state';
 
 	onMount(() => {
 		chatStore.getSingleConversation(Number(page.params.chatId));
+
+		const unsubscribe = initialMessage.subscribe((message) => {
+			if (message) {
+				chatStore.sendMessage({
+					message,
+					conversationId: Number(page.params.chatId)
+				});
+				chatStore.setInitialMessage(null);
+			}
+		});
+
+		return () => {
+			chatStore.setMessages([]);
+			unsubscribe();
+		};
 	});
 </script>
 

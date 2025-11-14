@@ -24,7 +24,7 @@
 	// FUNCTION TO START A NEW CONVERSATION
 	async function handleSend(value?: string) {
 		await sendMessage({
-			message: value ? value : text,
+			message: value ? value : text.trim(),
 			createNewConversation: true
 		}).then((res) => {
 			goto(`/${res.conversationId}`);
@@ -88,7 +88,10 @@
 		<div class="mt-3 lg:mt-5 flex gap-5 w-full overflow-x-auto no-scrollbar pb-1">
 			<button
 				class="shadow-md rounded-[100px] flex items-center justify-center gap-2 px-6 lg:px-4 py-3 w-full whitespace-nowrap"
-				onclick={() => handleSend('Write a Story')}
+				onclick={() =>
+					handleSend(
+						"I want to write a story, but I'm not sure where to start. Can you ask me some questions to help me get started and then help me write it?"
+					)}
 				disabled={$sendingMessage}
 			>
 				<img src={mic} alt="mic" width="20" height="20" />
@@ -96,7 +99,10 @@
 			</button>
 			<button
 				class="shadow-md rounded-[100px] flex items-center justify-center gap-2 px-6 lg:px-4 py-3 w-full whitespace-nowrap"
-				onclick={() => handleSend('Career Chat')}
+				onclick={() =>
+					handleSend(
+						"I'd like to have a chat about my career. I'm at a crossroads and could use some help exploring my options. Can you ask me some questions to understand my situation better?"
+					)}
 				disabled={$sendingMessage}
 			>
 				<img src={pdf} alt="mic" width="20" height="20" />
@@ -104,7 +110,10 @@
 			</button>
 			<button
 				class="shadow-md rounded-[100px] flex items-center justify-center gap-2 px-6 lg:px-4 py-3 w-full whitespace-nowrap"
-				onclick={() => handleSend('Interview Prep')}
+				onclick={() =>
+					handleSend(
+						"I have an interview coming up and I'm feeling nervous. Can you help me prepare by running through some common interview questions and giving me feedback?"
+					)}
 				disabled={$sendingMessage}
 			>
 				<img src={mic} alt="mic" width="20" height="20" />

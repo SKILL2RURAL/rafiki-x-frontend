@@ -11,13 +11,18 @@ const initialState: ChatState = {
 	conversations: [],
 	conversation: null,
 	messages: [],
-	allResumes: []
+	allResumes: [],
+	initialMessage: null
 };
 
 function createChatStore() {
 	const { subscribe, update } = writable<ChatState>(initialState);
 	return {
 		subscribe,
+
+		setInitialMessage: (message: string | null) => {
+			update((state) => ({ ...state, initialMessage: message }));
+		},
 
 		// Send Message
 		sendMessage: async ({
@@ -37,13 +42,13 @@ function createChatStore() {
 
 			try {
 				const { data } = await api.post('/chat/message', payload);
-				console.log(data);
 
 				const newMessage: Message = {
 					id: new Date().getTime(),
 					content: data.data.message,
 					role: 'ASSISTANT',
-					createdAt: new Date().toISOString()
+					createdAt: new Date().toISOString(),
+					isTyping: true
 				};
 				update((state) => ({
 					...state,
@@ -130,6 +135,14 @@ function createChatStore() {
 				...state,
 				messages: messages
 			}));
+		},
+
+		// Set message typing status
+		setMessageTypingStatus: (messageId: number, isTyping: boolean) => {
+			update((state) => ({
+				...state,
+				messages: state.messages.map((msg) => (msg.id === messageId ? { ...msg, isTyping } : msg))
+			}));
 		}
 	};
 }
@@ -140,3 +153,4 @@ export const chats = derived(chatStore, ($chatStore) => $chatStore.conversations
 export const messages = derived(chatStore, ($chatStore) => $chatStore.messages);
 export const sendingMessage = derived(chatStore, ($chatStore) => $chatStore.isSending);
 export const resumes = derived(chatStore, ($chatStore) => $chatStore.allResumes);
+export const initialMessage = derived(chatStore, ($chatStore) => $chatStore.initialMessage);
