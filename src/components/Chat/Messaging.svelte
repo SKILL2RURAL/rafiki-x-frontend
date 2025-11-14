@@ -4,7 +4,7 @@
 	import send from '$lib/assets/icons/send.svg';
 	import search from '$lib/assets/icons/search.svg';
 	import paperclip from '$lib/assets/icons/paperclip.png';
-	import botLogo from '$lib/assets/icons/botLogo.png';
+	import botLogo from '$lib/assets/icons/logo-gradient.png';
 	import copyIcon from '$lib/assets/icons/copyIcon.png';
 	import like from '$lib/assets/icons/likeIcon.png';
 	import thumDown from '$lib/assets/icons/thumbDown.png';
@@ -19,8 +19,7 @@
 	let newMessage = '';
 	let selectedFile: File | null = null;
 	let fileInput: HTMLInputElement;
-	let chatContainer: HTMLDivElement;
-	let hasSentMessage = false;
+	let scrollAnchor: HTMLDivElement;
 
 	async function handleSend() {
 		const updatedMessage: Message[] = [...$messages];
@@ -40,7 +39,6 @@
 			conversationId: Number(page.params.chatId)
 		});
 		newMessage = '';
-		hasSentMessage = true;
 	}
 
 	function triggerFileUpload() {
@@ -56,9 +54,7 @@
 
 	async function scrollToBottom() {
 		await tick();
-		if (chatContainer) {
-			chatContainer.scrollTo({ top: chatContainer.scrollHeight, behavior: 'smooth' });
-		}
+		scrollAnchor?.scrollIntoView({ behavior: 'smooth', block: 'end' });
 	}
 
 	$: if ($messages) {
@@ -66,49 +62,56 @@
 	}
 </script>
 
-<div class="flex flex-col mx-auto justify-between gap-20 font-mulish font-medium lg:max-w-[70vw]">
+<div class="flex-1 flex-col mx-auto justify-between font-mulish font-medium lg:max-w-[70vw] h-full">
 	<!--Chat area-->
-	<div class="h-full overflow-y-auto space-y-4 bg-white" bind:this={chatContainer}>
+	<div class="space-y-4 flex-grow pb-[200px]">
 		{#each $messages as msg, i}
 			<div class="flex {msg.role === 'USER' ? 'justify-end' : 'justify-start'}">
 				<div class="px-4 py-2 w-[70vw] lg:max-w-[50vw]">
 					{#if msg.role === 'ASSISTANT'}
-						<div class="flex gap-4 items-start">
+						<div class="flex gap-3 items-start">
 							<img src={botLogo} width="16" height="16" class="object-contain" alt="bot logo" />
 							<div class="space-y-2">
 								<!-- Content  -->
-								<div class="px-4 text-sm rounded-lg rounded-bl-none text-[#808990]">
-									{#if i === $messages.length - 1 && hasSentMessage}
-										<Typewriter text={msg.content} />
+								<div class="text-sm rounded-lg rounded-bl-none text-[#808990] w-[70vw] lg:w-[50vw]">
+									{#if msg.isTyping}
+										<Typewriter
+											text={msg.content}
+											on:typingComplete={() => chatStore.setMessageTypingStatus(msg.id!, false)}
+											on:tick={scrollToBottom}
+										/>
 									{:else}
 										<MarkdownContent raw={msg.content} />
 									{/if}
 								</div>
+
 								<!-- Icons  -->
-								<div class="flex gap-4 items-center">
-									<img
-										src={copyIcon}
-										width="16"
-										height="16"
-										class="cursor-pointer"
-										alt="copy Icon"
-									/>
-									<img src={like} width="16" height="16" class="cursor-pointer" alt="Like Icon" />
-									<img
-										src={thumDown}
-										width="16"
-										height="16"
-										class="cursor-pointer"
-										alt="thumb down"
-									/>
-									<img
-										src={megaphone}
-										width="16"
-										height="16"
-										class="cursor-pointer"
-										alt="mega phone"
-									/>
-								</div>
+								{#if !msg.isTyping}
+									<div class="flex gap-4 items-center">
+										<img
+											src={copyIcon}
+											width="16"
+											height="16"
+											class="cursor-pointer"
+											alt="copy Icon"
+										/>
+										<img src={like} width="16" height="16" class="cursor-pointer" alt="Like Icon" />
+										<img
+											src={thumDown}
+											width="16"
+											height="16"
+											class="cursor-pointer"
+											alt="thumb down"
+										/>
+										<img
+											src={megaphone}
+											width="16"
+											height="16"
+											class="cursor-pointer"
+											alt="mega phone"
+										/>
+									</div>
+								{/if}
 							</div>
 						</div>
 					{:else}
@@ -126,9 +129,27 @@
 				</div>
 			</div>
 		{/each}
+		{#if $sendingMessage}
+			<div class="flex justify-start">
+				<div class="px-4 py-2 w-[70vw] lg:max-w-[50vw]">
+					<div class="flex gap-4 items-start">
+						<img src={botLogo} width="16" height="16" class="object-contain" alt="bot logo" />
+						<div class="space-y-2">
+							<div
+								class="px-4 text-sm rounded-lg rounded-bl-none text-[#808990] animate-pulse-opacity"
+							>
+								Rafiki is typing...
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		{/if}
 	</div>
+	<div bind:this={scrollAnchor}></div>
+
 	<!-- Input Area -->
-	<div class="sticky bottom-0 flex flex-col gap-4">
+	<div class="fixed bottom-10 w-[95vw] lg:w-[70vw] flex flex-col gap-4">
 		<div class="border border-[#E8E8E8] rounded-[20px] p-4 bg-white shadow-md">
 			<div class="flex flex-col px-3 py-2 gap-4">
 				<div class="flex">

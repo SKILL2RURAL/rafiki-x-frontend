@@ -10,13 +10,19 @@ const initialState: ChatState = {
 	isSending: false,
 	conversations: [],
 	conversation: null,
-	messages: []
+	messages: [],
+	allResumes: [],
+	initialMessage: null
 };
 
 function createChatStore() {
 	const { subscribe, update } = writable<ChatState>(initialState);
 	return {
 		subscribe,
+
+		setInitialMessage: (message: string | null) => {
+			update((state) => ({ ...state, initialMessage: message }));
+		},
 
 		// Send Message
 		sendMessage: async ({
@@ -36,13 +42,13 @@ function createChatStore() {
 
 			try {
 				const { data } = await api.post('/chat/message', payload);
-				console.log(data);
 
 				const newMessage: Message = {
 					id: new Date().getTime(),
 					content: data.data.message,
 					role: 'ASSISTANT',
-					createdAt: new Date().toISOString()
+					createdAt: new Date().toISOString(),
+					isTyping: true
 				};
 				update((state) => ({
 					...state,
@@ -97,11 +103,45 @@ function createChatStore() {
 			}
 		},
 
+		uploadResume: async (file: File) => {
+			const resume = new FormData();
+			resume.append('file', file);
+
+			try {
+				const { data } = await api.post('/resume/upload', resume);
+				console.log(data);
+			} catch (error) {
+				console.error(error);
+				throw error;
+			}
+		},
+
+		getAllResumes: async () => {
+			try {
+				const { data } = await api.get('/resume/list');
+				update((s) => ({
+					...s,
+					allResumes: data.data || []
+				}));
+			} catch (error) {
+				console.error(error);
+				throw error;
+			}
+		},
+
 		// set messages
 		setMessages: (messages: Message[]) => {
 			update((state) => ({
 				...state,
 				messages: messages
+			}));
+		},
+
+		// Set message typing status
+		setMessageTypingStatus: (messageId: number, isTyping: boolean) => {
+			update((state) => ({
+				...state,
+				messages: state.messages.map((msg) => (msg.id === messageId ? { ...msg, isTyping } : msg))
 			}));
 		}
 	};
@@ -112,3 +152,5 @@ export const chatStore = createChatStore();
 export const chats = derived(chatStore, ($chatStore) => $chatStore.conversations);
 export const messages = derived(chatStore, ($chatStore) => $chatStore.messages);
 export const sendingMessage = derived(chatStore, ($chatStore) => $chatStore.isSending);
+export const resumes = derived(chatStore, ($chatStore) => $chatStore.allResumes);
+export const initialMessage = derived(chatStore, ($chatStore) => $chatStore.initialMessage);

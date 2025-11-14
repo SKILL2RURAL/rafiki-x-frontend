@@ -4,6 +4,7 @@ export interface Message {
 	content: string;
 	createdAt: string;
 	tokenCount?: string | null;
+	isTyping?: boolean;
 }
 
 export interface Chat {
@@ -24,6 +25,17 @@ export interface ChatState {
 	conversations: Conversation[];
 	conversation: Conversation | null;
 	messages: Message[];
+	allResumes: Resume[];
+	initialMessage: string | null;
+}
+
+export interface Resume {
+	id: number;
+	fileName: string;
+	fileUrl: string;
+	fileSize: number;
+	status: string;
+	uploadedAt: string;
 }
 
 export interface MessagePayload {
