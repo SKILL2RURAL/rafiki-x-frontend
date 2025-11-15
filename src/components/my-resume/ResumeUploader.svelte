@@ -8,7 +8,8 @@
 	import { toast } from 'svelte-sonner';
 	import Drawer from '../Common/ReuseableDrawer.svelte';
 	import TextEditor from './TextEditor.svelte';
-	// import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index';
+	import { goto } from '$app/navigation';
+	import type { Resume } from '$lib/types/chat';
 
 	let {
 		onUpload,
@@ -31,13 +32,13 @@
 	let openMenuIndex = $state<number | null>(null);
 	let isDrawerOpen = $state<boolean>(false);
 	let isUploading = $state<boolean>(false);
+	let isDeleting = $state<boolean>(false);
 
 	// HANDLE FILE SELECTION
 	function handleFileChange(event: Event) {
 		const files = (event.target as HTMLInputElement).files;
 		if (files && files.length > 0) {
 			onUpload(files);
-			console.log(files);
 			filesToUpload = [...filesToUpload, ...Array.from(files)];
 		}
 	}
@@ -46,23 +47,8 @@
 		openMenuIndex = openMenuIndex === index ? null : index;
 	}
 
-	function makeDefault(file: { name: string }) {
-		console.log('Make default:', file.name);
-		openMenuIndex = null;
-	}
-
 	function downloadFile(file: { name: string }) {
 		console.log('Download file:', file.name);
-		openMenuIndex = null;
-	}
-
-	function deleteFile(file: { name: string }) {
-		console.log('Delete file:', file.name);
-		openMenuIndex = null;
-	}
-
-	function viewFile(file: { name: string }) {
-		console.log('View file:', file.name);
 		openMenuIndex = null;
 	}
 
@@ -82,6 +68,24 @@
 			toast.error('Failed to upload resume');
 		} finally {
 			isUploading = false;
+		}
+	}
+
+	// FUNCTION TO DELETE A SINGLE RESUME
+	async function deleteSingleResume(file: Resume) {
+		isDeleting = true;
+
+		try {
+			await chatStore.deleteResume(file.id).then((res) => {
+				if (res) {
+					chatStore.getAllResumes();
+				}
+			});
+			toast.success('Resume deleted successfully');
+		} catch (error) {
+			toast.error('Failed to delete resume');
+		} finally {
+			isDeleting = false;
 		}
 	}
 </script>
@@ -150,7 +154,9 @@
 							</button>
 
 							{#if openMenuIndex === index}
-								<div class="absolute right-0 top-10 w-[150px] bg-white rounded-md z-50">
+								<div
+									class={`absolute right-0 top-10 w-[150px] bg-white rounded-md z-50 ${isDeleting ? 'cursor-progress' : ''}`}
+								>
 									<div
 										class="w-[18.07px] h-[18.07px] rounded-[1px] rotate-45 absolute -top-2 right-3.5 bg-white shadow-md border"
 									></div>
@@ -160,9 +166,13 @@
 										<button class="block w-full text-left px-4 py-2 hover:bg-gray-100"
 											>Make default</button
 										>
-										<button class="block w-full text-left px-4 py-2 hover:bg-gray-100">View</button>
-										<button class="block w-full text-left px-4 py-2 text-red-500 hover:bg-gray-100"
-											>Delete resume</button
+										<button class="block w-full text-left px-4 py-2 hover:bg-gray-100"
+											><a href={file.fileUrl} target="_blank" referrerpolicy="strict-origin">View</a
+											>
+										</button>
+										<button
+											class="block w-full text-left px-4 py-2 text-red-500 hover:bg-gray-100"
+											onclick={() => deleteSingleResume(file)}>Delete resume</button
 										>
 									</div>
 								</div>
@@ -175,8 +185,7 @@
 	</ul>
 	<Button
 		class="bg-gradient w-full rounded-[8px] mt-5 border border-[#FFFFFF] h-[50px] hover:opacity-80"
-		disabled={!files.length || isUploading}
-		onclick={handleResumeUpload}
+		onclick={() => goto('/')}
 	>
 		Go to chat
 	</Button>

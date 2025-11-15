@@ -129,6 +129,18 @@ function createChatStore() {
 			}
 		},
 
+		deleteResume: async (id: number) => {
+			try {
+				const { data } = await api.delete(`/resume/${id}`);
+				if (data.success) {
+					return true;
+				}
+			} catch (error) {
+				console.error(error);
+				throw error;
+			}
+		},
+
 		// set messages
 		setMessages: (messages: Message[]) => {
 			update((state) => ({
