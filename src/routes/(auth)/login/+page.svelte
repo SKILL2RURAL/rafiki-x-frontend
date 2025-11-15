@@ -1,7 +1,7 @@
 <script lang="ts">
-	import AshBackground from '../../../lib/assets/img/ash-background.png';
+	import AshBackground from '../../../lib/assets/img/ash-background.webp';
 	import logo from '../../../lib/assets/img/logo-white.png';
-	import google from '../../../lib/assets/icons/google.png';
+	// import google from '../../../lib/assets/icons/google.png';
 	import LoginForm from '../../../components/Login/LoginForm.svelte';
 </script>
 

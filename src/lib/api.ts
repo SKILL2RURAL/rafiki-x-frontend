@@ -2,6 +2,8 @@ import axios from 'axios';
 import { get } from 'svelte/store';
 import { auth } from './stores/authStore';
 import { toast } from 'svelte-sonner';
+import { goto } from '$app/navigation';
+import { resolve } from '$app/paths';
 
 export const api = axios.create({
 	baseURL: import.meta.env.VITE_API_BASE_URL
@@ -30,6 +32,15 @@ api.interceptors.response.use(
 		if (err.response.status === 401) {
 			// Logout here
 			toast.error('Unauthorized. Please login again.');
+			goto(resolve('/login'));
+			cookieStore.delete('accessToken');
+			return Promise.reject(err);
+		}
+
+		if (err.response.status === 403) {
+			toast.error('Forbidden. You do not have permission to access this resource.');
+			goto(resolve('/login'));
+			cookieStore.delete('accessToken');
 			return Promise.reject(err);
 		}
 		return Promise.reject(err);

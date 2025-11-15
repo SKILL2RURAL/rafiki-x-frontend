@@ -8,17 +8,11 @@
 	import { toast } from 'svelte-sonner';
 	import Drawer from '../Common/ReuseableDrawer.svelte';
 	import TextEditor from './TextEditor.svelte';
-	// import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index';
-
-	let {
-		onUpload,
-		files,
-		openEditor
-	}: {
-		onUpload: (files: FileList) => void;
-		files: Array<{ name: string; size: string; type: string; icon?: string }>;
-		openEditor?: boolean;
-	} = $props();
+	import { goto } from '$app/navigation';
+	import type { Resume } from '$lib/types/chat';
+	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
+	import { EllipsisVertical } from 'lucide-svelte';
+	import { cn } from '$lib/utils';
 
 	// GET ALL RESUMES ON MOUNT
 	onMount(async () => {
@@ -27,49 +21,42 @@
 
 	// GET ALL RESUMES
 	// LOCAL STATES
-	let filesToUpload = $state<File[]>([]);
-	let openMenuIndex = $state<number | null>(null);
-	let isDrawerOpen = $state<boolean>(false);
 	let isUploading = $state<boolean>(false);
+	let isDrawerOpen = $state<boolean>(false);
+	let resumeFiles = $state<Resume[]>($resumes || []);
+
+	// UPDATE THE RESUMEFILES LOCAL STATE
+	$effect(() => {
+		resumeFiles = $resumes;
+	});
 
 	// HANDLE FILE SELECTION
 	function handleFileChange(event: Event) {
 		const files = (event.target as HTMLInputElement).files;
 		if (files && files.length > 0) {
-			onUpload(files);
-			console.log(files);
-			filesToUpload = [...filesToUpload, ...Array.from(files)];
+			const newFile: Resume = {
+				id: Date.now(),
+				fileName: files[0].name,
+				fileUrl: `${(files[0].size / 1024).toFixed(1)} KB`,
+				fileSize: files[0].size,
+				status: 'pending',
+				uploadedAt: new Date().toISOString()
+			};
+
+			resumeFiles = [newFile, ...resumeFiles];
+			handleResumeUpload(files[0]);
 		}
-	}
-
-	function toggleMenu(index: number) {
-		openMenuIndex = openMenuIndex === index ? null : index;
-	}
-
-	function makeDefault(file: { name: string }) {
-		console.log('Make default:', file.name);
-		openMenuIndex = null;
 	}
 
 	function downloadFile(file: { name: string }) {
 		console.log('Download file:', file.name);
-		openMenuIndex = null;
-	}
-
-	function deleteFile(file: { name: string }) {
-		console.log('Delete file:', file.name);
-		openMenuIndex = null;
-	}
-
-	function viewFile(file: { name: string }) {
-		console.log('View file:', file.name);
-		openMenuIndex = null;
+		// openMenuIndex = null;
 	}
 
 	// FUNCTION TO UPLOAD RESUME
-	async function handleResumeUpload() {
+	async function handleResumeUpload(file: File) {
 		// CHECK IF THERE ARE FILES TO UPLOAD
-		if (!filesToUpload.length) {
+		if (!file) {
 			toast.error('No files to upload, please select a file');
 			return;
 		}
@@ -77,12 +64,38 @@
 		isUploading = true;
 
 		try {
-			await chatStore.uploadResume(filesToUpload[0]);
+			await chatStore.uploadResume(file).then((res) => {
+				if (res) {
+					// UPDATE LOCAL STATE TO REFLECT CHANGES
+					toast.success('Resume uploaded successfully');
+					resumeFiles[0] = res;
+				}
+			});
 		} catch (error) {
 			toast.error('Failed to upload resume');
 		} finally {
 			isUploading = false;
 		}
+	}
+
+	// FUNCTION TO DELETE A SINGLE RESUME
+	async function deleteSingleResume(file: Resume) {
+		try {
+			await chatStore.deleteResume(file.id).then((res) => {
+				if (res) {
+					// UPDATE LOCAL STATE TO REFLECT CHANGES
+					toast.success('Resume deleted successfully');
+					resumeFiles = resumeFiles.filter((f) => f.id !== file.id);
+				}
+			});
+		} catch (error) {
+			toast.error('Failed to delete resume');
+		}
+	}
+
+	// FUNCTION TO FORMAT DATE
+	function formatDate(date: string) {
+		return new Date(date).toLocaleString('en-GB');
 	}
 </script>
 
@@ -121,53 +134,70 @@
 		onclick={onAddText}>Add text Content</Button
 	> -->
 
-	<ul class="flex flex-col gap-4 mt-6">
-		{#each $resumes as file, index}
-			<li class="relative">
+	<ul class="flex flex-col gap-4 mt-6 max-h-[100px] overflow-y-auto">
+		{#each resumeFiles as file}
+			<li>
 				<div
-					class="md:w-[611px] h-[60px] flex justify-between rounded-[8px] bg-[#F7FBFD] p-3 font-satoshi-regular"
+					class={cn(
+						`md:w-[611px] h-[60px] flex justify-between rounded-[8px] bg-[#F7FBFD] p-3 font-satoshi-regular`,
+						file.status === 'pending' ? 'opacity-30' : ''
+					)}
 				>
 					<div class="flex gap-2 items-center">
 						<!-- <img src={file.icon} alt="File Icon" class="" width="32" height="32" /> -->
 						<div>
-							<p class="text-[14px] font-medium leading-5">{file.fileName}</p>
-							<p class="text-[12px] text-[#4D5154] leading-4">{file.fileSize}</p>
+							<p class="text-[14px] leading-5 font-plus-jakarta-sans-semibold">
+								{file.fileName}
+							</p>
+							<p class="text-[12px] text-[#4D5154] leading-4">{formatDate(file.uploadedAt)}</p>
 						</div>
 					</div>
 					<div class="flex gap-2.5 items-center">
-						<div
+						<!-- DEFAULT TAG  -->
+						<!-- <div
 							class="bg-gradient h-[17px] w-[66px] rounded-full text-white font-satoshi-regular font-medium text-[12px] text-center"
 						>
 							Default
-						</div>
-						<div class="flex gap-2.5 items-center">
-							<button onclick={() => downloadFile}
-								><img src={downloadIcon} alt="download icon" width="24" height="24" /></button
-							>
-							<span class="w-[1px] h-[25px] bg-[#D9D9D9]"></span>
-							<button onclick={() => toggleMenu(index)}
-								><img src={threeDot} alt="more icon" width="24" height="24" />
-							</button>
+						</div> -->
 
-							{#if openMenuIndex === index}
-								<div class="absolute right-0 top-10 w-[150px] bg-white rounded-md z-50">
-									<div
-										class="w-[18.07px] h-[18.07px] rounded-[1px] rotate-45 absolute -top-2 right-3.5 bg-white shadow-md border"
-									></div>
-									<div
-										class="absolute z-51 w-[150px] bg-white rounded-md shadow-md text-sm font-satoshi-regular"
-									>
-										<button class="block w-full text-left px-4 py-2 hover:bg-gray-100"
-											>Make default</button
-										>
-										<button class="block w-full text-left px-4 py-2 hover:bg-gray-100">View</button>
-										<button class="block w-full text-left px-4 py-2 text-red-500 hover:bg-gray-100"
-											>Delete resume</button
-										>
-									</div>
-								</div>
-							{/if}
-						</div>
+						<!-- ACTIONS  -->
+						{#if file.status === 'COMPLETED'}
+							<div class="flex gap-2.5 items-center">
+								<button onclick={() => downloadFile}
+									><img src={downloadIcon} alt="download icon" width="24" height="24" /></button
+								>
+								<span class="w-[1px] h-[25px] bg-[#D9D9D9]"></span>
+								<!-- DROPDOWN MENU  -->
+
+								<DropdownMenu.Root>
+									<DropdownMenu.Trigger>
+										<EllipsisVertical />
+									</DropdownMenu.Trigger>
+									<DropdownMenu.Content>
+										<DropdownMenu.Group>
+											<DropdownMenu.Item>
+												<button class="block w-full text-left px-2 py-1 hover:bg-gray-100"
+													>Make default</button
+												>
+											</DropdownMenu.Item>
+											<DropdownMenu.Item>
+												<button class="block w-full text-left px-2 py-1 hover:bg-gray-100"
+													><a href={file.fileUrl} target="_blank" referrerpolicy="strict-origin"
+														>View</a
+													>
+												</button>
+											</DropdownMenu.Item>
+											<DropdownMenu.Item>
+												<button
+													class="block w-full text-left px-2 py-1 text-red-500 hover:bg-gray-100"
+													onclick={() => deleteSingleResume(file)}>Delete resume</button
+												>
+											</DropdownMenu.Item>
+										</DropdownMenu.Group>
+									</DropdownMenu.Content>
+								</DropdownMenu.Root>
+							</div>
+						{/if}
 					</div>
 				</div>
 			</li>
@@ -175,8 +205,7 @@
 	</ul>
 	<Button
 		class="bg-gradient w-full rounded-[8px] mt-5 border border-[#FFFFFF] h-[50px] hover:opacity-80"
-		disabled={!files.length || isUploading}
-		onclick={handleResumeUpload}
+		onclick={() => goto('/')}
 	>
 		Go to chat
 	</Button>
