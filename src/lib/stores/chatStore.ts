@@ -109,7 +109,9 @@ function createChatStore() {
 
 			try {
 				const { data } = await api.post('/resume/upload', resume);
-				console.log(data);
+				if (data.data) {
+					return data.data;
+				}
 			} catch (error) {
 				console.error(error);
 				throw error;
