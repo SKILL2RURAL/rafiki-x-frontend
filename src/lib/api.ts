@@ -7,31 +7,24 @@ export const api = axios.create({
 	baseURL: import.meta.env.VITE_API_BASE_URL
 });
 
-// Request Interceptor - Inject Bearer Token
+// Public endpoints that MUST NOT receive Authorization headers
+const publicEndpoints = [
+	'/auth/register',
+	'/auth/login',
+	'/auth/forgot-password',
+	'/auth/reset-password',
+	'/auth/verify-email'
+];
+
 api.interceptors.request.use((config) => {
 	const token = get(auth).accessToken;
 
-	if (token) {
-		config.headers.Authorization = `Bearer ${token}`;
+	// Remove Authorization header for public routes
+	if (!publicEndpoints.some((path) => config.url?.includes(path))) {
+		if (token) {
+			config.headers.Authorization = `Bearer ${token}`;
+		}
 	}
 
 	return config;
 });
-
-// Respose Interceptor - Auto refresh on 401
-api.interceptors.response.use(
-	(res) => res,
-	async (err) => {
-		if (err.code === 'ERR_NETWORK') {
-			toast.error('Network Error. Please check your internet connection.');
-			return Promise.reject(err);
-		}
-
-		if (err.response.status === 401) {
-			// Logout here
-			toast.error('Unauthorized. Please login again.');
-			return Promise.reject(err);
-		}
-		return Promise.reject(err);
-	}
-);
