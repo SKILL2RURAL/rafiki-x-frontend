@@ -5,7 +5,7 @@
 	// import google from '../../../lib/assets/icons/google.png';
 </script>
 
-<div class="bg-gradient min-h-[140vh] lg:min-h-screen">
+<div class="bg-gradient">
 	<img
 		src={AshBackground}
 		alt="Rafiki X"
@@ -14,7 +14,7 @@
 		class="h-screen w-screen z-[-1] top-0 left-0 opacity-50"
 	/>
 	<div
-		class="absolute top-0 left-0 overflow-scroll lg:h-screen w-screen flex flex-col items-center justify-center lg:grid grid-cols-2 gap-5 pt-10 z-50"
+		class="bg-gradient absolute top-0 left-0 overflow-scroll lg:h-screen w-screen flex flex-col items-center justify-center lg:grid grid-cols-2 gap-5 pt-10 z-50"
 	>
 		<div class="flex justify-center items-center">
 			<img
