@@ -44,15 +44,14 @@ api.interceptors.response.use(
 		// 401 - Unauthorized
 		if (err.response?.status === 401) {
 			toast.error('Unauthorized. Please login again.');
-			cookieStore.delete('accessToken');
+			localStorage.delete('accessToken');
 			goto(resolve('/login'));
 			return Promise.reject(err);
 		}
 
 		// 403 - Forbidden
 		if (err.response?.status === 403) {
-			toast.error('Forbidden. You do not have permission to access this resource.');
-			cookieStore.delete('accessToken');
+			localStorage.delete('accessToken');
 			goto(resolve('/login'));
 			return Promise.reject(err);
 		}
