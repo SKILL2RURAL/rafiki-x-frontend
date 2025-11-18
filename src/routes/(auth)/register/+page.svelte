@@ -5,7 +5,7 @@
 	// import google from '../../../lib/assets/icons/google.png';
 </script>
 
-<div class="bg-gradient">
+<div class="bg-gradient min-h-[140vh] lg:min-h-screen">
 	<img
 		src={AshBackground}
 		alt="Rafiki X"

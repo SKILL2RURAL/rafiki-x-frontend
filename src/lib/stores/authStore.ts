@@ -168,6 +168,42 @@ export async function getCountries() {
 	}
 }
 
+export async function forgetPassword(email: string) {
+	auth.update((state) => ({ ...state, isLoading: true }));
+	try {
+		const { data } = await api.post('/auth/forgot-password', { email });
+		console.log(data);
+	} catch (error) {
+		console.log(error);
+		throw error;
+	} finally {
+		auth.update((state) => ({
+			...state,
+			isLoading: false
+		}));
+	}
+}
+
+export async function resetPassword(token: string, newPassword: string) {
+	auth.update((state) => ({ ...state, isLoading: true }));
+	try {
+		const { data } = await api.post('/auth/reset-password', { token, newPassword });
+		console.log(data);
+
+		if (data.success) {
+			toast.success('Password reset successfully');
+		}
+	} catch (error) {
+		console.log(error);
+		throw error;
+	} finally {
+		auth.update((state) => ({
+			...state,
+			isLoading: false
+		}));
+	}
+}
+
 export async function logOut() {
 	auth.update(() => ({
 		email: null,

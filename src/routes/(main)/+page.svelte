@@ -5,7 +5,7 @@
 </script>
 
 <Layout>
-	<div class="w-full h-full flex flex-col items-center my-10 md:my-0 lg:justify-center">
+	<div class="w-full h-full flex flex-col items-center my-0 justify-center">
 		<img src={logo} alt="Rafiki X" width="38" height="38" class="mb-5" />
 		<WelcomeScreen />
 	</div>

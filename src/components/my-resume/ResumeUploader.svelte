@@ -110,7 +110,7 @@
 			Drag and drop files or
 			<label class="text-[#60269E] underline cursor-pointer">
 				Browse
-				<input type="file" class="hidden" onchange={handleFileChange} />
+				<input type="file" class="hidden" onchange={handleFileChange} accept=".pdf,.doc,.docx" />
 			</label>
 		</p>
 		<p class="mt-2 text-[11.3px] text-[#676767] leading-4">Supported formats: PDF, TXT, PNG</p>
@@ -163,12 +163,14 @@
 						<!-- ACTIONS  -->
 						{#if file.status === 'COMPLETED'}
 							<div class="flex gap-2.5 items-center">
-								<button onclick={() => downloadFile}
-									><img src={downloadIcon} alt="download icon" width="24" height="24" /></button
-								>
+								<!-- DOWNLOAD BUTTON  -->
+								<button onclick={() => downloadFile}>
+									<a href={file.fileUrl} download target="_blank" referrerpolicy="strict-origin">
+										<img src={downloadIcon} alt="download icon" width="24" height="24" />
+									</a>
+								</button>
 								<span class="w-[1px] h-[25px] bg-[#D9D9D9]"></span>
 								<!-- DROPDOWN MENU  -->
-
 								<DropdownMenu.Root>
 									<DropdownMenu.Trigger>
 										<EllipsisVertical />

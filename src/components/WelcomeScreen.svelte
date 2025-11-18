@@ -45,7 +45,7 @@
 	</h1>
 	<p class="text-[12px] font-bold mt-3 lg:w-[80%] mx-auto">
 		RafikiX helps you explore opportunities, gain clarity, and build confidence at every stage of
-		your career. <a href="/career-guide" class="underline">Learn more about RafikiX policy here.</a>
+		your career. <a href="/learn-more" class="underline">Learn more about RafikiX policy here.</a>
 	</p>
 
 	<div

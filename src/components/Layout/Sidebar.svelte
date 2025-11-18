@@ -201,7 +201,8 @@
 				<button
 					class={`flex items-center gap-3`}
 					onclick={() => {
-						goto('/login');
+						cookieStore.delete('accessToken');
+						goto('/login', { replaceState: true });
 					}}
 				>
 					<img src={logout} alt="Rafiki X" width="20" height="20" />
