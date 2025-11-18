@@ -2,45 +2,44 @@
 	import Button from '$lib/components/ui/button/button.svelte';
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
 	import { Input } from '$lib/components/ui/input';
-    import { api } from '$lib/api';
-    import { toast } from 'svelte-sonner';
-    import { profile, fetchProfile } from '$lib/stores/profile';
-    import { get } from 'svelte/store';
+	import { api } from '$lib/api';
+	import { toast } from 'svelte-sonner';
+	import { profile, fetchProfile } from '$lib/stores/profile';
+	import { get } from 'svelte/store';
 
 	export let isOpen: boolean = false;
 	export let onClose: () => void;
 
 	let formData = {
-		email: '',
+		email: ''
 	};
 
-    let loading = false;
+	let loading = false;
 
-    //When modal opens prefill with existing data
-    $: if (isOpen) {
-        const data = get(profile).data;
-        if (data) {
-            formData.email = data.email || '';
-        }
-    }
+	//When modal opens prefill with existing data
+	$: if (isOpen) {
+		const data = get(profile).data;
+		if (data) {
+			formData.email = data.email || '';
+		}
+	}
 
-    async function handleSave() {
-        try {
-            loading = true;
-            await api.put('/user/profile', {
-                email: formData.email
-            });
-            toast.success('Email updated successfully!');
-            await fetchProfile();
-            onClose();
-        } catch (error) {
-            console.error(error);
-            toast.error('Failed to update Email. Please try again.');
-        } finally {
-            loading = false;
-        }
-    }
-
+	async function handleSave() {
+		try {
+			loading = true;
+			await api.put('/user/profile', {
+				email: formData.email
+			});
+			toast.success('Email updated successfully!');
+			await fetchProfile();
+			onClose();
+		} catch (error) {
+			console.error(error);
+			toast.error('Failed to update Email. Please try again.');
+		} finally {
+			loading = false;
+		}
+	}
 </script>
 
 <Dialog.Root open={isOpen} onOpenChange={onClose}>
@@ -53,7 +52,7 @@
 		<div>
 			<label for="email" class="text-sm">Email</label>
 			<Input
-                id="email"
+				id="email"
 				type="email"
 				bind:value={formData.email}
 				placeholder="Enter your FirstName"

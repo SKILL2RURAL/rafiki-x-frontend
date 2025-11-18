@@ -16,13 +16,12 @@
 			isLoading = true;
 			// Call API to delete account
 			await api.delete('/user/profile');
-			toast.success('Account deleted successfully.');	
+			toast.success('Account deleted successfully.');
 			await fetchProfile();
 			onClose(false);
 
 			// Redirect to home page
 			goto('/');
-			
 		} catch (error) {
 			console.error('Failed to delete account:', error);
 			toast.error('Failed to delete account. Please try again.');
@@ -31,7 +30,6 @@
 			isLoading = false;
 		}
 	}
-
 </script>
 
 <AlertDialog.Root open={isOpen} onOpenChange={onClose}>
@@ -54,8 +52,9 @@
 		</div>
 		<AlertDialog.Footer>
 			<AlertDialog.Cancel class="w-full sm:w-[50%]">Cancel</AlertDialog.Cancel>
-			<AlertDialog.Action class="w-full sm:w-[50%] bg-red-500 hover:bg-red-600"
-				 onclick={handleDelete}>Delete Account</AlertDialog.Action
+			<AlertDialog.Action
+				class="w-full sm:w-[50%] bg-red-500 hover:bg-red-600"
+				onclick={handleDelete}>Delete Account</AlertDialog.Action
 			>
 		</AlertDialog.Footer>
 	</AlertDialog.Content>
