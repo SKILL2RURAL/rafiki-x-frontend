@@ -18,6 +18,7 @@
 	async function handleSubmit() {
 		try {
 			await login(formData);
+			auth.update((state) => ({ ...state, isLoading: false }));
 			goto('/');
 		} catch (error) {
 			if (error instanceof AxiosError) {
@@ -78,7 +79,7 @@
 			<Checkbox />
 			<p>Remember me</p>
 		</div>
-		<a href="/">Forget Password?</a>
+		<a href="/forget-password">Forget Password?</a>
 	</div>
 	<Button
 		type="submit"

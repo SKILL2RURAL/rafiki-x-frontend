@@ -23,7 +23,6 @@
 		<button
 			onclick={() => {
 				isSidebarOpen = !isSidebarOpen;
-				console.log('Toggled:', isSidebarOpen);
 			}}
 		>
 			<Menu size={30} class="cursor-pointer" />

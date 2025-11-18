@@ -97,10 +97,10 @@
 	}
 
 	:global(.markdown-content table) {
-		width: 100%;
 		border-collapse: collapse;
 		margin: 1rem 0;
 		font-size: 0.875rem;
+		min-width: max-content; /* Ensure table doesn't shrink */
 	}
 
 	:global(.markdown-content th),
@@ -108,6 +108,11 @@
 		padding: 0.75rem 1rem;
 		border: 1px solid #e5e7eb;
 		text-align: left;
+	}
+
+	:global(.markdown-content td) {
+		/* background-color: red; */
+		max-width: 600px;
 	}
 
 	:global(.markdown-content th) {

@@ -16,6 +16,7 @@
 	import { page } from '$app/state';
 	import type { Message } from '$lib/types/chat';
 	import { toast } from 'svelte-sonner';
+	import Microphone from './Microphone.svelte';
 
 	let newMessage = '';
 	let selectedFile: File | null = null;
@@ -155,7 +156,7 @@
 	<div bind:this={scrollAnchor}></div>
 
 	<!-- Input Area -->
-	<div class="fixed bottom-10 w-[95vw] lg:w-[70vw] flex flex-col gap-4">
+	<div class="fixed bottom-10 w-[90vw] sm:w-[95vw] lg:w-[70vw] flex flex-col gap-4">
 		<div class="border border-[#E8E8E8] rounded-[20px] p-4 bg-white shadow-md">
 			<div class="flex flex-col px-3 py-2 gap-4">
 				<div class="flex">
@@ -188,9 +189,7 @@
 					</div>
 					{#if newMessage.length === 0}
 						<!-- Mic Button -->
-						<button class="p-2 h-[48px] w-[48px] border rounded-full hover:bg-gray-100">
-							<img src={mic} class="mx-auto" width="20" height="20" alt="mic icon" />
-						</button>
+						<Microphone />
 					{:else}
 						<button
 							class="p-2 h-[48px] w-[48px] border rounded-full hover:bg-gray-100 flex items-center justify-center"

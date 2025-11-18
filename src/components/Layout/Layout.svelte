@@ -41,9 +41,7 @@
 
 <!-- If loading  -->
 {#if loading}
-	<div class="flex items-center justify-center h-screen">
-		<div class="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-gray-900"></div>
-	</div>
+	<div class="flex items-center justify-center h-screen"></div>
 {:else}
 	<div
 		class="flex [--sidebar-full-width:300px] [--sidebar-collapsed-width:80px] [--navbar-height:10vh] h-dvh max-h-screen w-screen overflow-hidden"
@@ -51,7 +49,7 @@
 		<Sidebar openHistory={() => {}} />
 		<div class="w-full h-screen">
 			<Navbar />
-			<main class="p-5 h-[90vh] w-full overflow-auto">
+			<main class="p-5 h-[90vh] w-full overflow-auto mt-[--navbar-height] lg:mt-0">
 				{@render children()}
 			</main>
 		</div>
