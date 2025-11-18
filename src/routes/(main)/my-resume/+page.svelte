@@ -1,24 +1,8 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
+	import logo from '$lib/assets/icons/logo-gradient.png';
 	import Layout from '../../../components/Layout/Layout.svelte';
 	import ResumeUploader from '../../../components/my-resume/ResumeUploader.svelte';
-	import logo from '$lib/assets/icons/logo-gradient.png';
-	import { fileIcons } from '$lib';
-	import { goto } from '$app/navigation';
-
-	// files + history store
-	let files: Array<{ name: string; size: string; type: string; icon?: string }> = [];
-
-	function handleUpload(uploadedFiles: FileList) {
-		files = [
-			...files,
-			...Array.from(uploadedFiles).map((f) => ({
-				name: f.name,
-				size: `${(f.size / 1024).toFixed(1)} KB`,
-				type: f.type,
-				icon: fileIcons[f.type] || fileIcons.default
-			}))
-		];
-	}
 </script>
 
 <Layout>
@@ -38,7 +22,7 @@
 			</button>
 			<h1 class="text-[24px] font-bold font-mulish text-white">My Resume</h1>
 			<!-- {#if files.length === 0} -->
-			<ResumeUploader onUpload={handleUpload} {files} />
+			<ResumeUploader />
 
 			<div class="text-[14px] font-mulish text-[#686868] leading-4">
 				By messaging RafikiX, you agree to our <span class="text-[#60269E]"

@@ -1,6 +1,6 @@
 <script>
 	import { goto } from '$app/navigation';
-	import AshBackground from '$lib/assets/img/ash-background.png';
+	import AshBackground from '$lib/assets/img/ash-background.webp';
 	import logo from '$lib/assets/img/logo-white.png';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import Input from '$lib/components/ui/input/input.svelte';

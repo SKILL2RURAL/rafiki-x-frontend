@@ -109,7 +109,9 @@ function createChatStore() {
 
 			try {
 				const { data } = await api.post('/resume/upload', resume);
-				console.log(data);
+				if (data.data) {
+					return data.data;
+				}
 			} catch (error) {
 				console.error(error);
 				throw error;
@@ -123,6 +125,18 @@ function createChatStore() {
 					...s,
 					allResumes: data.data || []
 				}));
+			} catch (error) {
+				console.error(error);
+				throw error;
+			}
+		},
+
+		deleteResume: async (id: number) => {
+			try {
+				const { data } = await api.delete(`/resume/${id}`);
+				if (data.success) {
+					return true;
+				}
 			} catch (error) {
 				console.error(error);
 				throw error;

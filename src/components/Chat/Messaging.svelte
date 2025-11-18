@@ -15,6 +15,7 @@
 	import Spinner from '$lib/components/ui/spinner/spinner.svelte';
 	import { page } from '$app/state';
 	import type { Message } from '$lib/types/chat';
+	import { toast } from 'svelte-sonner';
 
 	let newMessage = '';
 	let selectedFile: File | null = null;
@@ -22,6 +23,11 @@
 	let scrollAnchor: HTMLDivElement;
 
 	async function handleSend() {
+		if (!newMessage.trim()) {
+			toast.error('Please enter a message');
+			return;
+		}
+
 		const updatedMessage: Message[] = [...$messages];
 
 		updatedMessage.push({
@@ -182,10 +188,7 @@
 					</div>
 					{#if newMessage.length === 0}
 						<!-- Mic Button -->
-						<button
-							class="p-2 h-[48px] w-[48px] border rounded-full hover:bg-gray-100"
-							onclick={handleSend}
-						>
+						<button class="p-2 h-[48px] w-[48px] border rounded-full hover:bg-gray-100">
 							<img src={mic} class="mx-auto" width="20" height="20" alt="mic icon" />
 						</button>
 					{:else}
