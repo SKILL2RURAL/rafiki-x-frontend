@@ -201,7 +201,7 @@
 				<button
 					class={`flex items-center gap-3`}
 					onclick={() => {
-						cookieStore.delete('accessToken');
+						localStorage.delete('accessToken');
 						goto('/login', { replaceState: true });
 					}}
 				>

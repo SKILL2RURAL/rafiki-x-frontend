@@ -1,14 +1,13 @@
 <script lang="ts">
+	import { browser } from '$app/environment';
+	import { goto } from '$app/navigation';
 	import arrowIcon from '$lib/assets/icons/caret-left-fill.svg';
+	import { auth } from '$lib/stores/authStore';
 	import { onMount } from 'svelte';
 	import Feedback from '../Feedback.svelte';
 	import FeedbackInput from '../FeedbackInput.svelte';
 	import Navbar from './Navbar.svelte';
 	import Sidebar from './Sidebar.svelte';
-	import { browser } from '$app/environment';
-	import { auth } from '$lib/stores/authStore';
-	import { goto } from '$app/navigation';
-	import { getCookie } from '$lib/utils/cookies';
 
 	let { children } = $props();
 
@@ -24,7 +23,7 @@
 
 	onMount(() => {
 		if (browser) {
-			const storedToken = getCookie('accessToken');
+			const storedToken = localStorage.getItem('accessToken');
 			if (!storedToken) {
 				loading = false;
 				goto('/login');
