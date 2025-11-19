@@ -1,5 +1,5 @@
 <script>
-	import Button from '$lib/components/ui/button/button.svelte';
+	// import Button from '$lib/components/ui/button/button.svelte';
 	import { Menu } from 'lucide-svelte';
 	import logo from '$lib/assets/logo.svg';
 	import { getStores } from '$app/stores';
@@ -39,6 +39,6 @@
 		</div>
 		<img src={logo} alt="logo" class="h-[20px] w-[50px]" />
 	</div>
-	<Button class="bg-gradient h-[40px] w-[100px] hidden lg:block">Sign in</Button>
+	<!-- <Button class="bg-gradient h-[40px] w-[100px] hidden lg:block">Sign in</Button> -->
 </nav>
 <MobileSidebar isOpen={isSidebarOpen} onClose={() => (isSidebarOpen = false)} />

@@ -95,6 +95,7 @@ function createChatStore() {
 					conversation: data.data,
 					messages: data.data.messages ?? []
 				}));
+				return true;
 			} catch (error) {
 				console.log(error);
 				throw error;

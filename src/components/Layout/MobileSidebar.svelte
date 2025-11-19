@@ -4,7 +4,7 @@
 	import * as Drawer from '$lib/components/ui/drawer/index.js';
 	import X from '$lib/assets/icons/custom-x.svg';
 	import logo from '$lib/assets/logo.svg';
-	import { ChevronRight, EllipsisVertical } from 'lucide-svelte';
+	import { ChevronRight } from 'lucide-svelte';
 	import premium from '$lib/assets/icons/premium.png';
 	import noProfile from '$lib/assets/icons/no-profile.png';
 	import logout from '$lib/assets/icons/door-open.png';
@@ -17,6 +17,15 @@
 	onMount(() => {
 		chatStore.getConversations({});
 	});
+
+	function routeToChat(chatId: number) {
+		goto(`/${chatId}`);
+		chatStore.getSingleConversation(chatId).then((success) => {
+			if (success) {
+				onClose();
+			}
+		});
+	}
 </script>
 
 <Drawer.Root open={isOpen} onOpenChange={onClose} direction="left">
@@ -55,10 +64,7 @@
 						{#each $chats as chat}
 							<button
 								class={`flex justify-between items-center cursor-pointer w-full gap-5`}
-								onclick={() => {
-									goto(`/${chat.id}`);
-									chatStore.getSingleConversation(Number(chat.id));
-								}}
+								onclick={() => routeToChat(chat.id)}
 							>
 								<p class="text-[#253B4B] text-[16px] text-left line-clamp-1">{chat.title}</p>
 								<ChevronRight color="#80899A" />
