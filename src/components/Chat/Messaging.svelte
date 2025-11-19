@@ -9,7 +9,7 @@
 	import like from '$lib/assets/icons/likeIcon.png';
 	import thumDown from '$lib/assets/icons/thumbDown.png';
 	import megaphone from '$lib/assets/icons/megaphone.png';
-	import mic from '$lib/assets/icons/mic.png';
+	// import mic from '$lib/assets/icons/mic.png';
 	import MarkdownContent from './MarkdownContent.svelte';
 	import Typewriter from './Typewriter.svelte';
 	import Spinner from '$lib/components/ui/spinner/spinner.svelte';

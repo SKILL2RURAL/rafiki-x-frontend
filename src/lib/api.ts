@@ -6,7 +6,7 @@ import { goto } from '$app/navigation';
 import { resolve } from '$app/paths';
 
 export const api = axios.create({
-	baseURL: import.meta.env.VITE_API_BASE_URL
+	baseURL: '/api'
 });
 
 // Public endpoints that MUST NOT receive Authorization headers

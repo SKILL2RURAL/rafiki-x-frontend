@@ -2,48 +2,47 @@
 	import Button from '$lib/components/ui/button/button.svelte';
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
 	import { Input } from '$lib/components/ui/input';
-    import { api } from '$lib/api';
-    import { toast } from 'svelte-sonner';
-    import { profile, fetchProfile } from '$lib/stores/profile';
-    import { get } from 'svelte/store';
+	import { api } from '$lib/api';
+	import { toast } from 'svelte-sonner';
+	import { profile, fetchProfile } from '$lib/stores/profile';
+	import { get } from 'svelte/store';
 
 	export let isOpen: boolean = false;
 	export let onClose: () => void;
 
 	let formData = {
 		firstName: '',
-		LastName: '',
+		LastName: ''
 	};
 
-    let loading = false;
+	let loading = false;
 
-    //When modal opens prefill with existing data
-    $: if (isOpen) {
-        const data = get(profile).data;
-        if (data) {
-            formData.firstName = data.firstName || '';
-            formData.LastName = data.lastName || '';
-        }
-    }
+	//When modal opens prefill with existing data
+	$: if (isOpen) {
+		const data = get(profile).data;
+		if (data) {
+			formData.firstName = data.firstName || '';
+			formData.LastName = data.lastName || '';
+		}
+	}
 
-    async function handleSave() {
-        try {
-            loading = true;
-            await api.put('/user/profile', {
-                firstName: formData.firstName,
-                lastName: formData.LastName
-            });
-            toast.success('Name updated successfully!');
-            await fetchProfile();
-            onClose();
-        } catch (error) {
-            console.error(error);
-            toast.error('Failed to update name. Please try again.');
-        } finally {
-            loading = false;
-        }
-    }
-
+	async function handleSave() {
+		try {
+			loading = true;
+			await api.put('/user/profile', {
+				firstName: formData.firstName,
+				lastName: formData.LastName
+			});
+			toast.success('Name updated successfully!');
+			await fetchProfile();
+			onClose();
+		} catch (error) {
+			console.error(error);
+			toast.error('Failed to update name. Please try again.');
+		} finally {
+			loading = false;
+		}
+	}
 </script>
 
 <Dialog.Root open={isOpen} onOpenChange={onClose}>
@@ -56,7 +55,7 @@
 		<div>
 			<label for="firstName" class="text-sm">First Name</label>
 			<Input
-                id="firstName"
+				id="firstName"
 				type="text"
 				bind:value={formData.firstName}
 				placeholder="Enter your FirstName"
@@ -66,7 +65,7 @@
 		<div>
 			<label for="lastName" class="text-sm">Last Name </label>
 			<Input
-                id="lastName"
+				id="lastName"
 				type="text"
 				bind:value={formData.LastName}
 				placeholder="Enter your LastName"

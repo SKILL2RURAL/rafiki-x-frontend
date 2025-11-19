@@ -201,8 +201,8 @@
 				<button
 					class={`flex items-center gap-3`}
 					onclick={() => {
-						localStorage.delete('accessToken');
-						goto('/login', { replaceState: true });
+						localStorage.removeItem('accessToken');
+						goto('/login');
 					}}
 				>
 					<img src={logout} alt="Rafiki X" width="20" height="20" />

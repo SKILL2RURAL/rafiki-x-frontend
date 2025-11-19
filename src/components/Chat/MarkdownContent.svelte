@@ -69,6 +69,7 @@
 
 	:global(.markdown-content p) {
 		margin-bottom: 1rem;
+		font-size: 16px;
 	}
 
 	:global(.markdown-content code) {
