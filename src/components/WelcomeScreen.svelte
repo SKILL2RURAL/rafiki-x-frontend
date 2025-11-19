@@ -33,7 +33,7 @@
 </script>
 
 <div
-	class="bg-gradient-to-b px-3 py-10 lg:p-10 rounded-[20px] from-[#928bb8] via-[#ebdef8] to-[#FFFFFF] text-center font-mulish text-white relative flex flex-col items-center"
+	class="bg-gradient-background px-3 py-10 lg:p-10 rounded-[20px] text-center font-mulish text-white relative flex flex-col items-center"
 >
 	<h1 class="font-bold text-[24px] text-white mt-5 lg:mt-0">
 		Welcome to <span class="bg-white p-2 px-3 rounded-[100px] font-bold text-[20px]">
@@ -57,7 +57,7 @@
 				<Input
 					type="text"
 					placeholder="Ask a question to explore career options"
-					class="w-full border-none outline-none focus-visible:ring-transparent placeholder:text-[14px] lg:placeholder:font-bold placeholder:text-[#80899A] text-black shadow-none"
+					class="w-full border-none outline-none focus-visible:ring-transparent placeholder:text-[14px] lg:placeholder:font-light placeholder:text-[#80899A] text-black shadow-none"
 					onfocus={handleFocus}
 					bind:value={text}
 				/>
@@ -95,7 +95,7 @@
 				disabled={$sendingMessage}
 			>
 				<img src={mic} alt="mic" width="20" height="20" />
-				<p class="text-[14px] lg:font-bold text-[#1E1E1E]">Write a Story</p>
+				<p class="text-[14px] lg:font-normal text-[#1E1E1E]">Write a Story</p>
 			</button>
 			<button
 				class="shadow-md rounded-[100px] flex items-center justify-center gap-2 px-6 lg:px-4 py-3 w-full whitespace-nowrap"
@@ -106,7 +106,7 @@
 				disabled={$sendingMessage}
 			>
 				<img src={pdf} alt="mic" width="20" height="20" />
-				<p class="text-[14px] lg:font-bold text-[#1E1E1E]">Career Chat</p>
+				<p class="text-[14px] lg:font-normal text-[#1E1E1E]">Career Chat</p>
 			</button>
 			<button
 				class="shadow-md rounded-[100px] flex items-center justify-center gap-2 px-6 lg:px-4 py-3 w-full whitespace-nowrap"
@@ -117,12 +117,12 @@
 				disabled={$sendingMessage}
 			>
 				<img src={mic} alt="mic" width="20" height="20" />
-				<p class="text-[14px] lg:font-bold text-[#1E1E1E]">Interview Prep</p>
+				<p class="text-[14px] lg:font-normal text-[#1E1E1E]">Interview Prep</p>
 			</button>
 		</div>
 	</div>
 
-	<p class="text-[14px] font-bold text-[#686868]">
+	<p class="text-[14px] font-normal text-[#686868]">
 		By messaging RafikiX, you agree to our
 		<span class="bg-gradient from-[#51A3DA] to-[#60269E] text-transparent bg-clip-text"
 			>Terms and Conditions</span

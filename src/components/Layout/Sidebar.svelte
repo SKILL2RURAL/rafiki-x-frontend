@@ -8,7 +8,7 @@
 	import premium from '$lib/assets/icons/premium.png';
 	import noProfile from '$lib/assets/icons/no-profile.png';
 	import briefcaseGrey from '$lib/assets/icons/briefcase-grey.png';
-	import briefcaseLight from '$lib/assets/icons/briefcase-light.svg';
+	import briefcaseLight from '$lib/assets/icons/briefcase-light.png';
 	import pdfGrey from '$lib/assets/icons/pdf-grey.png';
 	import pdfLight from '$lib/assets/icons/pdf-white.svg';
 	import logout from '$lib/assets/icons/door-open.png';
