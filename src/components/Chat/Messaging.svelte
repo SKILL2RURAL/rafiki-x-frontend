@@ -71,7 +71,7 @@
 
 <div class="flex-1 flex-col mx-auto justify-between font-mulish font-medium lg:max-w-[70vw] h-full">
 	<!--Chat area-->
-	<div class="space-y-4 flex-grow pb-[200px]">
+	<div class="space-y-4 grow pb-[200px]">
 		{#each $messages as msg, i}
 			<div class="flex {msg.role === 'USER' ? 'justify-end' : 'justify-start'}">
 				<div class="px-4 py-2 w-[70vw] lg:max-w-[50vw]">
@@ -80,7 +80,7 @@
 							<img src={botLogo} width="16" height="16" class="object-contain" alt="bot logo" />
 							<div class="space-y-2">
 								<!-- Content  -->
-								<div class="text-sm rounded-lg rounded-bl-none text-[#808990] w-[70vw] lg:w-[50vw]">
+								<div class="text-sm rounded-lg rounded-bl-none w-[70vw] lg:w-[50vw]">
 									{#if msg.isTyping}
 										<Typewriter
 											text={msg.content}
@@ -103,6 +103,7 @@
 											alt="copy Icon"
 										/>
 										<img src={like} width="16" height="16" class="cursor-pointer" alt="Like Icon" />
+
 										<img
 											src={thumDown}
 											width="16"
@@ -110,20 +111,22 @@
 											class="cursor-pointer"
 											alt="thumb down"
 										/>
-										<img
+										<!-- <img
 											src={megaphone}
 											width="16"
 											height="16"
 											class="cursor-pointer"
 											alt="mega phone"
-										/>
+										/> -->
 									</div>
 								{/if}
 							</div>
 						</div>
 					{:else}
 						<div class="flex flex-col items-end">
-							<p class="px-4 py-2 text-sm rounded-lg bg-[#F7F6F5] rounded-br-none">{msg.content}</p>
+							<p class="px-4 py-2 text-sm rounded-lg text-black bg-[#F7F6F5] rounded-br-none">
+								{msg.content}
+							</p>
 							<img
 								src={copyIcon}
 								class="self-end mt-1 cursor-pointer"
@@ -156,7 +159,7 @@
 	<div bind:this={scrollAnchor}></div>
 
 	<!-- Input Area -->
-	<div class="fixed bottom-10 w-[90vw] sm:w-[95vw] lg:w-[70vw] flex flex-col gap-4">
+	<div class="fixed bg-white bottom-10 w-[90vw] sm:w-[95vw] lg:w-[70vw] flex flex-col gap-4">
 		<div class="border border-[#E8E8E8] rounded-[20px] p-4 bg-white shadow-md">
 			<div class="flex flex-col px-3 py-2 gap-4">
 				<div class="flex">

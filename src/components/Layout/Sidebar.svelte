@@ -40,14 +40,18 @@
 </script>
 
 <aside
-	class={`${isSidebarOpen ? 'w-(--sidebar-full-width)' : 'w-(--sidebar-collapsed-width)'} transition-all duration-200  p-5 py-7 h-screen border-r-[0.4px] font-mulish relative hidden lg:block`}
+	class={`${isSidebarOpen ? 'w-(--sidebar-full-width)' : 'w-(--sidebar-collapsed-width)'} transition-all duration-200  p-5 py-7 max-h-screen overflow-y-auto border-r-[0.4px] font-mulish relative hidden lg:block`}
 >
 	<!-- toogle button  -->
 	<button
 		class="absolute -right-4 top-7 bg-gradient rounded-full cursor-pointer p-1"
 		onclick={toogleSidebar}
 	>
-		<ChevronRight color="white" size={25} class={`${!isSidebarOpen ? 'rotate-0' : 'rotate-180'}`} />
+		<ChevronRight
+			color="white"
+			size={25}
+			class={`z-60 ${!isSidebarOpen ? 'rotate-0' : 'rotate-180'}`}
+		/>
 	</button>
 	<div class="flex flex-col h-full justify-between">
 		<div>
