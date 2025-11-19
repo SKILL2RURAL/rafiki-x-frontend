@@ -11,13 +11,18 @@
 	import ChangeNameModal from '../../../components/Profile/ChangeNameModal.svelte';
 	import ChangePasswordModal from '../../../components/Profile/ChangePasswordModal.svelte';
 	import DeleteAccountConfirmDialog from '../../../components/Profile/DeleteAccountConfirmDialog.svelte';
+	import PersonCircle from '../../../lib/assets/icons/person-circle.png';
+	import EnvelopeFill from '../../../lib/assets/icons/envelope-fill.png';
+	import LockFill from '../../../lib/assets/icons/lock-fill.png';
+	import TrashFill from '../../../lib/assets/icons/trash-fill.png';
+	import DefualtProfileImage from '../../../lib/assets/icons/default-profile.png';
 
 	let isDeleteDialogOpen = $state(false);
 	let isChangePasswordModalOpen = $state(false);
 	let isChangeNameModalOpen = $state(false);
 	let isChangeEmailModalOpen = $state(false);
 
-	let form = {
+	let form = $state({
 		firstName: '',
 		lastName: '',
 		email: '',
@@ -25,7 +30,11 @@
 		gender: '',
 		ageGroup: '',
 		profilePhoto: ''
-	};
+	});
+
+	$effect(() => {
+		console.log(form);
+	});
 
 	onMount(async () => {
 		await fetchProfile();
@@ -47,35 +56,35 @@
 	let isUploading = false;
 
 	async function handleFileChange(event: Event) {
-    try {
-      isUploading = true;
+		try {
+			isUploading = true;
 
-      const input = event.target as HTMLInputElement;
-      if (!input?.files?.length) return;
+			const input = event.target as HTMLInputElement;
+			if (!input?.files?.length) return;
 
-      const file = input.files[0];
-      if (!file.type.startsWith('image/')) {
-        toast.error('Please upload a valid image file.');
-        return;
-      }
+			const file = input.files[0];
+			if (!file.type.startsWith('image/')) {
+				toast.error('Please upload a valid image file.');
+				return;
+			}
 
-      const uploadedUrl = await uploadProfilePhoto(file);
-      if (uploadedUrl) {
-        await api.put('/user/profile', { profilePhoto: uploadedUrl });
-        toast.success('Profile photo updated!');
+			const uploadedUrl = await uploadProfilePhoto(file);
+			if (uploadedUrl) {
+				await api.put('/user/profile', { profilePhoto: uploadedUrl });
+				toast.success('Profile photo updated!');
 
-        // Optimistic UI update
-        form.profilePhoto = uploadedUrl;
+				// Optimistic UI update
+				form.profilePhoto = uploadedUrl;
 
-        await fetchProfile();
-      }
-    } catch (error: any) {
-      console.error('Error updating profile photo:', error?.response?.data || error);
-      toast.error('Failed to update profile photo.');
-    } finally {
-      isUploading = false;
-    }
-  }
+				await fetchProfile();
+			}
+		} catch (error: any) {
+			console.error('Error updating profile photo:', error?.response?.data || error);
+			toast.error('Failed to update profile photo.');
+		} finally {
+			isUploading = false;
+		}
+	}
 </script>
 
 <Layout>
@@ -91,13 +100,16 @@
 			<div>
 				<p class="text-[#253B4B] text-[18px] font-light mb-3">Profile picture</p>
 				<div class="flex items-center gap-4 mb-5">
-					<Avatar.Root class="w-20 h-20">
-						<Avatar.Image
-							src={form.profilePhoto || 'https://github.com/shadcn.png'}
-							alt="profile"
-						/>
-						<Avatar.Fallback>{form.firstName?.[0] || '?'}</Avatar.Fallback>
-					</Avatar.Root>
+					<!-- PROFILE IMAGE  -->
+					{#if form.profilePhoto}
+						<Avatar.Root class="w-20 h-20">
+							<Avatar.Image src={form.profilePhoto} alt="profile" />
+							<Avatar.Fallback>{form.firstName?.[0] + form.lastName?.[0]}</Avatar.Fallback>
+						</Avatar.Root>
+					{:else}
+						<img src={DefualtProfileImage} alt="profile" class="w-20 h-20 rounded-full" />
+					{/if}
+
 					<div class="space-y-2">
 						<p class="text-[#808990]">Must be JPG, PNG, 2MB Max</p>
 						<label
@@ -115,14 +127,11 @@
 				<h3 class="text-[#253B4B] text-[18px] font-semibold font-mulish">Basic information</h3>
 				<div class="flex justify-between items-center py-5 border-b border-[#E8E8E8]">
 					<div class="flex space-x-5 items-center">
-						<Avatar.Root class="w-10 h-10">
-							<Avatar.Image
-								src={form.profilePhoto || 'https://github.com/shadcn.png'}
-								alt="profile"
-							/>
-							<Avatar.Fallback>{form.firstName?.[0] || '?'}</Avatar.Fallback>
-						</Avatar.Root>
-						<button onclick={() => (isChangeNameModalOpen = true)}>
+						<img src={PersonCircle} alt="profile" class="w-[20px] h-[20px]" />
+						<button
+							onclick={() => (isChangeNameModalOpen = true)}
+							class="flex flex-col items-start"
+						>
 							<h5 class="text-[#253B4B] text-[18px] font-medium">
 								{$profile.data.firstName + ' ' + $profile.data.lastName}
 							</h5>
@@ -141,19 +150,19 @@
 					class="flex justify-between items-center py-5 w-full"
 				>
 					<div class="flex space-x-5 items-center">
-						<Mail color="#808990" />
+						<img src={EnvelopeFill} alt="profile" class="w-[20px] h-[20px]" />
 						<div class="text-start">
-							<h5 class="text-[#253B4B] text-[18px] font-medium max-w-[200px] md:w-full truncate">
+							<h5 class="text-[#253B4B] text-[18px] font-medium max-w-[200px] md:w-full">
 								{$profile.data.email}
 							</h5>
 							<p class="text-[#808990] text-[14px] font-satoshi-regular">Email address</p>
 						</div>
 					</div>
-					<div class="hidden lg:block">
+					<!-- <div class="hidden lg:block">
 						<div class="bg-gradient rounded-full cursor-pointer text-white px-4 text-[12px]">
 							Default
 						</div>
-					</div>
+					</div> -->
 				</button>
 
 				<div>
@@ -163,7 +172,7 @@
 						class="flex justify-between items-center py-5 w-full"
 					>
 						<div class="flex space-x-5 items-center">
-							<Lock color="#808990" />
+							<img src={LockFill} alt="profile" class="w-[20px] h-[20px]" />
 							<div>
 								<h5 class="text-[#253B4B] text-[18px] font-medium text-left">Password</h5>
 								<p class="text-[#808990] text-[14px] font-satoshi-regular text-left">
@@ -187,7 +196,7 @@
 						onclick={() => (isDeleteDialogOpen = true)}
 					>
 						<div class="flex space-x-5 items-center">
-							<Trash2 color="#DE1106" />
+							<img src={TrashFill} alt="profile" class="w-[20px] h-[20px]" />
 							<div>
 								<h5 class="text-[#DE1106] text-[18px] font-medium text-left">Delete account</h5>
 								<p class="text-[#808990] text-[14px] font-satoshi-regular text-left">
