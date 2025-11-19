@@ -148,7 +148,7 @@
 							<div
 								class="px-4 text-sm rounded-lg rounded-bl-none text-[#808990] animate-pulse-opacity"
 							>
-								Rafiki is typing...
+								RafikiBot is thinking...
 							</div>
 						</div>
 					</div>
