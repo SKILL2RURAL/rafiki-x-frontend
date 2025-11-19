@@ -162,7 +162,11 @@ button:disabled {
 }
 
 .bg-gradient {
-	@apply bg-gradient-to-r from-[#51A3DA] to-[#60269E];
+	@apply bg-linear-to-r from-[#51A3DA] to-[#60269E];
+}
+
+.bg-gradient-background{
+	@apply bg-linear-to-b from-[#5449AC] to-[#FFFFFF00] from-3% to-65%;
 }
 
 .border-gradient {
