@@ -38,7 +38,7 @@
 	<h1 class="font-bold text-[24px] text-white mt-5 lg:mt-0">
 		Welcome to <span class="bg-white p-2 px-3 rounded-[100px] font-bold text-[20px]">
 			<span class="bg-gradient from-[#51A3DA] to-[#60269E] text-transparent bg-clip-text"
-				>RafikiX test testing</span
+				>RafikiX</span
 			>
 		</span>
 		, your personal AI Career Assistant
