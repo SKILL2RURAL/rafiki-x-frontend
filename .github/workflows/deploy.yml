@@ -1,0 +1,43 @@
+name: Deploy to EC2
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy to EC2
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          port: 22
+          script: |
+            # Load NVM environment
+            export NVM_DIR="$HOME/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+
+            # Navigate to project directory
+            cd /home/ec2-user/rafiki-x-frontend
+
+            # Pull latest changes
+            git pull origin main
+
+            # Update .env file from secret
+            echo "VITE_API_BASE_URL=${{ secrets.VITE_API_BASE_URL }}" > .env
+
+            # Install dependencies
+            pnpm install
+
+            # Build application
+            pnpm build
+
+            # Restart application
+            pm2 restart rafiki-x-frontend || pm2 start build/index.js --name rafiki-x-frontend
+            pm2 save
