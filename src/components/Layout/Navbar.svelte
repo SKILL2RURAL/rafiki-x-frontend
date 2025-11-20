@@ -39,6 +39,6 @@
 		</div>
 		<img src={logo} alt="logo" class="h-[20px] w-[50px]" />
 	</div>
-	<!-- <Button class="bg-gradient h-[40px] w-[100px] hidden lg:block">Sign innn</Button> -->
+	<!-- <Button class="bg-gradient h-[40px] w-[100px] hidden lg:block">Sign in</Button> -->
 </nav>
 <MobileSidebar isOpen={isSidebarOpen} onClose={() => (isSidebarOpen = false)} />
