@@ -130,25 +130,25 @@
 			<!-- Basic Information Section -->
 			<div class="shadow-md rounded-[20px] p-10">
 				<h3 class="text-[#253B4B] text-[18px] font-semibold font-mulish">Basic information</h3>
-				<div class="flex justify-between items-center py-5 border-b border-[#E8E8E8]">
+				<button
+					class="flex justify-between items-center py-5 border-b border-[#E8E8E8] w-full"
+					onclick={() => (isChangeNameModalOpen = true)}
+				>
 					<div class="flex space-x-5 items-center">
 						<img src={PersonCircle} alt="profile" class="w-[20px] h-[20px]" />
-						<button
-							onclick={() => (isChangeNameModalOpen = true)}
-							class="flex flex-col items-start"
-						>
+						<div class="flex flex-col items-start">
 							<h5 class="text-[#253B4B] text-[18px] font-medium">
 								{$profile.data.firstName + ' ' + $profile.data.lastName}
 							</h5>
 							<p class="text-[#808990] text-[14px] font-satoshi-regular">Full name</p>
-						</button>
+						</div>
 					</div>
 					<div class="hidden lg:block">
-						<button class="bg-gradient rounded-full cursor-pointer p-1">
+						<div class="bg-gradient rounded-full cursor-pointer p-1">
 							<ChevronRight color="white" size={25} />
-						</button>
+						</div>
 					</div>
-				</div>
+				</button>
 
 				<button
 					onclick={() => (isChangeEmailModalOpen = true)}
