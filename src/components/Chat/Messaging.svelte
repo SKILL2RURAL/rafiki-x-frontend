@@ -124,7 +124,7 @@
 						</div>
 					{:else}
 						<div class="flex flex-col items-end">
-							<p class="px-4 py-2 text-sm rounded-lg text-black bg-[#F7F6F5] rounded-br-none">
+							<p class="px-4 py-2 text-[16px] rounded-lg text-black bg-[#F7F6F5] rounded-br-none">
 								{msg.content}
 							</p>
 							<img
@@ -148,7 +148,7 @@
 							<div
 								class="px-4 text-sm rounded-lg rounded-bl-none text-[#808990] animate-pulse-opacity"
 							>
-								Rafiki is typing...
+								RafikiBot is thinking...
 							</div>
 						</div>
 					</div>

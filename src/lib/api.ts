@@ -56,6 +56,11 @@ api.interceptors.response.use(
 			return Promise.reject(err);
 		}
 
+		if (err.response?.status === 500) {
+			toast.error('Internal Server Error. Please try again later.');
+			return Promise.reject(err);
+		}
+
 		return Promise.reject(err);
 	}
 );

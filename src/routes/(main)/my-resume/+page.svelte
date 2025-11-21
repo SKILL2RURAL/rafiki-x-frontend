@@ -24,7 +24,7 @@
 			<!-- {#if files.length === 0} -->
 			<ResumeUploader />
 
-			<div class="text-[14px] font-mulish text-[#686868] leading-4">
+			<div class="text-[14px] font-mulish text-[#686868] leading-4 text-center">
 				By messaging RafikiX, you agree to our <span class="text-[#60269E]"
 					>Terms and Conditions</span
 				>
