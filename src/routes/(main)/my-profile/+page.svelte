@@ -16,11 +16,13 @@
 	import LockFill from '../../../lib/assets/icons/lock-fill.png';
 	import TrashFill from '../../../lib/assets/icons/trash-fill.png';
 	import DefualtProfileImage from '../../../lib/assets/icons/default-profile.png';
+	import { cn } from '$lib/utils';
 
 	let isDeleteDialogOpen = $state(false);
 	let isChangePasswordModalOpen = $state(false);
 	let isChangeNameModalOpen = $state(false);
 	let isChangeEmailModalOpen = $state(false);
+	let isUploading = $state(false);
 
 	let form = $state({
 		firstName: '',
@@ -30,10 +32,6 @@
 		gender: '',
 		ageGroup: '',
 		profilePhoto: ''
-	});
-
-	$effect(() => {
-		console.log(form);
 	});
 
 	onMount(async () => {
@@ -53,7 +51,6 @@
 	});
 
 	// ✅ Handle photo upload and profile update
-	let isUploading = false;
 
 	async function handleFileChange(event: Event) {
 		try {
@@ -99,23 +96,31 @@
 			<!-- ✅ Profile picture section -->
 			<div>
 				<p class="text-[#253B4B] text-[18px] font-light mb-3">Profile picture</p>
-				<div class="flex items-center gap-4 mb-5">
+				<div class={cn('flex items-center gap-4 mb-5', { 'opacity-50': isUploading })}>
 					<!-- PROFILE IMAGE  -->
-					{#if form.profilePhoto}
-						<Avatar.Root class="w-20 h-20">
-							<Avatar.Image src={form.profilePhoto} alt="profile" />
-							<Avatar.Fallback>{form.firstName?.[0] + form.lastName?.[0]}</Avatar.Fallback>
-						</Avatar.Root>
-					{:else}
-						<img src={DefualtProfileImage} alt="profile" class="w-20 h-20 rounded-full" />
-					{/if}
+					<div class={cn('w-20 h-20 rounded-full', { 'opacity-50': isUploading })}>
+						{#if form.profilePhoto}
+							<Avatar.Root class="w-20 h-20">
+								<Avatar.Image src={form.profilePhoto} alt="profile" />
+								<Avatar.Fallback>{form.firstName?.[0] + form.lastName?.[0]}</Avatar.Fallback>
+							</Avatar.Root>
+						{:else}
+							<img src={DefualtProfileImage} alt="profile" class="w-20 h-20 rounded-full" />
+						{/if}
+					</div>
 
 					<div class="space-y-2">
 						<p class="text-[#808990]">Must be JPG, PNG, 2MB Max</p>
 						<label
 							class="text-[#253B4B] text-[14px] font-normal border border-[#808990] rounded-[4px] p-2 cursor-pointer"
 						>
-							<input type="file" accept="image/*" onchange={handleFileChange} class="hidden" />
+							<input
+								type="file"
+								disabled={isUploading}
+								accept="image/*"
+								onchange={handleFileChange}
+								class="hidden"
+							/>
 							Change Picture
 						</label>
 					</div>

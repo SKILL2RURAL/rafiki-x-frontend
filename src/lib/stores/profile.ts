@@ -1,8 +1,7 @@
-import { writable, get } from 'svelte/store';
 import { api } from '$lib/api';
-import { auth } from './authStore';
-import { browser } from '$app/environment';
+import axios, { AxiosError } from 'axios';
 import { toast } from 'svelte-sonner';
+import { writable } from 'svelte/store';
 
 export interface UserProfile {
 	firstName: string;
@@ -29,7 +28,7 @@ const initialState: ProfileState = {
 export const profile = writable<ProfileState>(initialState);
 
 export async function fetchProfile() {
-	profile.set({ ...initialState, isLoading: true });
+	// profile.set({ ...initialState, isLoading: true });
 	try {
 		const { data } = await api.get('/user/profile');
 
@@ -46,11 +45,13 @@ export async function fetchProfile() {
 		};
 
 		profile.set({ data: normalizedUser, isLoading: false, error: null });
-	} catch (error: any) {
+	} catch (error) {
 		console.error('Error fetching profile:', error);
-		const message = error.response?.data?.message || 'Failed to load profile.';
-		profile.set({ data: null, isLoading: false, error: message });
-		toast.error(message);
+		if (error instanceof AxiosError) {
+			const message = error.response?.data?.message || 'Failed to load profile.';
+			profile.set({ data: null, isLoading: false, error: message });
+			toast.error(message);
+		}
 	}
 }
 
@@ -62,17 +63,27 @@ export async function uploadProfilePhoto(file: File): Promise<string | null> {
 	try {
 		const formData = new FormData();
 		formData.append('file', file);
+		formData.append('folder', 'profile');
 
-		const { data } = await api.post('/upload', formData, {
-			headers: {
-				'Content-Type': 'multipart/form-data'
+		const { data } = await axios.post(
+			`http://ec2-51-21-61-45.eu-north-1.compute.amazonaws.com:8080/api/upload`,
+			formData,
+			{
+				headers: {
+					Authorization: `Bearer ${localStorage.getItem('accessToken')}`
+				}
 			}
-		});
+		);
 
-		toast.success('Photo uploaded successfully!');
-		console.log('Upload response data:', data);
+		profile.update((prev) => ({
+			...prev,
+			data: {
+				...(prev.data || {}),
+				profilePhoto: data.data.fileUrl
+			} as UserProfile
+		}));
 		return data.data.fileUrl;
-	} catch (error: any) {
+	} catch (error) {
 		console.error('Error uploading profile photo:', error);
 		toast.error('Failed to upload profile photo.');
 		return null;

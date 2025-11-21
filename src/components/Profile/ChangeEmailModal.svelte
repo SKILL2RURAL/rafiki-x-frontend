@@ -62,7 +62,7 @@
 
 		<Button
 			onclick={handleSave}
-			disabled={loading}
+			disabled={loading || formData.email === get(profile).data?.email}
 			class="bg-gradient w-full rounded-[8px] mt-5 border border-[#FFFFFF] h-[50px]"
 		>
 			{loading ? 'Saving...' : 'Save Changes'}
