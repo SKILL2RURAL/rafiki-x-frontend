@@ -29,11 +29,11 @@
 </script>
 
 <Layout>
-	<div class="w-full h-full flex flex-col items-center lg:justify-center mb-20 lg:mb-0">
+	<div class="w-full h-full flex flex-col items-center justify-center mb-0">
 		<img src={logo} alt="Rafki-X logo" width={38} height={38} />
 
 		<div
-			class="bg-gradient-to-b px-3 py-10 min-w-full lg:min-w-fit lg:p-10 rounded-[20px] from-[#928bb8] via-[#ebdef8] to-[#FFFFFF] text-center font-mulish text-white relative mt-5 lg:mt-10"
+			class="bg-gradient-background px-3 py-10 min-w-full lg:min-w-fit lg:p-10 rounded-[20px] text-center font-mulish text-white relative mt-5 lg:mt-10"
 		>
 			<button
 				onclick={() => {

@@ -8,7 +8,7 @@
 	import premium from '$lib/assets/icons/premium.png';
 	import noProfile from '$lib/assets/icons/no-profile.png';
 	import briefcaseGrey from '$lib/assets/icons/briefcase-grey.png';
-	import briefcaseLight from '$lib/assets/icons/briefcase-light.svg';
+	import briefcaseLight from '$lib/assets/icons/briefcase-light.png';
 	import pdfGrey from '$lib/assets/icons/pdf-grey.png';
 	import pdfLight from '$lib/assets/icons/pdf-white.svg';
 	import logout from '$lib/assets/icons/door-open.png';
@@ -19,6 +19,8 @@
 	import { browser } from '$app/environment';
 	import { onMount } from 'svelte';
 	import { chats, chatStore } from '$lib/stores/chatStore';
+	import { profile } from '$lib/stores/profile';
+	import * as Avatar from '$lib/components/ui/avatar/index.js';
 
 	const todayHistory = history.find((item) => item.day === 'TODAY');
 
@@ -40,17 +42,18 @@
 </script>
 
 <aside
-	class={`${isSidebarOpen ? 'w-(--sidebar-full-width)' : 'w-(--sidebar-collapsed-width)'} transition-all duration-200  p-5 py-7 h-screen border-r-[0.4px] font-mulish relative hidden lg:block`}
+	class={`${isSidebarOpen ? 'w-(--sidebar-full-width)' : 'w-(--sidebar-collapsed-width)'} transition-all duration-200 bg-white  p-5 py-7 max-h-screen border-r-[0.4px] font-mulish relative hidden lg:block`}
 >
 	<!-- toogle button  -->
 	<button
-		class="absolute -right-4 top-7 bg-gradient rounded-full cursor-pointer p-1"
+		class="absolute -right-4 top-7 bg-gradient rounded-full cursor-pointer p-1 z-40"
 		onclick={toogleSidebar}
 	>
 		<ChevronRight color="white" size={25} class={`${!isSidebarOpen ? 'rotate-0' : 'rotate-180'}`} />
 	</button>
-	<div class="flex flex-col h-full justify-between">
-		<div>
+	<div class="h-full flex flex-col">
+		<!-- Settings -->
+		<div class="min-h-0 overflow-auto no-scrollbar">
 			<!-- Logo  -->
 			<img src={logo} alt="Rafiki X" width="45" height="45" />
 
@@ -99,8 +102,8 @@
 				{#if isSidebarOpen}
 					<div>
 						{#if chats && $chats.length > 0}
-							<div class="space-y-3 overflow-y-auto no-scrollbar h-[410px]">
-								{#each $chats as chat, index}
+							<div class="space-y-3 overflow-y-auto no-scrollbar">
+								{#each $chats as chat}
 									<button
 										class={`flex justify-between items-center cursor-pointer w-full gap-5`}
 										onclick={() => {
@@ -161,10 +164,7 @@
 			<!-- Chat history end  -->
 		</div>
 
-		<!-- Learn more  -->
-
-		<!-- Settings  -->
-		<div class="mt-3">
+		<div class=" relativ white mt-auto h-[250px] pt-5">
 			<button
 				class={`w-full flex items-center justify-between rounded-[10px] py-3 px-2 mb-10 ${isSidebarOpen ? 'border' : ''}`}
 				onclick={() => goto('/learn-more')}
@@ -193,7 +193,17 @@
 					{/if}
 				</button>
 				<button class={` flex items-center gap-3`} onclick={() => goto('/my-profile')}>
-					<img src={noProfile} alt="Rafiki X" width="20" height="20" />
+					{#if $profile.data?.profilePhoto}
+						<Avatar.Root class="size-[20px]">
+							<Avatar.Image src={$profile.data?.profilePhoto} alt="profile" />
+							<Avatar.Fallback
+								>{$profile.data?.firstName?.[0] + $profile.data?.lastName?.[0]}</Avatar.Fallback
+							>
+						</Avatar.Root>
+					{:else}
+						<img src={noProfile} alt="Rafiki X" class="size-[20px]" />
+					{/if}
+
 					{#if isSidebarOpen}
 						<p>My profile</p>
 					{/if}
@@ -201,6 +211,7 @@
 				<button
 					class={`flex items-center gap-3`}
 					onclick={() => {
+						localStorage.removeItem('accessToken');
 						goto('/login');
 					}}
 				>

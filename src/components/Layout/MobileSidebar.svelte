@@ -4,12 +4,28 @@
 	import * as Drawer from '$lib/components/ui/drawer/index.js';
 	import X from '$lib/assets/icons/custom-x.svg';
 	import logo from '$lib/assets/logo.svg';
-	import { ChevronRight, EllipsisVertical } from 'lucide-svelte';
+	import { ChevronRight } from 'lucide-svelte';
 	import premium from '$lib/assets/icons/premium.png';
 	import noProfile from '$lib/assets/icons/no-profile.png';
 	import logout from '$lib/assets/icons/door-open.png';
+	import { onMount } from 'svelte';
+	import { chats, chatStore } from '$lib/stores/chatStore';
+	import noChat from '$lib/assets/icons/empty-state.png';
 
 	const { isOpen, onClose } = $props();
+
+	onMount(() => {
+		chatStore.getConversations({});
+	});
+
+	function routeToChat(chatId: number) {
+		goto(`/${chatId}`);
+		chatStore.getSingleConversation(chatId).then((success) => {
+			if (success) {
+				onClose();
+			}
+		});
+	}
 </script>
 
 <Drawer.Root open={isOpen} onOpenChange={onClose} direction="left">
@@ -30,7 +46,7 @@
 			</div>
 
 			<!-- History  -->
-			<div class="h-full mr-3 my-2 p-2 mt-5">
+			<!-- <div class="h-full mr-3 my-2 p-2 mt-5">
 				<div class="space-y-3">
 					<h1 class="text-[14px] font-[400] text-[#808990]">Today</h1>
 					<div class="flex items-center justify-between">
@@ -40,6 +56,27 @@
 						</button>
 					</div>
 				</div>
+			</div> -->
+
+			<div>
+				{#if chats && $chats.length > 0}
+					<div class="space-y-3 overflow-y-auto no-scrollbar h-[50vh]">
+						{#each $chats as chat}
+							<button
+								class={`flex justify-between items-center cursor-pointer w-full gap-5`}
+								onclick={() => routeToChat(chat.id)}
+							>
+								<p class="text-[#253B4B] text-[16px] text-left line-clamp-1">{chat.title}</p>
+								<ChevronRight color="#80899A" />
+							</button>
+						{/each}
+					</div>
+				{:else}
+					<div class="flex flex-col items-center">
+						<img src={noChat} alt="" width="80" height="80" />
+						<p class="text-sm font-semibold text-[#80899A]">No Chat history</p>
+					</div>
+				{/if}
 			</div>
 
 			<!-- Settings  -->

@@ -1,14 +1,13 @@
 <script lang="ts">
+	import { browser } from '$app/environment';
+	import { goto } from '$app/navigation';
 	import arrowIcon from '$lib/assets/icons/caret-left-fill.svg';
+	import { auth } from '$lib/stores/authStore';
 	import { onMount } from 'svelte';
 	import Feedback from '../Feedback.svelte';
 	import FeedbackInput from '../FeedbackInput.svelte';
 	import Navbar from './Navbar.svelte';
 	import Sidebar from './Sidebar.svelte';
-	import { browser } from '$app/environment';
-	import { auth } from '$lib/stores/authStore';
-	import { goto } from '$app/navigation';
-	import { getCookie } from '$lib/utils/cookies';
 
 	let { children } = $props();
 
@@ -24,7 +23,7 @@
 
 	onMount(() => {
 		if (browser) {
-			const storedToken = getCookie('accessToken');
+			const storedToken = localStorage.getItem('accessToken');
 			if (!storedToken) {
 				loading = false;
 				goto('/login');
@@ -41,9 +40,7 @@
 
 <!-- If loading  -->
 {#if loading}
-	<div class="flex items-center justify-center h-screen">
-		<div class="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-gray-900"></div>
-	</div>
+	<div class="flex items-center justify-center h-screen"></div>
 {:else}
 	<div
 		class="flex [--sidebar-full-width:300px] [--sidebar-collapsed-width:80px] [--navbar-height:10vh] h-dvh max-h-screen w-screen overflow-hidden"
@@ -51,7 +48,7 @@
 		<Sidebar openHistory={() => {}} />
 		<div class="w-full h-screen">
 			<Navbar />
-			<main class="p-5 h-[90vh] w-full overflow-auto">
+			<main class="p-5 h-[90vh] w-full overflow-auto mt-[--navbar-height] lg:mt-0">
 				{@render children()}
 			</main>
 		</div>

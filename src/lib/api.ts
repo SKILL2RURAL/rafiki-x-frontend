@@ -6,21 +6,33 @@ import { goto } from '$app/navigation';
 import { resolve } from '$app/paths';
 
 export const api = axios.create({
-	baseURL: import.meta.env.VITE_API_BASE_URL
+	baseURL: '/api'
 });
 
-// Request Interceptor - Inject Bearer Token
+// Public endpoints that MUST NOT receive Authorization headers
+const publicEndpoints = [
+	'/auth/register',
+	'/auth/login',
+	'/auth/forgot-password',
+	'/auth/reset-password',
+	'/auth/verify-email'
+];
+
+// REQUEST INTERCEPTOR
 api.interceptors.request.use((config) => {
 	const token = get(auth).accessToken;
 
-	if (token) {
+	// Add Authorization ONLY for private routes
+	const isPublic = publicEndpoints.some((path) => config.url?.includes(path));
+
+	if (!isPublic && token) {
 		config.headers.Authorization = `Bearer ${token}`;
 	}
 
 	return config;
 });
 
-// Respose Interceptor - Auto refresh on 401
+// RESPONSE INTERCEPTOR
 api.interceptors.response.use(
 	(res) => res,
 	async (err) => {
@@ -29,20 +41,26 @@ api.interceptors.response.use(
 			return Promise.reject(err);
 		}
 
-		if (err.response.status === 401) {
-			// Logout here
+		// 401 - Unauthorized
+		if (err.response?.status === 401) {
 			toast.error('Unauthorized. Please login again.');
+			localStorage.delete('accessToken');
 			goto(resolve('/login'));
-			cookieStore.delete('accessToken');
 			return Promise.reject(err);
 		}
 
-		if (err.response.status === 403) {
-			toast.error('Forbidden. You do not have permission to access this resource.');
+		// 403 - Forbidden
+		if (err.response?.status === 403) {
+			localStorage.delete('accessToken');
 			goto(resolve('/login'));
-			cookieStore.delete('accessToken');
 			return Promise.reject(err);
 		}
+
+		if (err.response?.status === 500) {
+			toast.error('Internal Server Error. Please try again later.');
+			return Promise.reject(err);
+		}
+
 		return Promise.reject(err);
 	}
 );

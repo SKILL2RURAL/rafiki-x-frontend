@@ -1,6 +1,5 @@
 import { browser } from '$app/environment';
 import { api } from '$lib/api';
-import { setCookie } from '$lib/utils/cookies';
 import { derived, get, writable, type Writable } from 'svelte/store';
 import type { LoginPayload, RegisterPayload } from '../types/auth';
 import { toast } from 'svelte-sonner';
@@ -76,7 +75,7 @@ export async function login(payload: LoginPayload) {
 			accessToken: data.data.token
 		}));
 		if (browser) {
-			setCookie('accessToken', data.data.token);
+			localStorage.setItem('accessToken', data.data.token);
 		}
 	} catch (err) {
 		console.log(err);
@@ -99,11 +98,7 @@ export async function register(payload: RegisterPayload) {
 			...state,
 			firstName: data.data.firstName,
 			email: data.data.email
-			// accessToken: data.data.token
 		}));
-		// if (browser) {
-		// 	setCookie('accessToken', data.data.token);
-		// }
 	} catch (err) {
 		console.log(err);
 		throw err;
@@ -127,7 +122,7 @@ export async function verifyEmail({ email, code }: { email: string; code: string
 			firstName: data.data.firstName
 		}));
 		if (browser) {
-			setCookie('accessToken', data.data.token);
+			localStorage.setItem('accessToken', data.data.token);
 		}
 	} catch (error) {
 		console.log(error);
@@ -160,6 +155,42 @@ export async function getCountries() {
 			...state,
 			countries: data.data
 		}));
+	} finally {
+		auth.update((state) => ({
+			...state,
+			isLoading: false
+		}));
+	}
+}
+
+export async function forgetPassword(email: string) {
+	auth.update((state) => ({ ...state, isLoading: true }));
+	try {
+		const { data } = await api.post('/auth/forgot-password', { email });
+		console.log(data);
+	} catch (error) {
+		console.log(error);
+		throw error;
+	} finally {
+		auth.update((state) => ({
+			...state,
+			isLoading: false
+		}));
+	}
+}
+
+export async function resetPassword(token: string, newPassword: string) {
+	auth.update((state) => ({ ...state, isLoading: true }));
+	try {
+		const { data } = await api.post('/auth/reset-password', { token, newPassword });
+		console.log(data);
+
+		if (data.success) {
+			toast.success('Password reset successfully');
+		}
+	} catch (error) {
+		console.log(error);
+		throw error;
 	} finally {
 		auth.update((state) => ({
 			...state,

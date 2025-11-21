@@ -110,7 +110,7 @@
 			Drag and drop files or
 			<label class="text-[#60269E] underline cursor-pointer">
 				Browse
-				<input type="file" class="hidden" onchange={handleFileChange} />
+				<input type="file" class="hidden" onchange={handleFileChange} accept=".pdf,.doc,.docx" />
 			</label>
 		</p>
 		<p class="mt-2 text-[11.3px] text-[#676767] leading-4">Supported formats: PDF, TXT, PNG</p>
@@ -146,10 +146,12 @@
 					<div class="flex gap-2 items-center">
 						<!-- <img src={file.icon} alt="File Icon" class="" width="32" height="32" /> -->
 						<div>
-							<p class="text-[14px] leading-5 font-plus-jakarta-sans-semibold">
+							<p class="text-[12px] lg:text-[14px] leading-5 font-plus-jakarta-sans-semibold">
 								{file.fileName}
 							</p>
-							<p class="text-[12px] text-[#4D5154] leading-4">{formatDate(file.uploadedAt)}</p>
+							<p class="text-[10px] lg:text-[12px] text-[#4D5154] leading-4">
+								{formatDate(file.uploadedAt)}
+							</p>
 						</div>
 					</div>
 					<div class="flex gap-2.5 items-center">
@@ -163,12 +165,14 @@
 						<!-- ACTIONS  -->
 						{#if file.status === 'COMPLETED'}
 							<div class="flex gap-2.5 items-center">
-								<button onclick={() => downloadFile}
-									><img src={downloadIcon} alt="download icon" width="24" height="24" /></button
-								>
+								<!-- DOWNLOAD BUTTON  -->
+								<button onclick={() => downloadFile} class="size-[20px]">
+									<a href={file.fileUrl} download target="_blank" referrerpolicy="strict-origin">
+										<img src={downloadIcon} alt="download icon" width="24" height="24" />
+									</a>
+								</button>
 								<span class="w-[1px] h-[25px] bg-[#D9D9D9]"></span>
 								<!-- DROPDOWN MENU  -->
-
 								<DropdownMenu.Root>
 									<DropdownMenu.Trigger>
 										<EllipsisVertical />
@@ -214,7 +218,7 @@
 	<Drawer bind:isOpen={isDrawerOpen} onClose={() => (isDrawerOpen = false)}>
 		<div class="flex flex-col justify-between h-full">
 			<div class="px-5 border-b border-[#A3AED0] h-[90px] flex flex-col justify-center relative">
-				<h4 class="font-medium text-[#262424] text-[20px]">Add text content</h4>
+				<h4 class="font-medium text-[#262424] text-[14px] lg:text-[20px]">Add text content</h4>
 				<p class="text-[#A09D9D] text-[14px]">txt file</p>
 				<button
 					onclick={() => (isDrawerOpen = false)}

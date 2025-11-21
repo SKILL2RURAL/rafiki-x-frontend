@@ -1,9 +1,10 @@
 <script>
-	import Button from '$lib/components/ui/button/button.svelte';
+	// import Button from '$lib/components/ui/button/button.svelte';
 	import { Menu } from 'lucide-svelte';
 	import logo from '$lib/assets/logo.svg';
 	import { getStores } from '$app/stores';
 	import MobileSidebar from './MobileSidebar.svelte';
+	import { Button } from '$lib/components/ui/button';
 	const { page } = getStores();
 	const pathname = $derived($page.url.pathname);
 
@@ -17,13 +18,12 @@
 </script>
 
 <nav
-	class="h-(--navbar-height)] flex justify-between lg:justify-end items-center p-5 border-b-[0.5px]"
+	class="min-h-[var(--navbar-height)] flex justify-between lg:justify-end items-center p-5 border-b-[0.5px]"
 >
 	<div class="flex lg:hidden items-center justify-between w-full">
 		<button
 			onclick={() => {
 				isSidebarOpen = !isSidebarOpen;
-				console.log('Toggled:', isSidebarOpen);
 			}}
 		>
 			<Menu size={30} class="cursor-pointer" />
@@ -40,6 +40,6 @@
 		</div>
 		<img src={logo} alt="logo" class="h-[20px] w-[50px]" />
 	</div>
-	<Button class="bg-gradient h-[40px] w-[100px] hidden lg:block">Sign in</Button>
+	<!-- <Button class="bg-gradient h-[40px] w-[100px] hidden lg:block">Sign in</Button> -->
 </nav>
 <MobileSidebar isOpen={isSidebarOpen} onClose={() => (isSidebarOpen = false)} />

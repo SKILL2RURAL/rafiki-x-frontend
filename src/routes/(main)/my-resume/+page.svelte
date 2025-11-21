@@ -10,7 +10,7 @@
 		<img src={logo} alt="Rafki-X logo" width={38} height={38} />
 
 		<div
-			class="lg:w-[856px] space-y-10 pt-9 flex flex-col items-center rounded-[20px] bg-gradient-to-b from-[#928bb8] via-[#ebdef8] to-[#FFFFFF] mt-10 px-5 w-full relative"
+			class="lg:w-[856px] space-y-10 pt-9 flex flex-col items-center rounded-[20px] bg-gradient-background mt-10 px-5 w-full relative"
 		>
 			<button
 				onclick={() => {
@@ -24,7 +24,7 @@
 			<!-- {#if files.length === 0} -->
 			<ResumeUploader />
 
-			<div class="text-[14px] font-mulish text-[#686868] leading-4">
+			<div class="text-[14px] font-mulish text-[#686868] leading-4 text-center">
 				By messaging RafikiX, you agree to our <span class="text-[#60269E]"
 					>Terms and Conditions</span
 				>
