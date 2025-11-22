@@ -21,7 +21,7 @@
 			onClose(false);
 
 			// Redirect to home page
-			goto('/');
+			goto('/login');
 		} catch (error) {
 			console.error('Failed to delete account:', error);
 			toast.error('Failed to delete account. Please try again.');
