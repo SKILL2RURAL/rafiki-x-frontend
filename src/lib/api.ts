@@ -6,7 +6,7 @@ import { goto } from '$app/navigation';
 import { resolve } from '$app/paths';
 
 export const api = axios.create({
-	baseURL: import.meta.env.VITE_API_BASE_URL
+	baseURL: '/api'
 });
 
 // Public endpoints that MUST NOT receive Authorization headers
@@ -36,22 +36,24 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
 	(res) => res,
 	async (err) => {
+		const isPublic = publicEndpoints.some((path) => err.config?.url?.includes(path));
+
 		if (err.code === 'ERR_NETWORK') {
 			toast.error('Network Error. Please check your internet connection.');
 			return Promise.reject(err);
 		}
 
 		// 401 - Unauthorized
-		if (err.response?.status === 401) {
+		if (err.response?.status === 401 && !isPublic) {
 			toast.error('Unauthorized. Please login again.');
-			localStorage.delete('accessToken');
+			localStorage.removeItem('accessToken');
 			goto(resolve('/login'));
 			return Promise.reject(err);
 		}
 
 		// 403 - Forbidden
-		if (err.response?.status === 403) {
-			localStorage.delete('accessToken');
+		if (err.response?.status === 403 && !isPublic) {
+			localStorage.removeItem('accessToken');
 			goto(resolve('/login'));
 			return Promise.reject(err);
 		}
