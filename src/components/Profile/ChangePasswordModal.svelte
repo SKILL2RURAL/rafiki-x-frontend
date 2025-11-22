@@ -5,6 +5,7 @@
 	import { Eye, EyeOff } from 'lucide-svelte';
 	import { toast } from 'svelte-sonner';
 	import { fetchProfile } from '$lib/stores/profile';
+	import Spinner from '$lib/components/ui/spinner/spinner.svelte';
 
 	export let isOpen: boolean = false;
 	export let onClose: () => void;
@@ -21,8 +22,11 @@
 
 	let isLoading = false;
 
-	async function handleChangePassword(event) {
-		event.preventDefault();
+	async function handleChangePassword() {
+		if (formData.newPassword !== formData.confirmPassword) {
+			toast.error('New password and confirm password do not match.');
+			return;
+		}
 
 		try {
 			isLoading = true;
@@ -34,9 +38,14 @@
 			});
 
 			toast.success('Password changed successfully!');
-			await fetchProfile();
-			onClose(); // close only AFTER successful API call
 
+			// await fetchProfile();
+			onClose();
+			formData = {
+				currentPassword: '',
+				newPassword: '',
+				confirmPassword: ''
+			};
 		} catch (error) {
 			console.error(error);
 			toast.error('Failed to change password. Please try again.');
@@ -60,8 +69,7 @@
 			</Dialog.Title>
 		</Dialog.Header>
 
-		<form onsubmit = {handleChangePassword} class="space-y-5">
-			
+		<form on:submit|preventDefault={handleChangePassword} class="space-y-5">
 			<!-- Current Password -->
 			<div>
 				<label for="currentPassword" class="text-sm">Current Password</label>
@@ -70,11 +78,12 @@
 						id="currentPassword"
 						type={isPasswordVisible ? 'text' : 'password'}
 						bind:value={formData.currentPassword}
+						autocomplete="current-password"
 						required
 						placeholder="Enter Current Password"
 						class="w-full outline-none placeholder:text-[#999] text-black"
 					/>
-					<button type="button" onclick={() => (isPasswordVisible = !isPasswordVisible)}>
+					<button type="button" on:click={() => (isPasswordVisible = !isPasswordVisible)}>
 						{#if isPasswordVisible}
 							<Eye size={20} />
 						{:else}
@@ -92,10 +101,11 @@
 						type={isNewPasswordVisible ? 'text' : 'password'}
 						bind:value={formData.newPassword}
 						required
+						autocomplete="new-password"
 						placeholder="Enter New Password"
 						class="w-full outline-none placeholder:text-[#999] text-black"
 					/>
-					<button type="button" onclick={() => (isNewPasswordVisible = !isNewPasswordVisible)}>
+					<button type="button" on:click={() => (isNewPasswordVisible = !isNewPasswordVisible)}>
 						{#if isNewPasswordVisible}
 							<Eye size={20} />
 						{:else}
@@ -113,10 +123,14 @@
 						type={isConfirmPasswordVisible ? 'text' : 'password'}
 						bind:value={formData.confirmPassword}
 						required
+						autocomplete="new-password"
 						placeholder="Enter Confirm Password"
 						class="w-full outline-none placeholder:text-[#999] text-black"
 					/>
-					<button type="button" onclick={() => (isConfirmPasswordVisible = !isConfirmPasswordVisible)}>
+					<button
+						type="button"
+						on:click={() => (isConfirmPasswordVisible = !isConfirmPasswordVisible)}
+					>
 						{#if isConfirmPasswordVisible}
 							<Eye size={20} />
 						{:else}
@@ -131,7 +145,7 @@
 				class="bg-gradient w-full rounded-xl mt-5 border border-[#FFFFFF] h-[50px]"
 			>
 				{#if isLoading}
-					Processing...
+					<Spinner color="white" />
 				{:else}
 					Change Password
 				{/if}

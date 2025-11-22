@@ -1,10 +1,10 @@
 <script lang="ts">
-	import * as AlertDialog from '$lib/components/ui/alert-dialog/index.js';
-	import trash from '$lib/assets/icons/trash.svg';
-	import { api } from '$lib/api';
-	import { toast } from 'svelte-sonner';
-	import { fetchProfile } from '$lib/stores/profile';
 	import { goto } from '$app/navigation';
+	import { api } from '$lib/api';
+	import trash from '$lib/assets/icons/trash.svg';
+	import * as AlertDialog from '$lib/components/ui/alert-dialog/index.js';
+	import Spinner from '$lib/components/ui/spinner/spinner.svelte';
+	import { toast } from 'svelte-sonner';
 
 	export let isOpen: boolean = false;
 	export let onClose: (value: boolean) => void;
@@ -17,15 +17,14 @@
 			// Call API to delete account
 			await api.delete('/user/profile');
 			toast.success('Account deleted successfully.');
-			await fetchProfile();
 			onClose(false);
 
 			// Redirect to home page
 			goto('/login');
+			localStorage.clear();
 		} catch (error) {
 			console.error('Failed to delete account:', error);
 			toast.error('Failed to delete account. Please try again.');
-			// Handle error (e.g., show error message)
 		} finally {
 			isLoading = false;
 		}
@@ -53,9 +52,16 @@
 		<AlertDialog.Footer>
 			<AlertDialog.Cancel class="w-full sm:w-[50%]">Cancel</AlertDialog.Cancel>
 			<AlertDialog.Action
+				disabled={isLoading}
 				class="w-full sm:w-[50%] bg-red-500 hover:bg-red-600"
-				onclick={handleDelete}>Delete Account</AlertDialog.Action
+				onclick={handleDelete}
 			>
+				{#if isLoading}
+					<Spinner />
+				{:else}
+					Delete Account
+				{/if}
+			</AlertDialog.Action>
 		</AlertDialog.Footer>
 	</AlertDialog.Content>
 </AlertDialog.Root>

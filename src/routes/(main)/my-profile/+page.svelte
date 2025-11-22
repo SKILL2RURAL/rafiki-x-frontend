@@ -50,8 +50,6 @@
 		}
 	});
 
-	// ✅ Handle photo upload and profile update
-
 	async function handleFileChange(event: Event) {
 		try {
 			isUploading = true;

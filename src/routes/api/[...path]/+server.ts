@@ -53,3 +53,18 @@ export const PUT: RequestHandler = async ({ params, request }) => {
 	const data = await response.json();
 	return new Response(JSON.stringify(data), { status: response.status });
 };
+
+export const DELETE: RequestHandler = async ({ params, request }) => {
+	const path = Array.isArray(params.path) ? params.path.join('/') : params.path;
+	const targetUrl = `${API_BASE_URL}/${path}`;
+
+	const response = await fetch(targetUrl, {
+		method: 'DELETE',
+		headers: {
+			Authorization: request.headers.get('authorization') || ''
+		}
+	});
+
+	const data = await response.json();
+	return new Response(JSON.stringify(data), { status: response.status });
+};
