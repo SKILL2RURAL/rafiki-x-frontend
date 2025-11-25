@@ -43,7 +43,7 @@
 	<div class="flex items-center justify-center h-screen"></div>
 {:else}
 	<div
-		class="flex [--sidebar-full-width:300px] [--sidebar-collapsed-width:80px] [--navbar-height:10vh] h-dvh max-h-screen w-screen overflow-hidden"
+		class="flex [--sidebar-full-width:340px] [--sidebar-collapsed-width:80px] [--navbar-height:10vh] h-dvh max-h-screen w-screen overflow-hidden"
 	>
 		<Sidebar openHistory={() => {}} />
 		<div class="w-full h-screen">

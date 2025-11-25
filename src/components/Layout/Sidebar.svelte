@@ -42,7 +42,7 @@
 </script>
 
 <aside
-	class={`${isSidebarOpen ? 'w-(--sidebar-full-width)' : 'w-(--sidebar-collapsed-width)'} transition-all duration-200 bg-white  p-5 py-7 max-h-screen border-r-[0.4px] font-mulish relative hidden lg:block`}
+	class={`${isSidebarOpen ? 'w-(--sidebar-full-width)' : 'w-(--sidebar-collapsed-width)'} transition-all duration-200 bg-[#fcfcfc]  p-5 py-7 max-h-screen border-r-[0.4px] font-mulish relative hidden lg:block`}
 >
 	<!-- toogle button  -->
 	<button
@@ -98,12 +98,13 @@
 			<!-- Links end  -->
 
 			<!-- Chat history  -->
-			<div class="flex-col mt-5">
+			<div class="flex-col mt-10">
 				{#if isSidebarOpen}
 					<div>
+						<p class="mb-4 font-[500] text-[12px] text-[#909090] uppercase">Today</p>
 						{#if chats && $chats.length > 0}
 							<div class="space-y-3 overflow-y-auto no-scrollbar">
-								{#each $chats as chat}
+								{#each $chats.slice(0, 3) as chat}
 									<button
 										class={`flex justify-between items-center cursor-pointer w-full gap-5`}
 										onclick={() => {
@@ -115,6 +116,10 @@
 										<img src={greaterArrow} alt="direction icon" width="7" height="13" />
 									</button>
 								{/each}
+								<button class="flex items-center justify-between w-full gap-3 mt-5">
+									<p class="text-sm font-[400] text-[#80899A]">View All Chat history</p>
+									<img src={greaterArrow} alt="direction icon" width="7" height="13" />
+								</button>
 							</div>
 						{:else}
 							<div class="flex flex-col items-center">
@@ -178,7 +183,7 @@
 			</button>
 
 			{#if isSidebarOpen}
-				<h5 class="text-[#253B4B] text-[12px] mb-5 font-medium">Settings</h5>
+				<h5 class="text-[#253B4B] text-[12px] mb-5 font-medium uppercase">Settings</h5>
 			{/if}
 
 			<div

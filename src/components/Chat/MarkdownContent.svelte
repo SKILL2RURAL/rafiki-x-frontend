@@ -70,6 +70,15 @@
 	:global(.markdown-content p) {
 		margin-bottom: 1rem;
 		font-size: 16px;
+		font-weight: 400;
+		color: #1a1a1a;
+	}
+
+	:global(.markdown-content td) {
+		margin-bottom: 1rem;
+		font-size: 16px;
+		font-weight: 400;
+		color: #1a1a1a;
 	}
 
 	:global(.markdown-content code) {

@@ -5,6 +5,7 @@
 	import Image3 from '$lib/assets/icons/career3.svg';
 	import Image4 from '$lib/assets/icons/career4.svg';
 	import logo from '$lib/assets/icons/logo-gradient.png';
+	import { X } from 'lucide-svelte';
 	import CareerGuideCard from '../../../components/CareerGuideCard.svelte';
 	import Layout from '../../../components/Layout/Layout.svelte';
 
@@ -39,9 +40,9 @@
 				onclick={() => {
 					goto('/');
 				}}
-				class="absolute top-7 right-5 cursor-pointer bg-white h-[35px] w-[35px] flex items-center justify-center text-[18px] rounded-full text-[#1E1E1E]"
+				class="absolute top-7 right-5 cursor-pointer bg-white h-[35px] w-[35px] flex items-center justify-center text-[18px] rounded-full text-[#60269e]"
 			>
-				X
+				<X />
 			</button>
 			<h2 class="font-bold text-[24px] text-white mb-5">Career Guide</h2>
 			<div

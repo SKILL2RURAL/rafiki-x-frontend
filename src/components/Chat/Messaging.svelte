@@ -48,6 +48,8 @@
 		newMessage = '';
 	}
 
+	function sendVoiceNote() {}
+
 	function triggerFileUpload() {
 		fileInput.click();
 	}
@@ -124,7 +126,9 @@
 						</div>
 					{:else}
 						<div class="flex flex-col items-end">
-							<p class="px-4 py-2 text-[16px] rounded-lg text-black bg-[#F7F6F5] rounded-br-none">
+							<p
+								class="px-4 py-2 text-[16px] font-[400] text-[#1a1a1a] rounded-lg bg-[#F7F6F5] rounded-br-none"
+							>
 								{msg.content}
 							</p>
 							<img
@@ -192,7 +196,7 @@
 					</div>
 					{#if newMessage.length === 0}
 						<!-- Mic Button -->
-						<Microphone />
+						<Microphone on:click={sendVoiceNote} />
 					{:else}
 						<button
 							class="p-2 h-[48px] w-[48px] border rounded-full hover:bg-gray-100 flex items-center justify-center"
