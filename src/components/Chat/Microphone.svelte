@@ -1,77 +1,113 @@
 <script lang="ts">
+	import { chatStore } from '$lib/stores/chatStore';
 	import { Mic } from 'lucide-svelte';
-	import { onDestroy } from 'svelte';
-	import { toast } from 'svelte-sonner';
 
-	let recognition: any;
-	let transcript = '';
-	let isListening = false;
+	let isRecording = false;
+	let mediaRecorder: MediaRecorder;
+	let audioChunks: Blob[] = [];
+	let audioUrl: string | null = null;
 
-	$: {
-		if (transcript) {
-			console.log('Transcript ->', transcript);
-		}
+	let stream: MediaStream | null = null;
+	let audioContext: AudioContext | null = null;
+	let analyser: AnalyserNode | null = null;
+	let dataArray: Uint8Array | null = null;
+	let volume = 0;
+
+	async function startRecording() {
+		const devices = await navigator.mediaDevices.enumerateDevices();
+		const realMic = devices.find((d) => d.kind === 'audioinput');
+
+		stream = await navigator.mediaDevices.getUserMedia({
+			audio: {
+				deviceId: realMic?.deviceId ? { exact: realMic.deviceId } : undefined,
+				echoCancellation: false,
+				noiseSuppression: false,
+				autoGainControl: false,
+				channelCount: 1,
+				sampleRate: 48000
+			}
+		});
+
+		const track = stream.getAudioTracks()[0];
+
+		await track.applyConstraints({
+			advanced: [{ echoCancellation: false }]
+		});
+
+		audioContext = new AudioContext();
+		await audioContext.resume();
+
+		const source = audioContext.createMediaStreamSource(stream);
+
+		// Analyzer
+		analyser = audioContext.createAnalyser();
+		analyser.fftSize = 256;
+		dataArray = new Uint8Array(analyser.frequencyBinCount);
+		source.connect(analyser);
+
+		// Recorder
+		mediaRecorder = new MediaRecorder(stream, { mimeType: 'audio/webm' });
+		mediaRecorder.ondataavailable = (e) => audioChunks.push(e.data);
+		mediaRecorder.onstop = async () => {
+			const blob = new Blob(audioChunks, { type: 'audio/webm' });
+			audioUrl = URL.createObjectURL(blob);
+			audioChunks = [];
+
+			stream?.getTracks().forEach((t) => t.stop());
+
+			let file = new File([blob], 'recording.webm', { type: 'audio/webm' });
+			await chatStore.sendVoiceNote(file);
+		};
+
+		mediaRecorder.start();
+		isRecording = true;
+		tick();
 	}
 
-	function startListening() {
-		const SpeechRecognition =
-			(window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+	function stopRecording() {
+		mediaRecorder.stop();
 
-		if (!SpeechRecognition) {
-			toast.error('Speech Recognition is not supported in this browser');
-			return;
+		// Stop analyser + audio context
+		audioContext?.close();
+
+		if (stream) {
+			stream.getTracks().forEach((t) => t.stop());
 		}
 
-		recognition = new SpeechRecognition();
-		recognition.lang = 'en-US'; // language
-		recognition.interimResults = true; // show partial results
-		recognition.continuous = true;
-
-		recognition.onstart = () => {
-			console.log('Recognition started');
-		};
-
-		recognition.onspeechstart = () => {
-			console.log('Speech detected');
-		};
-
-		recognition.onspeechend = () => {
-			console.log('Speech ended');
-		};
-
-		recognition.onerror = (event: any) => {
-			console.error('Recognition error:', event.error);
-		};
-
-		recognition.onresult = (event: any) => {
-			transcript = Array.from(event.results)
-				.map((result: any) => result[0].transcript)
-				.join('');
-		};
-
-		recognition.onend = () => {
-			if (isListening) recognition.start();
-		};
-
-		recognition.start();
-		isListening = true;
+		isRecording = false;
 	}
 
-	function stopListening() {
-		if (recognition) {
-			recognition.stop();
-			isListening = false;
+	function tick() {
+		if (!analyser || !dataArray) return;
+
+		analyser.getByteTimeDomainData(dataArray as any);
+		let sumSquares = 0;
+		for (let i = 0; i < dataArray.length; i++) {
+			const normalized = (dataArray[i] - 128) / 128;
+			sumSquares += normalized * normalized;
 		}
-	}
+		volume = Math.min(Math.sqrt(sumSquares / dataArray.length) * 10, 1);
 
-	// Cleanup when component unmounts
-	onDestroy(() => {
-		if (recognition) recognition.stop();
-	});
+		if (isRecording) requestAnimationFrame(tick);
+	}
 </script>
 
-<button
-	class={`${isListening ? 'bg-red-500' : 'bg-gray-100'} p-2 h-[48px] flex items-center justify-center w-[48px] border rounded-full hover:bg-gry-100`}
->
-	<Mic />
-</button>
+<div class="flex items-center gap-3">
+	<button
+		class={`${isRecording ? 'animate-pulse repeat-infinite' : ''} p-2 h-[48px] bg-gray-100 flex items-center justify-center w-[48px] border rounded-full hover:bg-gry-100`}
+		onclick={isRecording ? stopRecording : startRecording}
+	>
+		<Mic />
+	</button>
+
+	<!-- volume bar -->
+	<!-- <div class="mt-4 h-2 bg-gray-300 w-[200px]">
+		<div
+			class="h-2 transition-all"
+			style="
+      width: {volume * 100}%;
+      background-color: {volume > 0.7 ? 'red' : volume > 0.3 ? 'yellow' : 'green'};
+    "
+		></div>
+	</div> -->
+</div>

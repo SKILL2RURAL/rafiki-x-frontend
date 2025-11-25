@@ -4,5 +4,10 @@ import { defineConfig } from 'vite';
 import tailwindcss from '@tailwindcss/vite';
 
 export default defineConfig({
-	plugins: [sveltekit(), devtoolsJson(), tailwindcss()]
+	plugins: [sveltekit(), devtoolsJson(), tailwindcss()],
+	server: {
+		allowedHosts: [
+			'.ngrok-free.app' // your ngrok domain
+		]
+	}
 });

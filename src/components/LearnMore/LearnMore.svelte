@@ -1,5 +1,6 @@
 <script>
 	import { goto } from '$app/navigation';
+	import { X } from 'lucide-svelte';
 </script>
 
 <div
@@ -10,10 +11,12 @@
 			Learn more about rafiki X
 		</h2>
 		<button
-			class="absolute top-4 lg:top-7 right-5 cursor-pointer bg-white h-[26px] w-[26px] md:h-[35px] md:w-[35px] flex items-center justify-center text-[12px] md:text-[18px] rounded-full text-[#1E1E1E]"
-			onclick={() => goto('/')}
+			onclick={() => {
+				goto('/');
+			}}
+			class="absolute top-7 right-5 cursor-pointer bg-white h-[35px] w-[35px] flex items-center justify-center text-[18px] rounded-full text-[#60269e]"
 		>
-			X
+			<X />
 		</button>
 	</div>
 	<div class="flex flex-col text-[14px] md:text-[18px] gap-8">

@@ -1,5 +1,6 @@
 import { api } from '$lib/api';
 import type { ChatState, Conversation, Message, MessagePayload } from '$lib/types/chat';
+import axios from 'axios';
 import { derived, writable } from 'svelte/store';
 
 const initialState: ChatState = {
@@ -101,6 +102,28 @@ function createChatStore() {
 				throw error;
 			} finally {
 				update((state) => ({ ...state, isLoading: false }));
+			}
+		},
+
+		sendVoiceNote: async (file: File) => {
+			const formData = new FormData();
+			formData.append('audio', file);
+			formData.append('language', 'en-US');
+
+			try {
+				const { data } = await axios.post(
+					'http://ec2-51-21-61-45.eu-north-1.compute.amazonaws.com:8080/api/voice/note',
+					formData,
+					{
+						headers: {
+							Authorization: `Bearer ${localStorage.getItem('accessToken')}`
+						}
+					}
+				);
+				console.log(data);
+			} catch (error) {
+				console.log(error);
+				throw error;
 			}
 		},
 
