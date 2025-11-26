@@ -30,6 +30,7 @@ export interface ChatState {
 	isUploadingVoiceNote: boolean;
 	isRecording: boolean;
 	isTranscribing: boolean;
+	newMessage: string;
 }
 
 export interface Resume {

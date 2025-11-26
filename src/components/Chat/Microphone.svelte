@@ -1,7 +1,14 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import Spinner from '$lib/components/ui/spinner/spinner.svelte';
-	import { chatStore, isRecording, messages, isTranscribing } from '$lib/stores/chatStore';
+	import {
+		chatStore,
+		isRecording,
+		messages,
+		isTranscribing,
+		sendingMessage,
+		newMessage
+	} from '$lib/stores/chatStore';
 	import type { Message } from '$lib/types/chat';
 	import { cn } from '$lib/utils';
 	import { Mic } from 'lucide-svelte';
@@ -69,22 +76,24 @@
 				const transcription = await chatStore.sendVoiceNote(file);
 
 				if (transcription) {
-					const userMessage: Message = {
-						id: new Date().getTime(),
-						role: 'USER',
-						content: transcription,
-						createdAt: new Date().toISOString()
-					};
-					chatStore.setMessages([...$messages, userMessage]);
+					// APPEND NEW MESSAGE TO OLD MESSAGE
+					chatStore.setNewMessage(`${$newMessage} ${transcription}`);
+					// const userMessage: Message = {
+					// 	id: new Date().getTime(),
+					// 	role: 'USER',
+					// 	content: transcription,
+					// 	createdAt: new Date().toISOString()
+					// };
+					// chatStore.setMessages([...$messages, userMessage]);
 
-					const response = await chatStore.sendMessage({
-						message: transcription,
-						createNewConversation: !conversationId,
-						conversationId: conversationId
-					});
-					if (!conversationId && response?.id) {
-						goto(`/chat/${response.id}`);
-					}
+					// const response = await chatStore.sendMessage({
+					// 	message: transcription,
+					// 	createNewConversation: !conversationId,
+					// 	conversationId: conversationId
+					// });
+					// if (!conversationId && response?.id) {
+					// 	goto(`/chat/${response.id}`);
+					// }
 				}
 			} catch (error) {
 				console.error('Error sending voice note:', error);
@@ -148,7 +157,7 @@
 				}
 			)}
 			onclick={startRecording}
-			disabled={$isRecording || $isTranscribing}
+			disabled={$isRecording || $isTranscribing || $sendingMessage}
 		>
 			{#if $isTranscribing}
 				<Spinner color="black" />

@@ -16,7 +16,8 @@ const initialState: ChatState = {
 	initialMessage: null,
 	isTranscribing: false,
 	isRecording: false,
-	isUploadingVoiceNote: false
+	isUploadingVoiceNote: false,
+	newMessage: ''
 };
 
 function createChatStore() {
@@ -38,6 +39,10 @@ function createChatStore() {
 
 		setIsRecording: (isRecording: boolean) => {
 			update((state) => ({ ...state, isRecording }));
+		},
+
+		setNewMessage: (message: string) => {
+			update((state) => ({ ...state, newMessage: message }));
 		},
 
 		// Send Message
@@ -243,3 +248,4 @@ export const resumes = derived(chatStore, ($chatStore) => $chatStore.allResumes)
 export const initialMessage = derived(chatStore, ($chatStore) => $chatStore.initialMessage);
 export const isRecording = derived(chatStore, ($chatStore) => $chatStore.isRecording);
 export const isTranscribing = derived(chatStore, ($chatStore) => $chatStore.isTranscribing);
+export const newMessage = derived(chatStore, ($chatStore) => $chatStore.newMessage);
