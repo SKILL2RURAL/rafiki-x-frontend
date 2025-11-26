@@ -8,6 +8,7 @@
 	import { goto } from '$app/navigation';
 	import { chatStore, sendingMessage } from '$lib/stores/chatStore';
 	import Spinner from '$lib/components/ui/spinner/spinner.svelte';
+	import Microphone from './Chat/Microphone.svelte';
 
 	const { sendMessage } = chatStore;
 
@@ -66,9 +67,7 @@
 			<div>
 				{#if text.length === 0}
 					<!-- Mic Button -->
-					<button class="p-2 h-[48px] w-[48px] border rounded-full hover:bg-gray-100">
-						<img src={mic} class="mx-auto" width="20" height="20" alt="mic icon" />
-					</button>
+					<Microphone />
 				{:else}
 					<!-- Send Button -->
 					<button

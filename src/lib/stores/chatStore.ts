@@ -13,7 +13,10 @@ const initialState: ChatState = {
 	conversation: null,
 	messages: [],
 	allResumes: [],
-	initialMessage: null
+	initialMessage: null,
+	isTranscribing: false,
+	isRecording: false,
+	isUploadingVoiceNote: false
 };
 
 function createChatStore() {
@@ -25,11 +28,24 @@ function createChatStore() {
 			update((state) => ({ ...state, initialMessage: message }));
 		},
 
+		setIsSending: (isSending: boolean) => {
+			update((state) => ({ ...state, isSending }));
+		},
+
+		setIsTranscribing: (isTranscribing: boolean) => {
+			update((state) => ({ ...state, isTranscribing }));
+		},
+
+		setIsRecording: (isRecording: boolean) => {
+			update((state) => ({ ...state, isRecording }));
+		},
+
 		// Send Message
 		sendMessage: async ({
 			message,
 			createNewConversation = false,
-			conversationId
+			conversationId,
+			fileKeys
 		}: MessagePayload) => {
 			update((state) => ({ ...state, isSending: true }));
 
@@ -37,8 +53,15 @@ function createChatStore() {
 				message,
 				createNewConversation
 			};
+
+			// Check if conversationId is defined
 			if (conversationId) {
 				payload.conversationId = conversationId;
+			}
+
+			// Check if fileKeys is defined
+			if (fileKeys) {
+				payload.fileKeys = fileKeys;
 			}
 
 			try {
@@ -120,9 +143,35 @@ function createChatStore() {
 						}
 					}
 				);
-				console.log(data);
+				if (data.transcription && data.transcription.length > 0) {
+					return data.transcription;
+				}
 			} catch (error) {
 				console.log(error);
+				throw error;
+			}
+		},
+
+		uploadFileForChat: async (file: File) => {
+			const formData = new FormData();
+			formData.append('file', file);
+			formData.append('folder', 'chat');
+
+			try {
+				const { data } = await axios.post(
+					'http://ec2-51-21-61-45.eu-north-1.compute.amazonaws.com:8080/api/upload',
+					formData,
+					{
+						headers: {
+							Authorization: `Bearer ${localStorage.getItem('accessToken')}`
+						}
+					}
+				);
+				if (data.data) {
+					return data.data;
+				}
+			} catch (error) {
+				console.error(error);
 				throw error;
 			}
 		},
@@ -192,3 +241,5 @@ export const messages = derived(chatStore, ($chatStore) => $chatStore.messages);
 export const sendingMessage = derived(chatStore, ($chatStore) => $chatStore.isSending);
 export const resumes = derived(chatStore, ($chatStore) => $chatStore.allResumes);
 export const initialMessage = derived(chatStore, ($chatStore) => $chatStore.initialMessage);
+export const isRecording = derived(chatStore, ($chatStore) => $chatStore.isRecording);
+export const isTranscribing = derived(chatStore, ($chatStore) => $chatStore.isTranscribing);

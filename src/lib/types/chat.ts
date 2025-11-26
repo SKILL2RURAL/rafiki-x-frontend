@@ -27,6 +27,9 @@ export interface ChatState {
 	messages: Message[];
 	allResumes: Resume[];
 	initialMessage: string | null;
+	isUploadingVoiceNote: boolean;
+	isRecording: boolean;
+	isTranscribing: boolean;
 }
 
 export interface Resume {
@@ -42,6 +45,7 @@ export interface MessagePayload {
 	message: string;
 	createNewConversation?: boolean;
 	conversationId?: number;
+	fileKeys?: string[];
 }
 
 export interface Conversation {
