@@ -43,6 +43,7 @@ export interface AuthState {
 	accessToken: string | null;
 	isLoading: boolean;
 	countries: { code: string; name: string }[] | null;
+	isInitialAuthCheckComplete: boolean;
 }
 
 // Core Store
@@ -51,7 +52,8 @@ const initial: AuthState = {
 	firstName: null,
 	isLoading: false,
 	accessToken: null,
-	countries: null
+	countries: null,
+	isInitialAuthCheckComplete: false
 };
 
 export const auth = createPersisted<AuthState>('auth', initial);
@@ -200,14 +202,22 @@ export async function resetPassword(token: string, newPassword: string) {
 }
 
 export async function logOut() {
-	auth.update(() => ({
-		email: null,
-		firstName: null,
-		accessToken: null,
-		isLoading: false,
-		countries: null
-	}));
+	auth.set({
+		...initial,
+		isInitialAuthCheckComplete: true
+	});
 	if (browser) {
 		localStorage.removeItem('accessToken');
 	}
+}
+
+export function runInitialAuthCheck() {
+	auth.update((state) => ({
+		...state,
+		isInitialAuthCheckComplete: true
+	}));
+}
+
+if (browser) {
+	runInitialAuthCheck();
 }

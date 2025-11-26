@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { tick } from 'svelte';
-	import { chatStore, messages, sendingMessage } from '$lib/stores/chatStore';
+	import { chatStore, isRecording, messages, sendingMessage, isTranscribing } from '$lib/stores/chatStore';
 	import send from '$lib/assets/icons/send.svg';
 	import search from '$lib/assets/icons/search.svg';
 	import paperclip from '$lib/assets/icons/paperclip.png';
@@ -8,7 +8,7 @@
 	import copyIcon from '$lib/assets/icons/copyIcon.png';
 	import like from '$lib/assets/icons/likeIcon.png';
 	import thumDown from '$lib/assets/icons/thumbDown.png';
-	import megaphone from '$lib/assets/icons/megaphone.png';
+	// import megaphone from '$lib/assets/icons/megaphone.png';
 	// import mic from '$lib/assets/icons/mic.png';
 	import MarkdownContent from './MarkdownContent.svelte';
 	import Typewriter from './Typewriter.svelte';
@@ -17,13 +17,20 @@
 	import type { Message } from '$lib/types/chat';
 	import { toast } from 'svelte-sonner';
 	import Microphone from './Microphone.svelte';
+	import X from '$lib/assets/icons/gradient-x.png';
+	import check from '$lib/assets/icons/check.png';
 
 	let newMessage = '';
 	let selectedFile: File | null = null;
 	let fileInput: HTMLInputElement;
 	let scrollAnchor: HTMLDivElement;
+	let fileKeys: string[] = [];
+	let uploadingFile = false;
+	let microphone: Microphone;
 
 	async function handleSend() {
+		if ($sendingMessage) return;
+
 		if (!newMessage.trim()) {
 			toast.error('Please enter a message');
 			return;
@@ -40,24 +47,40 @@
 
 		chatStore.setMessages(updatedMessage);
 
+		// SEND MESSAGE
 		chatStore.sendMessage({
 			message: newMessage.trim(),
 			createNewConversation: false,
-			conversationId: Number(page.params.chatId)
+			conversationId: Number(page.params.chatId),
+			fileKeys
 		});
-		newMessage = '';
-	}
 
-	function sendVoiceNote() {}
+		// RESET STATE
+		newMessage = '';
+		selectedFile = null;
+		fileKeys = [];
+
+		// GET CONVERSATIONS AGAIN
+		chatStore.getConversations({});
+	}
 
 	function triggerFileUpload() {
 		fileInput.click();
 	}
 
-	function handleFileChange(event: Event) {
+	async function handleFileChange(event: Event) {
+		uploadingFile = true;
 		const target = event.target as HTMLInputElement;
+
+		// CHECK IF THERE ARE FILES TO UPLOAD
 		if (target.files && target.files.length > 0) {
 			selectedFile = target.files[0];
+
+			// UPLOAD FILE
+			const fileUploadResponse = await chatStore.uploadFileForChat(selectedFile);
+			fileKeys.push(fileUploadResponse.fileKey);
+
+			uploadingFile = false;
 		}
 	}
 
@@ -194,21 +217,39 @@
 							onchange={handleFileChange}
 						/>
 					</div>
-					{#if newMessage.length === 0}
+
+					<div class="flex items-center gap-5">
 						<!-- Mic Button -->
-						<Microphone on:click={sendVoiceNote} />
-					{:else}
-						<button
-							class="p-2 h-[48px] w-[48px] border rounded-full hover:bg-gray-100 flex items-center justify-center"
-							onclick={handleSend}
-						>
-							{#if $sendingMessage}
-								<Spinner color="black" size="lg" />
-							{:else}
-								<img src={send} class="mx-auto" width="20" height="20" alt="send icon" />
-							{/if}
-						</button>
-					{/if}
+						<Microphone bind:this={microphone} conversationId={Number(page.params.chatId)} />
+						{#if $isRecording}
+							<div class="flex items-center gap-3">
+								<button
+									onclick={() => microphone.cancelRecording()}
+									class="size-[45px] border border-[#E2E2E2] flex items-center justify-center rounded-full hover:bg-gray-100"
+								>
+									<img src={X} alt="" width="15" height="15" />
+								</button>
+								<button
+									onclick={() => microphone.stopRecording()}
+									class="size-[45px] border border-[#E2E2E2] flex items-center justify-center rounded-full hover:bg-gray-100"
+								>
+									<img src={check} alt="" width="18" height="18" />
+								</button>
+							</div>
+						{:else}
+							<button
+								disabled={$sendingMessage || newMessage.length === 0 || uploadingFile}
+								class="p-2 h-[48px] w-[48px] border rounded-full hover:bg-gray-100 flex items-center justify-center disabled:opacity-30"
+								onclick={handleSend}
+							>
+								{#if $sendingMessage}
+									<Spinner color="black" size="lg" />
+								{:else}
+									<img src={send} class="mx-auto" width="20" height="20" alt="send icon" />
+								{/if}
+							</button>
+						{/if}
+					</div>
 				</div>
 			</div>
 		</div>

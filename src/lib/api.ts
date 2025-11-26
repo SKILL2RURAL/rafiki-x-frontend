@@ -60,6 +60,7 @@ api.interceptors.response.use(
 
 		if (err.response?.status === 500) {
 			// toast.error('Internal Server Error. Please try again later.');
+			goto(resolve('/login'));
 			return Promise.reject(err);
 		}
 
