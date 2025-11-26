@@ -65,11 +65,7 @@
 				/>
 			</div>
 			<div>
-				{#if text.length === 0}
-					<!-- Mic Button -->
-					<Microphone />
-				{:else}
-					<!-- Send Button -->
+				{#if text.length > 0}
 					<button
 						class="p-2 h-[48px] w-[48px] border rounded-full hover:bg-gray-100 flex items-center justify-center"
 						disabled={$sendingMessage}

@@ -1,6 +1,13 @@
 <script lang="ts">
 	import { tick } from 'svelte';
-	import { chatStore, isRecording, messages, sendingMessage, isTranscribing } from '$lib/stores/chatStore';
+	import {
+		chatStore,
+		isRecording,
+		messages,
+		sendingMessage,
+		isTranscribing,
+		newMessage
+	} from '$lib/stores/chatStore';
 	import send from '$lib/assets/icons/send.svg';
 	import search from '$lib/assets/icons/search.svg';
 	import paperclip from '$lib/assets/icons/paperclip.png';
@@ -20,7 +27,6 @@
 	import X from '$lib/assets/icons/gradient-x.png';
 	import check from '$lib/assets/icons/check.png';
 
-	let newMessage = '';
 	let selectedFile: File | null = null;
 	let fileInput: HTMLInputElement;
 	let scrollAnchor: HTMLDivElement;
@@ -31,7 +37,7 @@
 	async function handleSend() {
 		if ($sendingMessage) return;
 
-		if (!newMessage.trim()) {
+		if (!$newMessage.trim()) {
 			toast.error('Please enter a message');
 			return;
 		}
@@ -41,7 +47,7 @@
 		updatedMessage.push({
 			id: new Date().getTime(),
 			role: 'USER',
-			content: newMessage.trim(),
+			content: $newMessage.trim(),
 			createdAt: new Date().toISOString()
 		});
 
@@ -49,14 +55,14 @@
 
 		// SEND MESSAGE
 		chatStore.sendMessage({
-			message: newMessage.trim(),
+			message: $newMessage.trim(),
 			createNewConversation: false,
 			conversationId: Number(page.params.chatId),
 			fileKeys
 		});
 
 		// RESET STATE
-		newMessage = '';
+		chatStore.setNewMessage('');
 		selectedFile = null;
 		fileKeys = [];
 
@@ -195,7 +201,11 @@
 					<input
 						type="text"
 						placeholder="Ask Rafiki..."
-						bind:value={newMessage}
+						value={$newMessage}
+						oninput={(e: Event) => {
+							const target = e.target as HTMLInputElement;
+							chatStore.setNewMessage(target.value);
+						}}
 						class=" px-2 text-sm bg-transparent outline-none w-full"
 						onkeydown={(e) => e.key === 'Enter' && handleSend()}
 					/>
@@ -221,6 +231,8 @@
 					<div class="flex items-center gap-5">
 						<!-- Mic Button -->
 						<Microphone bind:this={microphone} conversationId={Number(page.params.chatId)} />
+
+						<!-- RECORDING ACTIONS  -->
 						{#if $isRecording}
 							<div class="flex items-center gap-3">
 								<button
@@ -236,9 +248,12 @@
 									<img src={check} alt="" width="18" height="18" />
 								</button>
 							</div>
-						{:else}
+						{/if}
+
+						<!-- SEND BUTTON  -->
+						{#if $newMessage.length > 0 && !$isRecording && !$isTranscribing}
 							<button
-								disabled={$sendingMessage || newMessage.length === 0 || uploadingFile}
+								disabled={$sendingMessage || $newMessage.length === 0 || uploadingFile}
 								class="p-2 h-[48px] w-[48px] border rounded-full hover:bg-gray-100 flex items-center justify-center disabled:opacity-30"
 								onclick={handleSend}
 							>
