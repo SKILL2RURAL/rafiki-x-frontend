@@ -5,7 +5,7 @@
 	import { chatStore, initialMessage } from '$lib/stores/chatStore';
 	import { page } from '$app/state';
 
-	onMount(() => {
+	$effect(() => {
 		chatStore.getSingleConversation(Number(page.params.chatId));
 
 		const unsubscribe = initialMessage.subscribe((message) => {

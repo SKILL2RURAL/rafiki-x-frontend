@@ -5,6 +5,11 @@ export interface Message {
 	createdAt: string;
 	tokenCount?: string | null;
 	isTyping?: boolean;
+	attachments?: {
+		originalFileName: string | undefined;
+		fileSize: number | undefined;
+		fileType: string | undefined;
+	}[];
 }
 
 export interface Chat {
