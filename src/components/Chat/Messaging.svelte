@@ -24,8 +24,11 @@
 	import type { Message } from '$lib/types/chat';
 	import { toast } from 'svelte-sonner';
 	import Microphone from './Microphone.svelte';
-	import X from '$lib/assets/icons/gradient-x.png';
 	import check from '$lib/assets/icons/check.png';
+	import pdf from '$lib/assets/icons/pdf.png';
+	import image from '$lib/assets/icons/image.png';
+	import { X } from 'lucide-svelte';
+	import { cn } from '$lib/utils';
 
 	let selectedFile: File | null = null;
 	let fileInput: HTMLInputElement;
@@ -48,7 +51,14 @@
 			id: new Date().getTime(),
 			role: 'USER',
 			content: $newMessage.trim(),
-			createdAt: new Date().toISOString()
+			createdAt: new Date().toISOString(),
+			attachments: [
+				{
+					originalFileName: selectedFile?.name,
+					fileSize: selectedFile?.size,
+					fileType: selectedFile?.type
+				}
+			]
 		});
 
 		chatStore.setMessages(updatedMessage);
@@ -80,12 +90,17 @@
 
 		// CHECK IF THERE ARE FILES TO UPLOAD
 		if (target.files && target.files.length > 0) {
-			selectedFile = target.files[0];
+			// CHECK THE SIZE OF THE IMAGE TO UPLOAD
+			if (target.files[0].size > 5 * 1024 * 1024) {
+				toast.error('File size limit is 5MB');
+				uploadingFile = false;
+				return;
+			}
 
+			selectedFile = target.files[0];
 			// UPLOAD FILE
 			const fileUploadResponse = await chatStore.uploadFileForChat(selectedFile);
 			fileKeys.push(fileUploadResponse.fileKey);
-
 			uploadingFile = false;
 		}
 	}
@@ -95,9 +110,21 @@
 		scrollAnchor?.scrollIntoView({ behavior: 'smooth', block: 'end' });
 	}
 
+	function formatFileSize(bytes: number): string {
+		if (bytes === 0) return '0 B';
+
+		const sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
+		const i = Math.floor(Math.log(bytes) / Math.log(1024));
+		const value = (bytes / Math.pow(1024, i)).toFixed(2);
+
+		return `${value} ${sizes[i]}`;
+	}
+
 	$: if ($messages) {
 		scrollToBottom();
 	}
+
+	$: console.log(selectedFile);
 </script>
 
 <div class="flex-1 flex-col mx-auto justify-between font-mulish font-medium lg:max-w-[70vw] h-full">
@@ -154,19 +181,53 @@
 							</div>
 						</div>
 					{:else}
-						<div class="flex flex-col items-end">
-							<p
-								class="px-4 py-2 text-[16px] font-[400] text-[#1a1a1a] rounded-lg bg-[#F7F6F5] rounded-br-none"
-							>
-								{msg.content}
-							</p>
-							<img
-								src={copyIcon}
-								class="self-end mt-1 cursor-pointer"
-								width="16"
-								height="16"
-								alt="copy Icon"
-							/>
+						<div>
+							<div>
+								{#if msg.attachments && msg.attachments.length > 0}
+									<div class="mb-5 flex items-end justify-end">
+										<div
+											class="bg-[#F7F6F5] rounded-l-[10px] rounded-tr-[34px] rounded-br-[10px] p-4 flex items-center gap-3"
+										>
+											{#if msg.attachments && msg.attachments[0].fileType?.startsWith('image')}
+												<img
+													src={image}
+													class="w-[40px] h-[40px] object-contain"
+													alt="selected file"
+												/>
+											{:else}
+												<img
+													src={pdf}
+													class="w-[40px] h-[40px] object-contain"
+													alt="selected file"
+												/>
+											{/if}
+											<div class="pr-[12px]">
+												<p class="text-sm font-[500] max-w-[500px] truncate">
+													{msg.attachments[0].originalFileName}
+												</p>
+												<p class="text-[#4D5154] text-[14px] font-[400]">
+													{formatFileSize(msg.attachments[0].fileSize || 0)}
+												</p>
+											</div>
+										</div>
+									</div>
+								{/if}
+
+								<div class="flex flex-col items-end">
+									<p
+										class="px-4 py-2 text-[16px] font-[400] text-[#1a1a1a] rounded-lg bg-[#F7F6F5] rounded-br-none"
+									>
+										{msg.content}
+									</p>
+									<img
+										src={copyIcon}
+										class="self-end mt-1 cursor-pointer"
+										width="16"
+										height="16"
+										alt="copy Icon"
+									/>
+								</div>
+							</div>
 						</div>
 					{/if}
 				</div>
@@ -214,18 +275,48 @@
 				<div class="flex justify-between">
 					<!-- File Upload Button -->
 					<div class="flex gap-2 items-center">
-						<button
-							onclick={triggerFileUpload}
-							class="p-2 h-[48px] w-[48px] border rounded-full hover:bg-gray-100"
-						>
-							<img src={paperclip} class="mx-auto" width="20" height="20" alt="file picker" />
-						</button>
-						<input
-							type="file"
-							class={selectedFile ? 'flex' : 'hidden'}
-							bind:this={fileInput}
-							onchange={handleFileChange}
-						/>
+						{#if selectedFile}
+							<div
+								class={cn(
+									'bg-gradient-to-r from-[#51A3DA]/10 to-[#60269E]/10 border-[0.4px] border-[#C8CCD0] rounded-[8px] p-5 py-3 flex gap-5',
+									{ 'opacity-50': uploadingFile }
+								)}
+							>
+								<div class="flex items-center gap-3">
+									{#if selectedFile.type.startsWith('image')}
+										<img src={image} class="w-[40px] h-[40px] object-contain" alt="selected file" />
+									{:else}
+										<img src={pdf} class="w-[40px] h-[40px] object-contain" alt="selected file" />
+									{/if}
+									<div>
+										<p class="text-sm font-[500] max-w-[500px] truncate">{selectedFile.name}</p>
+										<p class="text-[#4D5154] text-[14px] font-[400]">
+											{formatFileSize(selectedFile.size)}
+										</p>
+									</div>
+								</div>
+								<button
+									class="size-[20px] rounded-full bg-white flex items-center justify-center cursor-pointer"
+									onclick={() => (selectedFile = null)}
+								>
+									<X size={18} />
+								</button>
+							</div>
+						{:else}
+							<button
+								onclick={triggerFileUpload}
+								class="p-2 h-[48px] w-[48px] border rounded-full hover:bg-gray-100"
+							>
+								<img src={paperclip} class="mx-auto" width="20" height="20" alt="file picker" />
+							</button>
+							<input
+								type="file"
+								class={'hidden'}
+								accept=".pdf,.doc,.docx"
+								bind:this={fileInput}
+								onchange={handleFileChange}
+							/>
+						{/if}
 					</div>
 
 					<div class="flex items-center gap-5">
@@ -239,7 +330,7 @@
 									onclick={() => microphone.cancelRecording()}
 									class="size-[45px] border border-[#E2E2E2] flex items-center justify-center rounded-full hover:bg-gray-100"
 								>
-									<img src={X} alt="" width="15" height="15" />
+									<X />
 								</button>
 								<button
 									onclick={() => microphone.stopRecording()}

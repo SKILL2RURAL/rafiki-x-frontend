@@ -45,7 +45,7 @@
 	<div
 		class="flex [--sidebar-full-width:340px] [--sidebar-collapsed-width:80px] [--navbar-height:10vh] h-dvh max-h-screen w-screen overflow-hidden"
 	>
-		<Sidebar openHistory={() => {}} />
+		<Sidebar />
 		<div class="w-full h-screen">
 			<Navbar />
 			<main class="p-5 h-[90vh] w-full overflow-auto mt-[--navbar-height] lg:mt-0">
