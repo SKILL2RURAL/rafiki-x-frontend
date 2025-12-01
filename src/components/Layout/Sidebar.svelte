@@ -91,7 +91,7 @@
 </script>
 
 <aside
-	class={`${isSidebarOpen ? 'w-(--sidebar-full-width)' : 'w-(--sidebar-collapsed-width)'} transition-all duration-200 bg-[#fcfcfc]  p-5 py-7 max-h-screen border-r-[0.4px] font-mulish relative hidden lg:block`}
+	class={`${isSidebarOpen ? 'w-(--sidebar-full-width)' : 'w-(--sidebar-collapsed-width)'} transition-all duration-200 bg-[#fcfcfc]  p-5 py-7 max-h-screen font-mulish relative hidden lg:block`}
 >
 	<!-- toogle button  -->
 	<button

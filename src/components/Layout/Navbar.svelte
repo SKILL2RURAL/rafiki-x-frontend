@@ -18,7 +18,7 @@
 </script>
 
 <nav
-	class="min-h-[var(--navbar-height)] flex justify-between lg:justify-end items-center p-5 border-b-[0.5px] bg-[#fcfcfc]"
+	class="min-h-(--navbar-height) flex justify-between lg:justify-end items-center p-5 bg-[#fcfcfc]"
 >
 	<div class="flex lg:hidden items-center justify-between w-full">
 		<button
