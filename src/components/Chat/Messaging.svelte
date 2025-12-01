@@ -127,7 +127,7 @@
 	$: console.log(selectedFile);
 </script>
 
-<div class="flex-1 flex-col mx-auto justify-between font-mulish font-medium lg:max-w-[70vw] h-full">
+<div class="flex-1 flex-col mx-auto justify-between font-mulish font-medium lg:max-w-[70vw] h-full relative">
 	<!--Chat area-->
 	<div class="space-y-4 grow pb-[200px]">
 		{#each $messages as msg, i}
@@ -184,7 +184,7 @@
 						<div>
 							<div>
 								{#if msg.attachments && msg.attachments.length > 0}
-									<div class="mb-5 flex items-end justify-end">
+									<div class="mb-2 flex items-end justify-end">
 										<div
 											class="bg-[#F7F6F5] rounded-l-[10px] rounded-tr-[34px] rounded-br-[10px] p-4 flex items-center gap-3"
 										>
@@ -202,10 +202,10 @@
 												/>
 											{/if}
 											<div class="pr-[12px]">
-												<p class="text-sm font-[500] max-w-[500px] truncate">
+												<p class="text-sm font-medium max-w-[500px] truncate">
 													{msg.attachments[0].originalFileName}
 												</p>
-												<p class="text-[#4D5154] text-[14px] font-[400]">
+												<p class="text-[#4D5154] text-[14px] font-normal">
 													{formatFileSize(msg.attachments[0].fileSize || 0)}
 												</p>
 											</div>
@@ -215,7 +215,7 @@
 
 								<div class="flex flex-col items-end">
 									<p
-										class="px-4 py-2 text-[16px] font-[400] text-[#1a1a1a] rounded-lg bg-[#F7F6F5] rounded-br-none"
+										class="px-4 py-2 pr-7  text-[16px] font-normal text-[#1a1a1a] rounded-lg rounded-tr-[34px] bg-[#F7F6F5] rounded-br-none"
 									>
 										{msg.content}
 									</p>
@@ -253,7 +253,7 @@
 	<div bind:this={scrollAnchor}></div>
 
 	<!-- Input Area -->
-	<div class="fixed bg-white bottom-10 w-[90vw] sm:w-[95vw] lg:w-[70vw] flex flex-col gap-4">
+	<div class="fixed bg-white bottom-10 w-[80vw] sm:w-[90vw] lg:w-[70vw] flex flex-col gap-4">
 		<div class="border border-[#E8E8E8] rounded-[20px] p-4 bg-white shadow-md">
 			<div class="flex flex-col px-3 py-2 gap-4">
 				<div class="flex">
@@ -278,7 +278,7 @@
 						{#if selectedFile}
 							<div
 								class={cn(
-									'bg-gradient-to-r from-[#51A3DA]/10 to-[#60269E]/10 border-[0.4px] border-[#C8CCD0] rounded-[8px] p-5 py-3 flex gap-5',
+									'bg-linear-to-r from-[#51A3DA]/10 to-[#60269E]/10 border-[0.4px] border-[#C8CCD0] rounded-[8px] p-5 py-3 flex gap-5',
 									{ 'opacity-50': uploadingFile }
 								)}
 							>
@@ -289,8 +289,8 @@
 										<img src={pdf} class="w-[40px] h-[40px] object-contain" alt="selected file" />
 									{/if}
 									<div>
-										<p class="text-sm font-[500] max-w-[500px] truncate">{selectedFile.name}</p>
-										<p class="text-[#4D5154] text-[14px] font-[400]">
+										<p class="text-sm font-medium max-w-[500px] truncate">{selectedFile.name}</p>
+										<p class="text-[#4D5154] text-[14px] font-normal">
 											{formatFileSize(selectedFile.size)}
 										</p>
 									</div>

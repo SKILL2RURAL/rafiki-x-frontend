@@ -45,7 +45,7 @@
 		</span>
 		, your personal AI Career Assistant
 	</h1>
-	<p class="text-[14px] font-[400] mt-3 lg:w-[80%] mx-auto">
+	<p class="text-[14px] font-normal mt-3 lg:w-[80%] mx-auto">
 		RafikiX helps you explore opportunities, gain clarity, and build confidence at every stage of
 		your career. <a href="/learn-more" class="underline">Learn more about RafikiX policy here.</a>
 	</p>
@@ -82,7 +82,7 @@
 		</div>
 
 		<div
-			class=" items-center justify-center mt-3 lg:mt-5 flex gap-5 w-full overflow-x-auto no-scrollbar pb-1"
+			class="items-center justify-center mt-3 lg:mt-5 flex gap-5 w-full max-w-[300px] lg:max-w-full mx-auto overflow-x-auto no-scrollbar pb-1"
 		>
 			<button
 				class="shadow-md rounded-[100px] flex items-center justify-center gap-2 px-6 lg:px-4 py-3 w-fit whitespace-nowrap"

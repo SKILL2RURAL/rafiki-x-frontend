@@ -1,19 +1,16 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
 	import Spinner from '$lib/components/ui/spinner/spinner.svelte';
 	import {
 		chatStore,
 		isRecording,
-		messages,
 		isTranscribing,
-		sendingMessage,
-		newMessage
+		newMessage,
+		sendingMessage
 	} from '$lib/stores/chatStore';
-	import type { Message } from '$lib/types/chat';
 	import { cn } from '$lib/utils';
 	import { Mic } from 'lucide-svelte';
 
-	export let conversationId: number | undefined = undefined;
+	export const conversationId: number | undefined = undefined;
 
 	let mediaRecorder: MediaRecorder;
 	let audioChunks: Blob[] = [];
