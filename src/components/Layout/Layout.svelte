@@ -43,15 +43,15 @@
 	<div class="flex items-center justify-center h-screen"></div>
 {:else}
 	<div
-		class="flex [--sidebar-full-width:340px] [--sidebar-collapsed-width:80px] [--navbar-height:10vh] h-dvh max-h-screen w-screen overflow-hidden bg-[#fcfcfc]"
+		class="flex [--sidebar-full-width:340px] [--sidebar-collapsed-width:80px] [--navbar-height:7vh] h-dvh max-h-screen w-screen overflow-hidden bg-[#fcfcfc]"
 	>
 		<Sidebar />
 		<div class="w-full h-screen">
 			<Navbar />
 			<main
-				class="p-5 pt-0 lg:pr-5 lg:pb-5 lg:pt-0 h-[90vh] w-full mt-[--navbar-height] lg:mt-0"
+				class="p-5 pt-0 lg:pr-8 lg:pb-5 lg:pt-0 w-full"
 			>
-				<div class="bg-white rounded-[20px] border border-[#E8E8E8] h-full w-full p-5 overflow-auto ">
+				<div class="bg-white rounded-[20px] border border-[#E8E8E8] h-[90vh] w-full overflow-y-auto p-5 ml-3">
 					{@render children()}
 				</div>
 			</main>

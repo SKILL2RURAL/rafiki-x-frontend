@@ -29,6 +29,7 @@
 	import image from '$lib/assets/icons/image.png';
 	import { X } from 'lucide-svelte';
 	import { cn } from '$lib/utils';
+	import * as Tooltip from '$lib/components/ui/tooltip/index.js';
 
 	let selectedFile: File | null = null;
 	let fileInput: HTMLInputElement;
@@ -127,7 +128,9 @@
 	$: console.log(selectedFile);
 </script>
 
-<div class="flex-1 flex-col mx-auto justify-between font-mulish font-medium lg:max-w-[70vw] h-full relative">
+<div
+	class="flex-1 flex-col mx-auto justify-between font-mulish font-medium lg:max-w-[70vw] h-full relative"
+>
 	<!--Chat area-->
 	<div class="space-y-4 grow pb-[200px]">
 		{#each $messages as msg, i}
@@ -152,23 +155,60 @@
 
 								<!-- Icons  -->
 								{#if !msg.isTyping}
-									<div class="flex gap-4 items-center">
-										<img
-											src={copyIcon}
-											width="16"
-											height="16"
-											class="cursor-pointer"
-											alt="copy Icon"
-										/>
-										<img src={like} width="16" height="16" class="cursor-pointer" alt="Like Icon" />
+									<div class="flex items-center">
+										<Tooltip.Provider>
+											<Tooltip.Root>
+												<Tooltip.Trigger class="hover:bg-gray-100 rounded-lg p-2" aria-label="Copy">
+													<img
+														src={copyIcon}
+														class="self-end cursor-pointer"
+														width="15"
+														height="15"
+														alt="copy Icon"
+													/></Tooltip.Trigger
+												>
+												<Tooltip.Content side="bottom">
+													<p>Copy</p>
+												</Tooltip.Content>
+											</Tooltip.Root>
+										</Tooltip.Provider>
 
-										<img
-											src={thumDown}
-											width="16"
-											height="16"
-											class="cursor-pointer"
-											alt="thumb down"
-										/>
+										<Tooltip.Provider>
+											<Tooltip.Root>
+												<Tooltip.Trigger class="hover:bg-gray-100 rounded-lg p-2" aria-label="Like">
+													<img
+														src={like}
+														width="15"
+														height="15"
+														class="cursor-pointer"
+														alt="Like Icon"
+													/>
+												</Tooltip.Trigger>
+												<Tooltip.Content side="bottom">
+													<p>Like</p>
+												</Tooltip.Content>
+											</Tooltip.Root>
+										</Tooltip.Provider>
+
+										<Tooltip.Provider>
+											<Tooltip.Root>
+												<Tooltip.Trigger
+													class="hover:bg-gray-100 rounded-lg p-2"
+													aria-label="Dislike"
+												>
+													<img
+														src={thumDown}
+														width="15"
+														height="15"
+														class="cursor-pointer"
+														alt="thumb down"
+													/>
+												</Tooltip.Trigger>
+												<Tooltip.Content side="bottom">
+													<p>Dislike</p>
+												</Tooltip.Content>
+											</Tooltip.Root>
+										</Tooltip.Provider>
 										<!-- <img
 											src={megaphone}
 											width="16"
@@ -215,17 +255,27 @@
 
 								<div class="flex flex-col items-end">
 									<p
-										class="px-4 py-2 pr-7  text-[16px] font-normal text-[#1a1a1a] rounded-lg rounded-tr-[34px] bg-[#F7F6F5] rounded-br-none"
+										class="px-4 py-2 pr-7 text-[16px] font-normal text-[#1a1a1a] rounded-lg rounded-tr-[34px] bg-[#F7F6F5] rounded-br-none mb-2"
 									>
 										{msg.content}
 									</p>
-									<img
-										src={copyIcon}
-										class="self-end mt-1 cursor-pointer"
-										width="16"
-										height="16"
-										alt="copy Icon"
-									/>
+
+									<Tooltip.Provider>
+										<Tooltip.Root>
+											<Tooltip.Trigger class="hover:bg-gray-100 rounded-lg p-2" aria-label="Copy">
+												<img
+													src={copyIcon}
+													class="self-end cursor-pointer"
+													width="15"
+													height="15"
+													alt="copy Icon"
+												/></Tooltip.Trigger
+											>
+											<Tooltip.Content side="bottom">
+												<p>Copy</p>
+											</Tooltip.Content>
+										</Tooltip.Root>
+									</Tooltip.Provider>
 								</div>
 							</div>
 						</div>
@@ -253,7 +303,7 @@
 	<div bind:this={scrollAnchor}></div>
 
 	<!-- Input Area -->
-	<div class="fixed bg-white bottom-10 w-[80vw] sm:w-[90vw] lg:w-[70vw] flex flex-col gap-4">
+	<div class="fixed bg-white bottom-15 w-[80vw] sm:w-[90vw] lg:w-[70vw] flex flex-col gap-4">
 		<div class="border border-[#E8E8E8] rounded-[20px] p-4 bg-white shadow-md">
 			<div class="flex flex-col px-3 py-2 gap-4">
 				<div class="flex">

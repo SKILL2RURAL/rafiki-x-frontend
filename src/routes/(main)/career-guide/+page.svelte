@@ -30,7 +30,7 @@
 </script>
 
 <Layout>
-	<div class="w-full h-full flex flex-col items-center justify-center mb-0">
+	<div class="w-full min-h-full flex flex-col items-center justify-center mb-0">
 		<img src={logo} alt="Rafki-X logo" width={38} height={38} />
 
 		<div

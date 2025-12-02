@@ -25,6 +25,7 @@
 	import ReuseableDrawer from '../Common/ReuseableDrawer.svelte';
 	import X from '@lucide/svelte/icons/x';
 	import type { Conversation } from '$lib/types/chat';
+	import Button from '$lib/components/ui/button/button.svelte';
 
 	const todayHistory = history.find((item) => item.day === 'TODAY');
 
@@ -152,7 +153,7 @@
 					<div>
 						{#if $chats && $chats.length > 0}
 							<div class="space-y-3 overflow-y-auto no-scrollbar">
-								<p class="mb-4 font-[500] text-[12px] text-[#909090] uppercase">Today</p>
+								<p class="mb-4 font-medium text-[12px] text-[#909090] uppercase">Today</p>
 
 								{#each $chats.slice(0, 3) as chat}
 									<button
@@ -170,7 +171,7 @@
 									class="flex items-center justify-between w-full gap-3 mt-5"
 									onclick={() => (isDrawerOpen = true)}
 								>
-									<p class="text-sm font-[400] text-[#80899A]">View All Chat history</p>
+									<p class="text-sm font-normal text-[#80899A]">View All Chat history</p>
 									<img src={greaterArrow} alt="direction icon" width="7" height="13" />
 								</button>
 							</div>
@@ -187,15 +188,21 @@
 
 		<div class=" relativ white mt-auto h-[250px] pt-5">
 			<button
-				class={`w-full flex items-center justify-between rounded-[10px] py-3 px-2 mb-10 ${isSidebarOpen ? 'border' : ''}`}
+				class={`w-full rounded-[10px] p-px mb-10 ${isSidebarOpen ? 'bg-linear-to-br from-[#51A3DA] to-[#60269E]' : ''}`}
 				onclick={() => goto('/learn-more')}
 			>
-				{#if isSidebarOpen}
-					<p class="text-[16px]">Learn more</p>
-					<div class="rounded-full bg-gradient p-1">
-						<ChevronRight color="white" size={15} />
+				<div class="bg-white py-3 px-2 rounded-[10px]">
+					<div
+						class="flex items-center bg-linear-to-br from-[#51A3DA] to-[#60269E] text-transparent bg-clip-text justify-between"
+					>
+						{#if isSidebarOpen}
+							<p class="text-[16px]">Learn more</p>
+							<div class="rounded-full bg-gradient p-1">
+								<ChevronRight color="white" size={15} />
+							</div>
+						{/if}
 					</div>
-				{/if}
+				</div>
 			</button>
 
 			{#if isSidebarOpen}
@@ -249,7 +256,7 @@
 <ReuseableDrawer bind:isOpen={isDrawerOpen} onClose={(value) => (isDrawerOpen = value)}>
 	<div>
 		<div class="border-b border-[#A3AED0] flex items-center justify-between px-5 py-8">
-			<h1 class="text-[#262424] text-[20px] font-[500]">Chat History</h1>
+			<h1 class="text-[#262424] text-[20px] font-medium">Chat History</h1>
 			<button
 				class="bg-[#F9F9F9] size-[37px] flex items-center justify-center rounded-full cursor-pointer"
 				onclick={() => (isDrawerOpen = false)}
@@ -257,16 +264,16 @@
 				<X color="#5F5F5F" />
 			</button>
 		</div>
-		<div class="px-5 py-8">
+		<div class="px-5 py-5 h-[90vh] overflow-auto">
 			{#if $chats.length > 0}
 				<div class="space-y-4">
 					<!-- TODAY -->
 					{#if grouped.today.length > 0}
-						<p class="text-[16px] font-[500] text-[#808990] mt-6">Today</p>
+						<p class="text-[16px] font-medium text-[#808990]">Today</p>
 						{#each grouped.today as chat}
 							<a
 								href={`/${chat.id}`}
-								class="flex items-center justify-between w-full text-[#253B4B] text-[16px] font-[500]"
+								class="flex items-center justify-between w-full text-[#253B4B] text-[16px] font-medium"
 								onclick={() => (isDrawerOpen = false)}
 							>
 								<p>{chat.title}</p>
@@ -277,11 +284,11 @@
 
 					<!-- YESTERDAY -->
 					{#if grouped.yesterday.length > 0}
-						<p class="text-[16px] font-[500] text-[#808990] mt-6">Yesterday</p>
+						<p class="text-[16px] font-medium text-[#808990]">Yesterday</p>
 						{#each grouped.yesterday as chat}
 							<a
 								href={`/${chat.id}`}
-								class="flex items-center justify-between w-full text-[#253B4B] text-[16px] font-[500]"
+								class="flex items-center justify-between w-full text-[#253B4B] text-[16px] font-medium"
 								onclick={() => (isDrawerOpen = false)}
 							>
 								<p>{chat.title}</p>
@@ -292,11 +299,11 @@
 
 					<!-- RECENT -->
 					{#if grouped.recent.length > 0}
-						<p class="text-[16px] font-[500] text-[#808990] mt-6">Recent</p>
+						<p class="text-[16px] font-medium text-[#808990] mt-6">Recent</p>
 						{#each grouped.recent as chat}
 							<a
 								href={`/${chat.id}`}
-								class="flex items-center justify-between w-full text-[#253B4B] text-[16px] font-[500]"
+								class="flex items-center justify-between w-full text-[#253B4B] text-[16px] font-medium"
 								onclick={() => (isDrawerOpen = false)}
 							>
 								<p>{chat.title}</p>
@@ -311,6 +318,16 @@
 					<p class="text-sm font-semibold text-[#80899A]">No Chat history</p>
 				</div>
 			{/if}
+		</div>
+		<div class="fixed bottom-0 w-full flex justify-end gap-5 py-3 bg-white">
+			<Button class="p-px rounded-xl h-[50px] w-[200px] bg-gradient">
+				<div class="bg-white flex items-center justify-center w-full h-[47px] rounded-xl">
+					<p class="bg-gradient text-transparent bg-clip-text">Go back</p>
+				</div>
+			</Button>
+			<Button class="bg-gradient rounded-xl border border-[#FFFFFF] h-[50px] w-[200px]">
+				Clear all chat
+			</Button>
 		</div>
 	</div>
 </ReuseableDrawer>
