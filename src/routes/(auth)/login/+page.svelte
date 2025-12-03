@@ -2,7 +2,7 @@
 	import AshBackground from '../../../lib/assets/img/ash-background.webp';
 	import logo from '../../../lib/assets/img/logo-white.png';
 	// import google from '../../../lib/assets/icons/google.png';
-	import LoginForm from '../../../components/Login/LoginForm.svelte';
+	import LoginForm from '../../../components/auth/Login/LoginForm.svelte';
 </script>
 
 <div class="relative bg-gradient">

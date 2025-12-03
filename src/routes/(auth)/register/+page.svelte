@@ -1,8 +1,8 @@
 <script lang="ts">
 	import AshBackground from '$lib/assets/img/ash-background.webp';
 	import logo from '$lib/assets/img/logo-white.png';
-	import RegisterForm from '../../../components/Register/RegisterForm.svelte';
-	// import google from '../../../lib/assets/icons/google.png';
+	import RegisterForm from '../../../components/auth/Register/RegisterForm.svelte';
+	// import google from '../../../lib/assets/icons/google.png';la
 </script>
 
 <div class="bg-gradient">

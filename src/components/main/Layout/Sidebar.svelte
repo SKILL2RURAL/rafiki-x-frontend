@@ -21,21 +21,17 @@
 	import { chats, chatStore } from '$lib/stores/chatStore';
 	import { profile } from '$lib/stores/profile';
 	import * as Avatar from '$lib/components/ui/avatar/index.js';
-	import * as Drawer from '$lib/components/ui/drawer/index.js';
-	import ReuseableDrawer from '../Common/ReuseableDrawer.svelte';
+	// import * as Drawer from '$lib/components/ui/drawer/index.js';
 	import X from '@lucide/svelte/icons/x';
 	import type { Conversation } from '$lib/types/chat';
 	import Button from '$lib/components/ui/button/button.svelte';
+	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
+	import ReuseableDrawer from '../../Common/ReuseableDrawer.svelte';
 
 	const todayHistory = history.find((item) => item.day === 'TODAY');
 
 	// LOACAL STATES
 	let isDrawerOpen = $state(false);
-	// let grouped: {
-	// 	today: Conversation[];
-	// 	yesterday: Conversation[];
-	// 	recent: Conversation[];
-	// } = { today: [], yesterday: [], recent: [] };
 
 	onMount(() => {
 		chatStore.getConversations({});
@@ -89,6 +85,10 @@
 	}
 
 	const grouped = $derived(groupChats($chats));
+
+	async function handleDeleteSingleConversation(conversationId: string) {
+		await chatStore.deleteSingleConversation(conversationId);
+	}
 </script>
 
 <aside
@@ -109,18 +109,18 @@
 
 			<!-- Links  -->
 			<div class="my-5 space-y-3 mt-10">
-				<button
+				<a
+					href="/"
 					class={`text-[14px] font-normal p-2 rounded-[8px] cursor-pointer flex items-center gap-2 ${!isSidebarOpen ? 'justify-center' : ''} ${pathname === '/' ? 'bg-gradient text-white' : 'text-[#808990]'} w-full`}
-					onclick={() => goto('/')}
 				>
 					<MessageCircle size={17} color={pathname === '/' ? 'white' : '#808990'} />
 					{#if isSidebarOpen}
 						<p>Chat</p>
 					{/if}
-				</button>
-				<button
+				</a>
+				<a
+					href="/my-resume"
 					class={` text-[14px] font-normal p-2 rounded-[8px] cursor-pointer flex items-center gap-2 ${!isSidebarOpen ? 'justify-center' : ''} ${pathname.includes('my-resume') ? 'bg-gradient text-white' : 'text-[#808990]'} w-full`}
-					onclick={() => goto('/my-resume')}
 				>
 					{#if pathname.includes('my-resume')}
 						<img src={pdfLight} alt="" width="20" height="20" />
@@ -130,9 +130,9 @@
 					{#if isSidebarOpen}
 						<p>My Resume</p>
 					{/if}
-				</button>
-				<button
-					onclick={() => goto('/career-guide')}
+				</a>
+				<a
+					href="/career-guide"
 					class={` text-[14px] font-normal p-2 rounded-[8px] cursor-pointer flex items-center gap-2 ${!isSidebarOpen ? 'justify-center' : ''} ${pathname.includes('career-guide') ? 'bg-gradient text-white' : 'text-[#808990]'} w-full`}
 				>
 					{#if pathname.includes('/career-guide')}
@@ -143,7 +143,7 @@
 					{#if isSidebarOpen}
 						<p>Career Guide</p>
 					{/if}
-				</button>
+				</a>
 			</div>
 			<!-- Links end  -->
 
@@ -188,7 +188,7 @@
 
 		<div class=" relativ white mt-auto h-[250px] pt-5">
 			<button
-				class={`w-full rounded-[10px] p-px mb-10 ${isSidebarOpen ? 'bg-linear-to-br from-[#51A3DA] to-[#60269E]' : ''}`}
+				class={`w-full rounded-[11px] p-px mb-10 ${isSidebarOpen ? 'bg-linear-to-br from-[#51A3DA] to-[#60269E]' : ''}`}
 				onclick={() => goto('/learn-more')}
 			>
 				<div class="bg-white py-3 px-2 rounded-[10px]">
@@ -214,13 +214,13 @@
 					? 'items-center'
 					: ''}   font-semibold text-[#80899A] text-sm"
 			>
-				<button class={`flex items-center gap-3`}>
+				<button class={`flex items-center gap-3`} onclick={() => goto('/subscription')}>
 					<img src={premium} alt="Rafiki X" width="20" height="20" />
 					{#if isSidebarOpen}
 						<p>Go premium</p>
 					{/if}
 				</button>
-				<button class={` flex items-center gap-3`} onclick={() => goto('/my-profile')}>
+				<a href="/my-profile" class={` flex items-center gap-3`}>
 					{#if $profile.data?.profilePhoto}
 						<Avatar.Root class="size-[20px]">
 							<Avatar.Image src={$profile.data?.profilePhoto} alt="profile" />
@@ -235,7 +235,7 @@
 					{#if isSidebarOpen}
 						<p>My profile</p>
 					{/if}
-				</button>
+				</a>
 				<button
 					class={`flex items-center gap-3`}
 					onclick={() => {
@@ -253,6 +253,7 @@
 	</div>
 </aside>
 
+<!-- CHAT HISTORY  -->
 <ReuseableDrawer bind:isOpen={isDrawerOpen} onClose={(value) => (isDrawerOpen = value)}>
 	<div>
 		<div class="border-b border-[#A3AED0] flex items-center justify-between px-5 py-8">
@@ -277,8 +278,24 @@
 								onclick={() => (isDrawerOpen = false)}
 							>
 								<p>{chat.title}</p>
-								<Ellipsis class="rotate-90" size={18} color="black" />
 							</a>
+
+							<DropdownMenu.Root>
+								<DropdownMenu.Trigger>
+									<Ellipsis class="rotate-90" size={18} color="black" />
+								</DropdownMenu.Trigger>
+								<DropdownMenu.Content>
+									<DropdownMenu.Group>
+										<DropdownMenu.Label
+											class="text-red-500"
+											onclick={() => {
+												handleDeleteSingleConversation(chat.id.toString());
+											}}
+											>Delete
+										</DropdownMenu.Label>
+									</DropdownMenu.Group>
+								</DropdownMenu.Content>
+							</DropdownMenu.Root>
 						{/each}
 					{/if}
 
@@ -292,7 +309,17 @@
 								onclick={() => (isDrawerOpen = false)}
 							>
 								<p>{chat.title}</p>
-								<Ellipsis class="rotate-90" size={18} color="black" />
+
+								<DropdownMenu.Root>
+									<DropdownMenu.Trigger>
+										<Ellipsis class="rotate-90" size={18} color="black" />
+									</DropdownMenu.Trigger>
+									<DropdownMenu.Content>
+										<DropdownMenu.Group>
+											<DropdownMenu.Label class="text-red-500">Delete</DropdownMenu.Label>
+										</DropdownMenu.Group>
+									</DropdownMenu.Content>
+								</DropdownMenu.Root>
 							</a>
 						{/each}
 					{/if}
@@ -301,14 +328,28 @@
 					{#if grouped.recent.length > 0}
 						<p class="text-[16px] font-medium text-[#808990] mt-6">Recent</p>
 						{#each grouped.recent as chat}
-							<a
-								href={`/${chat.id}`}
+							<div
 								class="flex items-center justify-between w-full text-[#253B4B] text-[16px] font-medium"
-								onclick={() => (isDrawerOpen = false)}
 							>
-								<p>{chat.title}</p>
-								<Ellipsis class="rotate-90" size={18} color="black" />
-							</a>
+								<a href={`/${chat.id}`} onclick={() => (isDrawerOpen = false)}>
+									<p>{chat.title}</p>
+								</a>
+								<DropdownMenu.Root>
+									<DropdownMenu.Trigger>
+										<Ellipsis class="rotate-90" size={18} color="black" />
+									</DropdownMenu.Trigger>
+									<DropdownMenu.Content>
+										<DropdownMenu.Group>
+											<DropdownMenu.Label
+												class="text-red-500 cursor-pointer"
+												onclick={() => {
+													handleDeleteSingleConversation(chat.id.toString());
+												}}>Delete</DropdownMenu.Label
+											>
+										</DropdownMenu.Group>
+									</DropdownMenu.Content>
+								</DropdownMenu.Root>
+							</div>
 						{/each}
 					{/if}
 				</div>
@@ -320,7 +361,10 @@
 			{/if}
 		</div>
 		<div class="fixed bottom-0 w-full flex justify-end gap-5 py-3 bg-white">
-			<Button class="p-px rounded-xl h-[50px] w-[200px] bg-gradient">
+			<Button
+				class="p-px rounded-xl h-[50px] w-[200px] bg-gradient"
+				onclick={() => (isDrawerOpen = false)}
+			>
 				<div class="bg-white flex items-center justify-center w-full h-[47px] rounded-xl">
 					<p class="bg-gradient text-transparent bg-clip-text">Go back</p>
 				</div>

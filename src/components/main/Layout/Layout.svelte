@@ -4,10 +4,10 @@
 	import arrowIcon from '$lib/assets/icons/caret-left-fill.svg';
 	import { auth } from '$lib/stores/authStore';
 	import { onMount } from 'svelte';
-	import Feedback from '../Feedback.svelte';
-	import FeedbackInput from '../FeedbackInput.svelte';
 	import Navbar from './Navbar.svelte';
 	import Sidebar from './Sidebar.svelte';
+	import FeedbackInput from '../FeedbackInput.svelte';
+	import Feedback from '../../Feedback.svelte';
 
 	let { children } = $props();
 
@@ -35,9 +35,6 @@
 	});
 </script>
 
-<!-- Mount RightSidebar first to avoid undefined errors -->
-<!-- <RightSidebar bind:this={rightSidebar} /> -->
-
 <!-- If loading  -->
 {#if loading}
 	<div class="flex items-center justify-center h-screen"></div>
@@ -48,10 +45,10 @@
 		<Sidebar />
 		<div class="w-full h-screen">
 			<Navbar />
-			<main
-				class="p-5 pt-0 lg:pr-8 lg:pb-5 lg:pt-0 w-full"
-			>
-				<div class="bg-white rounded-[20px] border border-[#E8E8E8] h-[90vh] w-full overflow-y-auto p-5 ml-3">
+			<main class="p-5 pt-0 lg:pl-0 lg:pr-8 lg:pb-5 lg:pt-0 w-full">
+				<div
+					class="bg-white rounded-[20px] border border-[#E8E8E8] h-[90vh] w-full overflow-y-auto p-5 lg:ml-3"
+				>
 					{@render children()}
 				</div>
 			</main>

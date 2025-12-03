@@ -1,14 +1,13 @@
 <script lang="ts">
-	import { Input } from '$lib/components/ui/input';
-	import searchIcon from '$lib/assets/icons/search-normal.svg';
+	import { goto } from '$app/navigation';
+	import book from '$lib/assets/icons/book.png';
 	import mic from '$lib/assets/icons/mic.svg';
 	import pen from '$lib/assets/icons/pen.png';
-	import book from '$lib/assets/icons/book.png';
+	import searchIcon from '$lib/assets/icons/search-normal.svg';
 	import send from '$lib/assets/icons/send.svg';
-	import { goto } from '$app/navigation';
-	import { chatStore, sendingMessage } from '$lib/stores/chatStore';
+	import { Input } from '$lib/components/ui/input';
 	import Spinner from '$lib/components/ui/spinner/spinner.svelte';
-	import Microphone from './Chat/Microphone.svelte';
+	import { chatStore, sendingMessage } from '$lib/stores/chatStore';
 
 	const { sendMessage } = chatStore;
 

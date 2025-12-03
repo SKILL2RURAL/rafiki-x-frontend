@@ -29,6 +29,13 @@
 	src: url(https://fonts.googleapis.com/css2?family=Mulish:ital,wght@0,200..1000;1,200..1000&display=swap);
 }
 
+@font-face {
+	font-family: 'Impact';
+	src: url('/fonts/impact.ttf') format('truetype');
+	font-weight: 400;
+	font-style: normal;
+}
+
 :root {
 	--radius: 0.625rem;
 	--background: oklch(1 0 0);
@@ -137,7 +144,7 @@
 }
 
 @theme {
-	--font-mulish: Mulish, system-ui, sans-serif;
+	--font-impact: Impact --font-mulish: Mulish, system-ui, sans-serif;
 	--font-satoshi-regular: Satoshi-Regular, system-ui, sans-serif;
 	--font-plus-jakarta-sans-semibold: PlusJakartaSans-Semibold, system-ui, sans-serif;
 	--font-plus-jakarta-sans-medium: PlusJakartaSans-Medium, system-ui, sans-serif;

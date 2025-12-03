@@ -7,6 +7,7 @@
 </script>
 
 <div class="bg-white px-5 h-[320px] w-[800px] flex flex-col justify-center">
+	<p class="font-semibold mb-3">Add Feedback<span class="font-normal">(optional)</span></p>
 	<textarea
 		placeholder="Enter text here..."
 		bind:value={text}
@@ -22,7 +23,7 @@
 		>
 		<Button
 			onclick={closeFeedback}
-			class="w-full h-[60px] text-white rounded-[10px] bg-gradient-to-r from-[#51A3DA] to-[#60269E]"
+			class="w-full h-[60px] text-white rounded-[10px] bg-linear-to-r from-[#51A3DA] to-[#60269E]"
 			>Send</Button
 		>
 	</div>

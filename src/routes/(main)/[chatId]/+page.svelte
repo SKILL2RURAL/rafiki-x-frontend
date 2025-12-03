@@ -1,9 +1,9 @@
 <script>
 	import { onMount } from 'svelte';
-	import Messaging from '../../../components/Chat/Messaging.svelte';
-	import Layout from '../../../components/Layout/Layout.svelte';
+	import Messaging from '../../../components/main/Chat/Messaging.svelte';
 	import { chatStore, initialMessage } from '$lib/stores/chatStore';
 	import { page } from '$app/state';
+	import Layout from '../../../components/main/Layout/Layout.svelte';
 
 	$effect(() => {
 		chatStore.getSingleConversation(Number(page.params.chatId));

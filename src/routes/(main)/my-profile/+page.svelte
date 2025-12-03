@@ -6,17 +6,17 @@
 	import { onMount } from 'svelte';
 	import { toast } from 'svelte-sonner';
 	import { get } from 'svelte/store';
-	import Layout from '../../../components/Layout/Layout.svelte';
-	import ChangeEmailModal from '../../../components/Profile/ChangeEmailModal.svelte';
-	import ChangeNameModal from '../../../components/Profile/ChangeNameModal.svelte';
-	import ChangePasswordModal from '../../../components/Profile/ChangePasswordModal.svelte';
-	import DeleteAccountConfirmDialog from '../../../components/Profile/DeleteAccountConfirmDialog.svelte';
+	import ChangeEmailModal from '../../../components/main/Profile/ChangeEmailModal.svelte';
+	import ChangeNameModal from '../../../components/main/Profile/ChangeNameModal.svelte';
+	import ChangePasswordModal from '../../../components/main/Profile/ChangePasswordModal.svelte';
+	import DeleteAccountConfirmDialog from '../../../components/main/Profile/DeleteAccountConfirmDialog.svelte';
 	import PersonCircle from '../../../lib/assets/icons/person-circle.png';
 	import EnvelopeFill from '../../../lib/assets/icons/envelope-fill.png';
 	import LockFill from '../../../lib/assets/icons/lock-fill.png';
 	import TrashFill from '../../../lib/assets/icons/trash-fill.png';
 	import DefualtProfileImage from '../../../lib/assets/icons/default-profile.png';
 	import { cn } from '$lib/utils';
+	import Layout from '../../../components/main/Layout/Layout.svelte';
 
 	let isDeleteDialogOpen = $state(false);
 	let isChangePasswordModalOpen = $state(false);

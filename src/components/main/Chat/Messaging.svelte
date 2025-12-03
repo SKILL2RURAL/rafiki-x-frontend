@@ -307,19 +307,25 @@
 		<div class="border border-[#E8E8E8] rounded-[20px] p-4 bg-white shadow-md">
 			<div class="flex flex-col px-3 py-2 gap-4">
 				<div class="flex">
-					<img src={search} class="ml-2" width="16" height="16" alt="Search Icon" />
-					<!-- Text Input -->
-					<input
-						type="text"
-						placeholder="Ask Rafiki..."
-						value={$newMessage}
-						oninput={(e: Event) => {
-							const target = e.target as HTMLInputElement;
-							chatStore.setNewMessage(target.value);
-						}}
-						class=" px-2 text-sm bg-transparent outline-none w-full"
-						onkeydown={(e) => e.key === 'Enter' && handleSend()}
-					/>
+					{#if $isRecording}
+						<p class="text-[#80899A] text-[16px] font-medium">Listening........</p>
+					{:else if $isTranscribing}
+						<p class="text-[#80899A] text-[16px] font-medium">Gathering thoughts........</p>
+					{:else}
+						<img src={search} class="ml-2" width="16" height="16" alt="Search Icon" />
+						<!-- Text Input -->
+						<input
+							type="text"
+							placeholder="Ask Rafiki..."
+							value={$newMessage}
+							oninput={(e: Event) => {
+								const target = e.target as HTMLInputElement;
+								chatStore.setNewMessage(target.value);
+							}}
+							class=" px-2 text-sm bg-transparent outline-none w-full"
+							onkeydown={(e) => e.key === 'Enter' && handleSend()}
+						/>
+					{/if}
 				</div>
 
 				<div class="flex justify-between">

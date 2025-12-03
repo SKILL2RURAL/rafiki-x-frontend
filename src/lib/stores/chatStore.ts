@@ -1,6 +1,6 @@
 import { api } from '$lib/api';
 import type { ChatState, Conversation, Message, MessagePayload } from '$lib/types/chat';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import { derived, writable } from 'svelte/store';
 
 const initialState: ChatState = {
@@ -106,7 +106,9 @@ function createChatStore() {
 					conversations: data.data ?? []
 				}));
 			} catch (error) {
-				console.log(error);
+				if (error instanceof AxiosError) {
+					console.log('Axios error ->', error);
+				}
 				throw error;
 			} finally {
 				update((state) => ({ ...state, isLoading: false }));
@@ -212,6 +214,19 @@ function createChatStore() {
 		deleteResume: async (id: number) => {
 			try {
 				const { data } = await api.delete(`/resume/${id}`);
+				if (data.success) {
+					return true;
+				}
+			} catch (error) {
+				console.error(error);
+				throw error;
+			}
+		},
+
+		// FUNCTION TO DELETE A SINGLE CONVERSATION
+		deleteSingleConversation: async (conversationId: string) => {
+			try {
+				const { data } = await api.delete(`/chat/conversations/${conversationId}`);
 				if (data.success) {
 					return true;
 				}

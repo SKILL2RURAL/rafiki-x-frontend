@@ -2,8 +2,8 @@
 	import { goto } from '$app/navigation';
 	import logo from '$lib/assets/icons/logo-gradient.png';
 	import { X } from 'lucide-svelte';
-	import Layout from '../../../components/Layout/Layout.svelte';
-	import ResumeUploader from '../../../components/my-resume/ResumeUploader.svelte';
+	import ResumeUploader from '../../../components/main/my-resume/ResumeUploader.svelte';
+	import Layout from '../../../components/main/Layout/Layout.svelte';
 </script>
 
 <Layout>
@@ -19,7 +19,7 @@
 				}}
 				class="absolute top-7 right-5 cursor-pointer bg-white h-[35px] w-[35px] flex items-center justify-center text-[18px] rounded-full text-[#60269e]"
 			>
-				<X/>
+				<X />
 			</button>
 			<h1 class="text-[24px] font-bold font-mulish text-white">My Resume</h1>
 			<!-- {#if files.length === 0} -->
