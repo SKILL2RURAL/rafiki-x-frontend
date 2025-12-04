@@ -7,7 +7,7 @@
 	import logo from '$lib/assets/icons/logo-gradient.png';
 	import { X } from 'lucide-svelte';
 	import CareerGuideCard from '../../../components/CareerGuideCard.svelte';
-	import Layout from '../../../components/Layout/Layout.svelte';
+	import Layout from '../../../components/main/Layout/Layout.svelte';
 
 	const lists = [
 		{

@@ -10,14 +10,14 @@
 		<h2 class="font-bold text-lg md:text-[24px] justify-center text-white">
 			Learn more about rafiki X
 		</h2>
-			<button
-				onclick={() => {
-					goto('/');
-				}}
-				class="absolute top-7 right-5 cursor-pointer bg-white h-[35px] w-[35px] flex items-center justify-center text-[18px] rounded-full text-[#60269e]"
-			>
-				<X/>
-			</button>
+		<button
+			onclick={() => {
+				goto('/');
+			}}
+			class="absolute top-7 right-5 cursor-pointer bg-white h-[35px] w-[35px] flex items-center justify-center text-[18px] rounded-full text-[#60269e]"
+		>
+			<X />
+		</button>
 	</div>
 	<div class="flex flex-col text-[14px] md:text-[18px] gap-8">
 		<p class="font-bold text-white">Last updated: February 20th, 2024</p>

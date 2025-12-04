@@ -12,7 +12,7 @@
 	import pdfGrey from '$lib/assets/icons/pdf-grey.png';
 	import pdfLight from '$lib/assets/icons/pdf-white.svg';
 	import logout from '$lib/assets/icons/door-open.png';
-	import { ChevronRight, Ellipsis, MessageCircle } from 'lucide-svelte';
+	import { ChevronRight, MessageCircle } from 'lucide-svelte';
 	import noChat from '$lib/assets/icons/empty-state.png';
 	import { history } from '$lib';
 	import greaterArrow from '$lib/assets/icons/greaterArrow.png';
@@ -21,12 +21,9 @@
 	import { chats, chatStore } from '$lib/stores/chatStore';
 	import { profile } from '$lib/stores/profile';
 	import * as Avatar from '$lib/components/ui/avatar/index.js';
-	// import * as Drawer from '$lib/components/ui/drawer/index.js';
-	import X from '@lucide/svelte/icons/x';
-	import type { Conversation } from '$lib/types/chat';
-	import Button from '$lib/components/ui/button/button.svelte';
-	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
-	import ReuseableDrawer from '../../Common/ReuseableDrawer.svelte';
+	import ChatHistoryDrawer from './ChatHistoryDrawer.svelte';
+
+	let { onOpenCreateAccount }: { onOpenCreateAccount?: () => void } = $props();
 
 	const todayHistory = history.find((item) => item.day === 'TODAY');
 
@@ -48,43 +45,7 @@
 		}
 	}
 
-	function groupChats(chats: Conversation[]) {
-		const today = new Date();
-		const yesterday = new Date();
-		yesterday.setDate(today.getDate() - 1);
-
-		// Helper to check date
-		const isSameDay = (d1: Date, d2: Date) =>
-			d1.getFullYear() === d2.getFullYear() &&
-			d1.getMonth() === d2.getMonth() &&
-			d1.getDate() === d2.getDate();
-
-		const groups: {
-			today: Conversation[];
-			yesterday: Conversation[];
-			recent: Conversation[];
-		} = {
-			today: [],
-			yesterday: [],
-			recent: []
-		};
-
-		for (const chat of chats) {
-			const date = new Date(chat.updatedAt);
-
-			if (isSameDay(date, today)) {
-				groups.today.push(chat);
-			} else if (isSameDay(date, yesterday)) {
-				groups.yesterday.push(chat);
-			} else {
-				groups.recent.push(chat);
-			}
-		}
-
-		return groups;
-	}
-
-	const grouped = $derived(groupChats($chats));
+	// chat grouping moved to ChatHistoryDrawer
 
 	async function handleDeleteSingleConversation(conversationId: string) {
 		await chatStore.deleteSingleConversation(conversationId);
@@ -186,7 +147,7 @@
 			</div>
 		</div>
 
-		<div class=" relativ white mt-auto h-[250px] pt-5">
+		<div class=" bg-white mt-auto h-[300px] pt-5">
 			<button
 				class={`w-full rounded-[11px] p-px mb-10 ${isSidebarOpen ? 'bg-linear-to-br from-[#51A3DA] to-[#60269E]' : ''}`}
 				onclick={() => goto('/learn-more')}
@@ -236,6 +197,11 @@
 						<p>My profile</p>
 					{/if}
 				</a>
+				<button class={`flex items-center gap-3`} onclick={() => onOpenCreateAccount?.()}>
+					{#if isSidebarOpen}
+						<p>Create account</p>
+					{/if}
+				</button>
 				<button
 					class={`flex items-center gap-3`}
 					onclick={() => {
@@ -253,125 +219,7 @@
 	</div>
 </aside>
 
-<!-- CHAT HISTORY  -->
-<ReuseableDrawer bind:isOpen={isDrawerOpen} onClose={(value) => (isDrawerOpen = value)}>
-	<div>
-		<div class="border-b border-[#A3AED0] flex items-center justify-between px-5 py-8">
-			<h1 class="text-[#262424] text-[20px] font-medium">Chat History</h1>
-			<button
-				class="bg-[#F9F9F9] size-[37px] flex items-center justify-center rounded-full cursor-pointer"
-				onclick={() => (isDrawerOpen = false)}
-			>
-				<X color="#5F5F5F" />
-			</button>
-		</div>
-		<div class="px-5 py-5 h-[90vh] overflow-auto">
-			{#if $chats.length > 0}
-				<div class="space-y-4">
-					<!-- TODAY -->
-					{#if grouped.today.length > 0}
-						<p class="text-[16px] font-medium text-[#808990]">Today</p>
-						{#each grouped.today as chat}
-							<a
-								href={`/${chat.id}`}
-								class="flex items-center justify-between w-full text-[#253B4B] text-[16px] font-medium"
-								onclick={() => (isDrawerOpen = false)}
-							>
-								<p>{chat.title}</p>
-							</a>
-
-							<DropdownMenu.Root>
-								<DropdownMenu.Trigger>
-									<Ellipsis class="rotate-90" size={18} color="black" />
-								</DropdownMenu.Trigger>
-								<DropdownMenu.Content>
-									<DropdownMenu.Group>
-										<DropdownMenu.Label
-											class="text-red-500"
-											onclick={() => {
-												handleDeleteSingleConversation(chat.id.toString());
-											}}
-											>Delete
-										</DropdownMenu.Label>
-									</DropdownMenu.Group>
-								</DropdownMenu.Content>
-							</DropdownMenu.Root>
-						{/each}
-					{/if}
-
-					<!-- YESTERDAY -->
-					{#if grouped.yesterday.length > 0}
-						<p class="text-[16px] font-medium text-[#808990]">Yesterday</p>
-						{#each grouped.yesterday as chat}
-							<a
-								href={`/${chat.id}`}
-								class="flex items-center justify-between w-full text-[#253B4B] text-[16px] font-medium"
-								onclick={() => (isDrawerOpen = false)}
-							>
-								<p>{chat.title}</p>
-
-								<DropdownMenu.Root>
-									<DropdownMenu.Trigger>
-										<Ellipsis class="rotate-90" size={18} color="black" />
-									</DropdownMenu.Trigger>
-									<DropdownMenu.Content>
-										<DropdownMenu.Group>
-											<DropdownMenu.Label class="text-red-500">Delete</DropdownMenu.Label>
-										</DropdownMenu.Group>
-									</DropdownMenu.Content>
-								</DropdownMenu.Root>
-							</a>
-						{/each}
-					{/if}
-
-					<!-- RECENT -->
-					{#if grouped.recent.length > 0}
-						<p class="text-[16px] font-medium text-[#808990] mt-6">Recent</p>
-						{#each grouped.recent as chat}
-							<div
-								class="flex items-center justify-between w-full text-[#253B4B] text-[16px] font-medium"
-							>
-								<a href={`/${chat.id}`} onclick={() => (isDrawerOpen = false)}>
-									<p>{chat.title}</p>
-								</a>
-								<DropdownMenu.Root>
-									<DropdownMenu.Trigger>
-										<Ellipsis class="rotate-90" size={18} color="black" />
-									</DropdownMenu.Trigger>
-									<DropdownMenu.Content>
-										<DropdownMenu.Group>
-											<DropdownMenu.Label
-												class="text-red-500 cursor-pointer"
-												onclick={() => {
-													handleDeleteSingleConversation(chat.id.toString());
-												}}>Delete</DropdownMenu.Label
-											>
-										</DropdownMenu.Group>
-									</DropdownMenu.Content>
-								</DropdownMenu.Root>
-							</div>
-						{/each}
-					{/if}
-				</div>
-			{:else}
-				<div class="flex flex-col items-center">
-					<img src={noChat} alt="" width="80" height="80" />
-					<p class="text-sm font-semibold text-[#80899A]">No Chat history</p>
-				</div>
-			{/if}
-		</div>
-		<div class="fixed bottom-0 w-full flex justify-end gap-5 py-3 bg-white">
-			<Button
-				class="p-px rounded-xl h-[50px] w-[200px] bg-gradient"
-				onclick={() => (isDrawerOpen = false)}
-			>
-				<div class="bg-white flex items-center justify-center w-full h-[47px] rounded-xl">
-					<p class="bg-gradient text-transparent bg-clip-text">Go back</p>
-				</div>
-			</Button>
-			<Button class="bg-gradient rounded-xl border border-[#FFFFFF] h-[50px] w-[200px]">
-				Clear all chat
-			</Button>
-		</div>
-	</div>
-</ReuseableDrawer>
+<ChatHistoryDrawer
+	bind:isOpen={isDrawerOpen}
+	onClose={(value: boolean) => (isDrawerOpen = value)}
+/>

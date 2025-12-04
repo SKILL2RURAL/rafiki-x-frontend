@@ -7,7 +7,7 @@
 </script>
 
 <div class="bg-white px-5 h-[320px] w-[800px] flex flex-col justify-center">
-	<p class="font-semibold mb-3">Add Feedback<span class="font-normal">(optional)</span></p>
+	<p class="font-semibold my-3">Add Feedback<span class="font-normal">(optional)</span></p>
 	<textarea
 		placeholder="Enter text here..."
 		bind:value={text}

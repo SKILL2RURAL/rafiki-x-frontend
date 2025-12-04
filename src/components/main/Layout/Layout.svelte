@@ -8,6 +8,7 @@
 	import Sidebar from './Sidebar.svelte';
 	import FeedbackInput from '../FeedbackInput.svelte';
 	import Feedback from '../../Feedback.svelte';
+	import CreateAccountModal from './CreateAccountModal.svelte';
 
 	let { children } = $props();
 
@@ -20,6 +21,7 @@
 	}
 
 	let loading = $state(true);
+	let isCreateAccountOpen = $state(false);
 
 	onMount(() => {
 		if (browser) {
@@ -42,7 +44,7 @@
 	<div
 		class="flex [--sidebar-full-width:340px] [--sidebar-collapsed-width:80px] [--navbar-height:7vh] h-dvh max-h-screen w-screen overflow-hidden bg-[#fcfcfc]"
 	>
-		<Sidebar />
+		<Sidebar onOpenCreateAccount={() => (isCreateAccountOpen = true)} />
 		<div class="w-full h-screen">
 			<Navbar />
 			<main class="p-5 pt-0 lg:pl-0 lg:pr-8 lg:pb-5 lg:pt-0 w-full">
@@ -73,4 +75,5 @@
 			</div>
 		</div>
 	</div>
+	<CreateAccountModal isOpen={isCreateAccountOpen} onClose={() => (isCreateAccountOpen = false)} />
 {/if}
