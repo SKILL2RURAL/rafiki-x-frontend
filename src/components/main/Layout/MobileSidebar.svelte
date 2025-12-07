@@ -86,7 +86,7 @@
 					onclick={() => goto('/learn-more')}
 				>
 					<p
-						class="text-[16px] font-bold bg-gradient-to-r from-[#51A3DA] to-[#60269E] text-transparent bg-clip-text"
+						class="text-[16px] font-bold bg-linear-to-r from-[#51A3DA] to-[#60269E] text-transparent bg-clip-text"
 					>
 						Learn more
 					</p>

@@ -1,18 +1,27 @@
 <script>
+	import { goto } from '$app/navigation';
 	import { onMount } from 'svelte';
-	import Messaging from '../../../components/Chat/Messaging.svelte';
-	import Layout from '../../../components/Layout/Layout.svelte';
+	import Messaging from '../../../components/main/Chat/Messaging.svelte';
 	import { chatStore, initialMessage } from '$lib/stores/chatStore';
 	import { page } from '$app/state';
+	import Layout from '../../../components/main/Layout/Layout.svelte';
 
 	$effect(() => {
-		chatStore.getSingleConversation(Number(page.params.chatId));
+		const id = Number(page.params.chatId);
+		(async () => {
+			try {
+				const ok = await chatStore.getSingleConversation(id);
+				if (!ok) goto('/');
+			} catch (e) {
+				goto('/');
+			}
+		})();
 
 		const unsubscribe = initialMessage.subscribe((message) => {
 			if (message) {
 				chatStore.sendMessage({
 					message,
-					conversationId: Number(page.params.chatId)
+					conversationId: id
 				});
 				chatStore.setInitialMessage(null);
 			}

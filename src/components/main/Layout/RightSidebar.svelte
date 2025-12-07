@@ -1,13 +1,13 @@
 <script lang="ts">
-	import TextEditor from '../my-resume/TextEditor.svelte'; // Adjust path as needed based on your project structure
 	import closeIcon from '$lib/assets/icons/close.png';
 	import ChatHistory from '../history/ChatHistory.svelte';
+	import TextEditor from '../my-resume/TextEditor.svelte';
 
 	let visible = $state(false);
 	let contentType = $state('');
 	let title = $state('');
 
-	export function show(type, t) {
+	export function show(type: any, t: any) {
 		contentType = type;
 		title = t;
 		visible = true;

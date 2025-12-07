@@ -12,7 +12,7 @@
 	import pdfGrey from '$lib/assets/icons/pdf-grey.png';
 	import pdfLight from '$lib/assets/icons/pdf-white.svg';
 	import logout from '$lib/assets/icons/door-open.png';
-	import { ChevronRight, Ellipsis, MessageCircle } from 'lucide-svelte';
+	import { ChevronRight, MessageCircle } from 'lucide-svelte';
 	import noChat from '$lib/assets/icons/empty-state.png';
 	import { history } from '$lib';
 	import greaterArrow from '$lib/assets/icons/greaterArrow.png';
@@ -21,20 +21,15 @@
 	import { chats, chatStore } from '$lib/stores/chatStore';
 	import { profile } from '$lib/stores/profile';
 	import * as Avatar from '$lib/components/ui/avatar/index.js';
-	import * as Drawer from '$lib/components/ui/drawer/index.js';
-	import ReuseableDrawer from '../Common/ReuseableDrawer.svelte';
-	import X from '@lucide/svelte/icons/x';
+	import ChatHistoryDrawer from './ChatHistoryDrawer.svelte';
 	import type { Conversation } from '$lib/types/chat';
+
+	let { onOpenCreateAccount }: { onOpenCreateAccount?: () => void } = $props();
 
 	const todayHistory = history.find((item) => item.day === 'TODAY');
 
 	// LOACAL STATES
 	let isDrawerOpen = $state(false);
-	// let grouped: {
-	// 	today: Conversation[];
-	// 	yesterday: Conversation[];
-	// 	recent: Conversation[];
-	// } = { today: [], yesterday: [], recent: [] };
 
 	onMount(() => {
 		chatStore.getConversations({});
@@ -51,30 +46,24 @@
 		}
 	}
 
-	function groupChats(chats: Conversation[]) {
+	function groupChats(chatsList: Conversation[]) {
 		const today = new Date();
 		const yesterday = new Date();
 		yesterday.setDate(today.getDate() - 1);
 
-		// Helper to check date
 		const isSameDay = (d1: Date, d2: Date) =>
 			d1.getFullYear() === d2.getFullYear() &&
 			d1.getMonth() === d2.getMonth() &&
 			d1.getDate() === d2.getDate();
 
-		const groups: {
-			today: Conversation[];
-			yesterday: Conversation[];
-			recent: Conversation[];
-		} = {
+		const groups: { today: Conversation[]; yesterday: Conversation[]; recent: Conversation[] } = {
 			today: [],
 			yesterday: [],
 			recent: []
 		};
 
-		for (const chat of chats) {
+		for (const chat of chatsList) {
 			const date = new Date(chat.updatedAt);
-
 			if (isSameDay(date, today)) {
 				groups.today.push(chat);
 			} else if (isSameDay(date, yesterday)) {
@@ -88,6 +77,24 @@
 	}
 
 	const grouped = $derived(groupChats($chats));
+
+	function groupChatsLimited(chatsList: Conversation[], limit: number) {
+		const g = groupChats(chatsList);
+		let remaining = limit;
+		const take = (arr: Conversation[]) => {
+			const n = Math.min(arr.length, remaining);
+			const res = arr.slice(0, n);
+			remaining -= n;
+			return res;
+		};
+		return {
+			today: take(g.today),
+			yesterday: remaining > 0 ? take(g.yesterday) : [],
+			recent: remaining > 0 ? take(g.recent) : []
+		};
+	}
+
+	const groupedLimited = $derived(groupChatsLimited($chats, 3));
 </script>
 
 <aside
@@ -108,18 +115,18 @@
 
 			<!-- Links  -->
 			<div class="my-5 space-y-3 mt-10">
-				<button
+				<a
+					href="/"
 					class={`text-[14px] font-normal p-2 rounded-[8px] cursor-pointer flex items-center gap-2 ${!isSidebarOpen ? 'justify-center' : ''} ${pathname === '/' ? 'bg-gradient text-white' : 'text-[#808990]'} w-full`}
-					onclick={() => goto('/')}
 				>
 					<MessageCircle size={17} color={pathname === '/' ? 'white' : '#808990'} />
 					{#if isSidebarOpen}
 						<p>Chat</p>
 					{/if}
-				</button>
-				<button
+				</a>
+				<a
+					href="/my-resume"
 					class={` text-[14px] font-normal p-2 rounded-[8px] cursor-pointer flex items-center gap-2 ${!isSidebarOpen ? 'justify-center' : ''} ${pathname.includes('my-resume') ? 'bg-gradient text-white' : 'text-[#808990]'} w-full`}
-					onclick={() => goto('/my-resume')}
 				>
 					{#if pathname.includes('my-resume')}
 						<img src={pdfLight} alt="" width="20" height="20" />
@@ -129,9 +136,9 @@
 					{#if isSidebarOpen}
 						<p>My Resume</p>
 					{/if}
-				</button>
-				<button
-					onclick={() => goto('/career-guide')}
+				</a>
+				<a
+					href="/career-guide"
 					class={` text-[14px] font-normal p-2 rounded-[8px] cursor-pointer flex items-center gap-2 ${!isSidebarOpen ? 'justify-center' : ''} ${pathname.includes('career-guide') ? 'bg-gradient text-white' : 'text-[#808990]'} w-full`}
 				>
 					{#if pathname.includes('/career-guide')}
@@ -142,7 +149,7 @@
 					{#if isSidebarOpen}
 						<p>Career Guide</p>
 					{/if}
-				</button>
+				</a>
 			</div>
 			<!-- Links end  -->
 
@@ -152,25 +159,59 @@
 					<div>
 						{#if $chats && $chats.length > 0}
 							<div class="space-y-3 overflow-y-auto no-scrollbar">
-								<p class="mb-4 font-[500] text-[12px] text-[#909090] uppercase">Today</p>
+								{#if groupedLimited.today.length > 0}
+									<p class="mb-4 font-medium text-[12px] text-[#909090] uppercase">Today</p>
+									{#each groupedLimited.today as chat}
+										<button
+											class={`flex justify-between items-center cursor-pointer w-full gap-5`}
+											onclick={() => {
+												goto(`/${chat.id}`);
+												chatStore.getSingleConversation(Number(chat.id));
+											}}
+										>
+											<p class="text-[#253B4B] text-[16px] text-left line-clamp-1">{chat.title}</p>
+											<img src={greaterArrow} alt="direction icon" width="7" height="13" />
+										</button>
+									{/each}
+								{/if}
 
-								{#each $chats.slice(0, 3) as chat}
-									<button
-										class={`flex justify-between items-center cursor-pointer w-full gap-5`}
-										onclick={() => {
-											goto(`/${chat.id}`);
-											chatStore.getSingleConversation(Number(chat.id));
-										}}
-									>
-										<p class="text-[#253B4B] text-[16px] text-left line-clamp-1">{chat.title}</p>
-										<img src={greaterArrow} alt="direction icon" width="7" height="13" />
-									</button>
-								{/each}
+								{#if groupedLimited.yesterday.length > 0}
+									<p class="mb-4 font-medium text-[12px] text-[#909090] uppercase">Yesterday</p>
+									{#each groupedLimited.yesterday as chat}
+										<button
+											class={`flex justify-between items-center cursor-pointer w-full gap-5`}
+											onclick={() => {
+												goto(`/${chat.id}`);
+												chatStore.getSingleConversation(Number(chat.id));
+											}}
+										>
+											<p class="text-[#253B4B] text-[16px] text-left line-clamp-1">{chat.title}</p>
+											<img src={greaterArrow} alt="direction icon" width="7" height="13" />
+										</button>
+									{/each}
+								{/if}
+
+								{#if groupedLimited.recent.length > 0}
+									<p class="mb-4 font-medium text-[12px] text-[#909090] uppercase">Recent</p>
+									{#each groupedLimited.recent as chat}
+										<button
+											class={`flex justify-between items-center cursor-pointer w-full gap-5`}
+											onclick={() => {
+												goto(`/${chat.id}`);
+												chatStore.getSingleConversation(Number(chat.id));
+											}}
+										>
+											<p class="text-[#253B4B] text-[16px] text-left line-clamp-1">{chat.title}</p>
+											<img src={greaterArrow} alt="direction icon" width="7" height="13" />
+										</button>
+									{/each}
+								{/if}
+
 								<button
 									class="flex items-center justify-between w-full gap-3 mt-5"
 									onclick={() => (isDrawerOpen = true)}
 								>
-									<p class="text-sm font-[400] text-[#80899A]">View All Chat history</p>
+									<p class="text-sm font-normal text-[#80899A]">View All Chat history</p>
 									<img src={greaterArrow} alt="direction icon" width="7" height="13" />
 								</button>
 							</div>
@@ -185,17 +226,23 @@
 			</div>
 		</div>
 
-		<div class=" relativ white mt-auto h-[250px] pt-5">
+		<div class=" bg-white mt-auto h-[300px] pt-5">
 			<button
-				class={`w-full flex items-center justify-between rounded-[10px] py-3 px-2 mb-10 ${isSidebarOpen ? 'border' : ''}`}
+				class={`w-full rounded-[11px] p-px mb-10 ${isSidebarOpen ? 'bg-linear-to-br from-[#51A3DA] to-[#60269E]' : ''}`}
 				onclick={() => goto('/learn-more')}
 			>
-				{#if isSidebarOpen}
-					<p class="text-[16px]">Learn more</p>
-					<div class="rounded-full bg-gradient p-1">
-						<ChevronRight color="white" size={15} />
+				<div class="bg-white py-3 px-2 rounded-[10px]">
+					<div
+						class="flex items-center bg-linear-to-br from-[#51A3DA] to-[#60269E] text-transparent bg-clip-text justify-between"
+					>
+						{#if isSidebarOpen}
+							<p class="text-[16px]">Learn more</p>
+							<div class="rounded-full bg-gradient p-1">
+								<ChevronRight color="white" size={15} />
+							</div>
+						{/if}
 					</div>
-				{/if}
+				</div>
 			</button>
 
 			{#if isSidebarOpen}
@@ -207,13 +254,13 @@
 					? 'items-center'
 					: ''}   font-semibold text-[#80899A] text-sm"
 			>
-				<button class={`flex items-center gap-3`}>
+				<button class={`flex items-center gap-3`} onclick={() => goto('/subscription')}>
 					<img src={premium} alt="Rafiki X" width="20" height="20" />
 					{#if isSidebarOpen}
 						<p>Go premium</p>
 					{/if}
 				</button>
-				<button class={` flex items-center gap-3`} onclick={() => goto('/my-profile')}>
+				<a href="/my-profile" class={` flex items-center gap-3`}>
 					{#if $profile.data?.profilePhoto}
 						<Avatar.Root class="size-[20px]">
 							<Avatar.Image src={$profile.data?.profilePhoto} alt="profile" />
@@ -227,6 +274,11 @@
 
 					{#if isSidebarOpen}
 						<p>My profile</p>
+					{/if}
+				</a>
+				<button class={`flex items-center gap-3`} onclick={() => onOpenCreateAccount?.()}>
+					{#if isSidebarOpen}
+						<p>Create account</p>
 					{/if}
 				</button>
 				<button
@@ -246,71 +298,7 @@
 	</div>
 </aside>
 
-<ReuseableDrawer bind:isOpen={isDrawerOpen} onClose={(value) => (isDrawerOpen = value)}>
-	<div>
-		<div class="border-b border-[#A3AED0] flex items-center justify-between px-5 py-8">
-			<h1 class="text-[#262424] text-[20px] font-[500]">Chat History</h1>
-			<button
-				class="bg-[#F9F9F9] size-[37px] flex items-center justify-center rounded-full cursor-pointer"
-				onclick={() => (isDrawerOpen = false)}
-			>
-				<X color="#5F5F5F" />
-			</button>
-		</div>
-		<div class="px-5 py-8">
-			{#if $chats.length > 0}
-				<div class="space-y-4">
-					<!-- TODAY -->
-					{#if grouped.today.length > 0}
-						<p class="text-[16px] font-[500] text-[#808990] mt-6">Today</p>
-						{#each grouped.today as chat}
-							<a
-								href={`/${chat.id}`}
-								class="flex items-center justify-between w-full text-[#253B4B] text-[16px] font-[500]"
-								onclick={() => (isDrawerOpen = false)}
-							>
-								<p>{chat.title}</p>
-								<Ellipsis class="rotate-90" size={18} color="black" />
-							</a>
-						{/each}
-					{/if}
-
-					<!-- YESTERDAY -->
-					{#if grouped.yesterday.length > 0}
-						<p class="text-[16px] font-[500] text-[#808990] mt-6">Yesterday</p>
-						{#each grouped.yesterday as chat}
-							<a
-								href={`/${chat.id}`}
-								class="flex items-center justify-between w-full text-[#253B4B] text-[16px] font-[500]"
-								onclick={() => (isDrawerOpen = false)}
-							>
-								<p>{chat.title}</p>
-								<Ellipsis class="rotate-90" size={18} color="black" />
-							</a>
-						{/each}
-					{/if}
-
-					<!-- RECENT -->
-					{#if grouped.recent.length > 0}
-						<p class="text-[16px] font-[500] text-[#808990] mt-6">Recent</p>
-						{#each grouped.recent as chat}
-							<a
-								href={`/${chat.id}`}
-								class="flex items-center justify-between w-full text-[#253B4B] text-[16px] font-[500]"
-								onclick={() => (isDrawerOpen = false)}
-							>
-								<p>{chat.title}</p>
-								<Ellipsis class="rotate-90" size={18} color="black" />
-							</a>
-						{/each}
-					{/if}
-				</div>
-			{:else}
-				<div class="flex flex-col items-center">
-					<img src={noChat} alt="" width="80" height="80" />
-					<p class="text-sm font-semibold text-[#80899A]">No Chat history</p>
-				</div>
-			{/if}
-		</div>
-	</div>
-</ReuseableDrawer>
+<ChatHistoryDrawer
+	bind:isOpen={isDrawerOpen}
+	onClose={(value: boolean) => (isDrawerOpen = value)}
+/>

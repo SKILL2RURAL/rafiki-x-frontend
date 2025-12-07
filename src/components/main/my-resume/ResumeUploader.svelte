@@ -1,18 +1,17 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
 	import downloadIcon from '$lib/assets/icons/downloadIcon.png';
-	import threeDot from '$lib/assets/icons/threeDot.png';
 	import upload from '$lib/assets/icons/upload.png';
 	import Button from '$lib/components/ui/button/button.svelte';
+	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 	import { chatStore, resumes } from '$lib/stores/chatStore';
+	import type { Resume } from '$lib/types/chat';
+	import { cn } from '$lib/utils';
+	import { EllipsisVertical } from 'lucide-svelte';
 	import { onMount } from 'svelte';
 	import { toast } from 'svelte-sonner';
-	import Drawer from '../Common/ReuseableDrawer.svelte';
+	import Drawer from '../../Common/ReuseableDrawer.svelte';
 	import TextEditor from './TextEditor.svelte';
-	import { goto } from '$app/navigation';
-	import type { Resume } from '$lib/types/chat';
-	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
-	import { EllipsisVertical } from 'lucide-svelte';
-	import { cn } from '$lib/utils';
 
 	// GET ALL RESUMES ON MOUNT
 	onMount(async () => {

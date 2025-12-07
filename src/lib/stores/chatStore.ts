@@ -1,6 +1,6 @@
 import { api } from '$lib/api';
 import type { ChatState, Conversation, Message, MessagePayload } from '$lib/types/chat';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import { derived, writable } from 'svelte/store';
 
 const initialState: ChatState = {
@@ -106,7 +106,9 @@ function createChatStore() {
 					conversations: data.data ?? []
 				}));
 			} catch (error) {
-				console.log(error);
+				if (error instanceof AxiosError) {
+					console.log('Axios error ->', error);
+				}
 				throw error;
 			} finally {
 				update((state) => ({ ...state, isLoading: false }));
@@ -213,6 +215,76 @@ function createChatStore() {
 			try {
 				const { data } = await api.delete(`/resume/${id}`);
 				if (data.success) {
+					return true;
+				}
+			} catch (error) {
+				console.error(error);
+				throw error;
+			}
+		},
+
+		// FUNCTION TO DELETE A SINGLE CONVERSATION
+		deleteSingleConversation: async (conversationId: number) => {
+			try {
+				const { data } = await api.delete(`/chat/conversations/${conversationId}`);
+				if (data.success) {
+					update((state) => ({
+						...state,
+						conversations: state.conversations.filter((c) => c.id !== conversationId),
+						...(state.conversation?.id === conversationId
+							? { conversation: null, messages: [] }
+							: {})
+					}));
+					return true;
+				}
+			} catch (error) {
+				console.error(error);
+				throw error;
+			}
+		},
+
+		// FUNCTION TO DELETE ALL CONVERSATIONS
+		deleteAllConversations: async () => {
+			try {
+				const { data } = await api.delete('/chat/conversations');
+				if (data.success) {
+					update((state) => ({
+						...state,
+						conversations: [],
+						conversation: null,
+						messages: []
+					}));
+					return data.data as number;
+				}
+			} catch (error) {
+				console.error(error);
+				throw error;
+			}
+		},
+
+		// Submit feedback for a message
+		submitMessageFeedback: async (
+			messageId: number,
+			payload: { feedbackType: 'LIKE' | 'DISLIKE'; feedbackText: string }
+		) => {
+			try {
+				const { data } = await api.post(`/chat/messages/${messageId}/feedback`, payload);
+
+				if (data.success && data.data) {
+					const returned = data.data as Message;
+					update((state) => ({
+						...state,
+						messages: state.messages.map((m) =>
+							m.id === messageId
+								? {
+										...m,
+										feedback: returned.feedback ?? payload.feedbackType,
+										feedbackText: returned.feedbackText ?? payload.feedbackText,
+										feedbackAt: returned.feedbackAt ?? new Date().toISOString()
+									}
+								: m
+						)
+					}));
 					return true;
 				}
 			} catch (error) {

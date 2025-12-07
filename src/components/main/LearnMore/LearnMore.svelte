@@ -4,10 +4,10 @@
 </script>
 
 <div
-	class="p-12 mx-auto font-mulish w-[370px] height-[716px] md:w-[756px] lg:w-[856px] md:h-[1063px] rounded-[20px] bg-gradient-to-b from-[#928bb8] via-[#ebdef8] to-[#FFFFFF] relative"
+	class="p-12 mx-auto font-mulish w-[370px] md:w-[756px] lg:w-[856px] min-h-full rounded-[20px] bg-gradient-background relative"
 >
 	<div class="flex justify-center gap-3 mb-7">
-		<h2 class="font-[700] text-lg md:text-[24px] justify-center text-white">
+		<h2 class="font-bold text-lg md:text-[24px] justify-center text-white">
 			Learn more about rafiki X
 		</h2>
 		<button
@@ -20,7 +20,7 @@
 		</button>
 	</div>
 	<div class="flex flex-col text-[14px] md:text-[18px] gap-8">
-		<p class="font-[700] text-white">Last updated: February 20th, 2024</p>
+		<p class="font-bold text-white">Last updated: February 20th, 2024</p>
 		<p>
 			Lorem ipsum dolor sit, amet consectetur adipisicing elit. Ab, nihil molestias! Nisi, rerum
 			dolorum eius aliquid repellat harum. Animi excepturi eligendi omnis quisquam voluptatem ut

@@ -1,13 +1,13 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import logo from '$lib/assets/icons/logo-gradient.png';
-	import X from '$lib/assets/icons/gradient-x.png';
-	import Layout from '../../../components/Layout/Layout.svelte';
-	import ResumeUploader from '../../../components/my-resume/ResumeUploader.svelte';
+	import { X } from 'lucide-svelte';
+	import ResumeUploader from '../../../components/main/my-resume/ResumeUploader.svelte';
+	import Layout from '../../../components/main/Layout/Layout.svelte';
 </script>
 
 <Layout>
-	<div class="flex flex-col items-center gap-2 h-full justify-center">
+	<div class="min-h-full flex flex-col items-center gap-2 justify-center">
 		<img src={logo} alt="Rafki-X logo" width={38} height={38} />
 
 		<div
@@ -19,7 +19,7 @@
 				}}
 				class="absolute top-7 right-5 cursor-pointer bg-white h-[35px] w-[35px] flex items-center justify-center text-[18px] rounded-full text-[#60269e]"
 			>
-				<img src={X} alt="" width="18" height="18" />
+				<X />
 			</button>
 			<h1 class="text-[24px] font-bold font-mulish text-white">My Resume</h1>
 			<!-- {#if files.length === 0} -->
