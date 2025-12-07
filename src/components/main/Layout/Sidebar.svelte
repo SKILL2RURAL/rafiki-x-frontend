@@ -22,6 +22,7 @@
 	import { profile } from '$lib/stores/profile';
 	import * as Avatar from '$lib/components/ui/avatar/index.js';
 	import ChatHistoryDrawer from './ChatHistoryDrawer.svelte';
+	import type { Conversation } from '$lib/types/chat';
 
 	let { onOpenCreateAccount }: { onOpenCreateAccount?: () => void } = $props();
 
@@ -45,11 +46,55 @@
 		}
 	}
 
-	// chat grouping moved to ChatHistoryDrawer
+	function groupChats(chatsList: Conversation[]) {
+		const today = new Date();
+		const yesterday = new Date();
+		yesterday.setDate(today.getDate() - 1);
 
-	async function handleDeleteSingleConversation(conversationId: string) {
-		await chatStore.deleteSingleConversation(conversationId);
+		const isSameDay = (d1: Date, d2: Date) =>
+			d1.getFullYear() === d2.getFullYear() &&
+			d1.getMonth() === d2.getMonth() &&
+			d1.getDate() === d2.getDate();
+
+		const groups: { today: Conversation[]; yesterday: Conversation[]; recent: Conversation[] } = {
+			today: [],
+			yesterday: [],
+			recent: []
+		};
+
+		for (const chat of chatsList) {
+			const date = new Date(chat.updatedAt);
+			if (isSameDay(date, today)) {
+				groups.today.push(chat);
+			} else if (isSameDay(date, yesterday)) {
+				groups.yesterday.push(chat);
+			} else {
+				groups.recent.push(chat);
+			}
+		}
+
+		return groups;
 	}
+
+	const grouped = $derived(groupChats($chats));
+
+	function groupChatsLimited(chatsList: Conversation[], limit: number) {
+		const g = groupChats(chatsList);
+		let remaining = limit;
+		const take = (arr: Conversation[]) => {
+			const n = Math.min(arr.length, remaining);
+			const res = arr.slice(0, n);
+			remaining -= n;
+			return res;
+		};
+		return {
+			today: take(g.today),
+			yesterday: remaining > 0 ? take(g.yesterday) : [],
+			recent: remaining > 0 ? take(g.recent) : []
+		};
+	}
+
+	const groupedLimited = $derived(groupChatsLimited($chats, 3));
 </script>
 
 <aside
@@ -114,20 +159,54 @@
 					<div>
 						{#if $chats && $chats.length > 0}
 							<div class="space-y-3 overflow-y-auto no-scrollbar">
-								<p class="mb-4 font-medium text-[12px] text-[#909090] uppercase">Today</p>
+								{#if groupedLimited.today.length > 0}
+									<p class="mb-4 font-medium text-[12px] text-[#909090] uppercase">Today</p>
+									{#each groupedLimited.today as chat}
+										<button
+											class={`flex justify-between items-center cursor-pointer w-full gap-5`}
+											onclick={() => {
+												goto(`/${chat.id}`);
+												chatStore.getSingleConversation(Number(chat.id));
+											}}
+										>
+											<p class="text-[#253B4B] text-[16px] text-left line-clamp-1">{chat.title}</p>
+											<img src={greaterArrow} alt="direction icon" width="7" height="13" />
+										</button>
+									{/each}
+								{/if}
 
-								{#each $chats.slice(0, 3) as chat}
-									<button
-										class={`flex justify-between items-center cursor-pointer w-full gap-5`}
-										onclick={() => {
-											goto(`/${chat.id}`);
-											chatStore.getSingleConversation(Number(chat.id));
-										}}
-									>
-										<p class="text-[#253B4B] text-[16px] text-left line-clamp-1">{chat.title}</p>
-										<img src={greaterArrow} alt="direction icon" width="7" height="13" />
-									</button>
-								{/each}
+								{#if groupedLimited.yesterday.length > 0}
+									<p class="mb-4 font-medium text-[12px] text-[#909090] uppercase">Yesterday</p>
+									{#each groupedLimited.yesterday as chat}
+										<button
+											class={`flex justify-between items-center cursor-pointer w-full gap-5`}
+											onclick={() => {
+												goto(`/${chat.id}`);
+												chatStore.getSingleConversation(Number(chat.id));
+											}}
+										>
+											<p class="text-[#253B4B] text-[16px] text-left line-clamp-1">{chat.title}</p>
+											<img src={greaterArrow} alt="direction icon" width="7" height="13" />
+										</button>
+									{/each}
+								{/if}
+
+								{#if groupedLimited.recent.length > 0}
+									<p class="mb-4 font-medium text-[12px] text-[#909090] uppercase">Recent</p>
+									{#each groupedLimited.recent as chat}
+										<button
+											class={`flex justify-between items-center cursor-pointer w-full gap-5`}
+											onclick={() => {
+												goto(`/${chat.id}`);
+												chatStore.getSingleConversation(Number(chat.id));
+											}}
+										>
+											<p class="text-[#253B4B] text-[16px] text-left line-clamp-1">{chat.title}</p>
+											<img src={greaterArrow} alt="direction icon" width="7" height="13" />
+										</button>
+									{/each}
+								{/if}
+
 								<button
 									class="flex items-center justify-between w-full gap-3 mt-5"
 									onclick={() => (isDrawerOpen = true)}

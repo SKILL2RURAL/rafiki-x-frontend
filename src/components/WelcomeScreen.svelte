@@ -50,7 +50,7 @@
 	</p>
 
 	<div
-		class="bg-white px-5 lg:p-10 py-10 lg:py-15 shadow-md rounded-[20px] my-5 lg:my-10 sm:max-w-full lg:max-w-full mx-0 lg:mx-15"
+		class="bg-white px-5 lg:p-10 py-10 lg:py-15 shadow-md rounded-[20px] my-5 lg:my-10 sm:max-w-full lg:max-w-full mx-3 lg:mx-15"
 	>
 		<div class="flex items-center gap-3">
 			<div class="border border-[#E8E8E8] rounded-[100px] flex px-4 py-2 w-full">
@@ -80,11 +80,12 @@
 			</div>
 		</div>
 
+		<!-- QUICK LINKS  -->
 		<div
-			class="items-center justify-center mt-3 lg:mt-5 flex gap-5 w-full max-w-[300px] lg:max-w-full mx-auto overflow-x-auto no-scrollbar pb-1"
+			class="mt-3 lg:mt-5 grid grid-cols-3 gap-5 w-[70vw] md:w-full overflow-x-auto no-scrollbar pb-1 mx-auto"
 		>
 			<button
-				class="shadow-md rounded-[100px] flex items-center justify-center gap-2 px-6 lg:px-4 py-3 w-fit whitespace-nowrap"
+				class="shadow-md rounded-[100px] flex items-center justify-center gap-2 px-6 lg:px-4 py-3 whitespace-nowrap min-w-[150px] lg:min-w-fit bg-white"
 				onclick={() =>
 					handleSend(
 						"I want to write a story, but I'm not sure where to start. Can you ask me some questions to help me get started and then help me write it?"
@@ -95,7 +96,7 @@
 				<p class="text-[14px] lg:font-normal text-[#1E1E1E]">Write a Story</p>
 			</button>
 			<button
-				class="shadow-md rounded-[100px] flex items-center justify-center gap-2 px-6 lg:px-4 py-3 w-fit whitespace-nowrap"
+				class="shadow-md rounded-[100px] flex items-center justify-center gap-2 px-6 lg:px-4 py-3 whitespace-nowrap min-w-[150px] lg:min-w-fit bg-white"
 				onclick={() =>
 					handleSend(
 						"I'd like to have a chat about my career. I'm at a crossroads and could use some help exploring my options. Can you ask me some questions to understand my situation better?"
@@ -106,7 +107,7 @@
 				<p class="text-[14px] lg:font-normal text-[#1E1E1E]">Career Chat</p>
 			</button>
 			<button
-				class="shadow-md rounded-[100px] flex items-center justify-center gap-2 px-6 lg:px-4 py-3 w-fit whitespace-nowrap"
+				class="shadow-md rounded-[100px] flex items-center justify-center gap-2 px-6 lg:px-4 py-3 whitespace-nowrap min-w-[150px] lg:min-w-fit bg-white"
 				onclick={() =>
 					handleSend(
 						"I have an interview coming up and I'm feeling nervous. Can you help me prepare by running through some common interview questions and giving me feedback?"

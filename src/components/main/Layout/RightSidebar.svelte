@@ -7,7 +7,7 @@
 	let contentType = $state('');
 	let title = $state('');
 
-	export function show(type, t) {
+	export function show(type: any, t: any) {
 		contentType = type;
 		title = t;
 		visible = true;

@@ -38,6 +38,31 @@
 	let uploadingFile = false;
 	let microphone: Microphone;
 
+	async function copyText(text: string) {
+		try {
+			await navigator.clipboard.writeText(text);
+			toast.success('Copied to clipboard');
+		} catch (e) {
+			toast.error('Failed to copy');
+		}
+	}
+
+	async function handleFeedback(messageId: number, type: 'LIKE' | 'DISLIKE') {
+		const defaultText =
+			type === 'LIKE' ? 'Very helpful response!' : 'The response was not relevant to my question';
+		try {
+			await chatStore.submitMessageFeedback(messageId, {
+				feedbackType: type,
+				feedbackText: defaultText
+			});
+			toast.success(
+				type === 'LIKE' ? 'Response Liked successfully' : 'Response Disliked successfully'
+			);
+		} catch (e) {
+			toast.error('Failed to submit feedback');
+		}
+	}
+
 	async function handleSend() {
 		if ($sendingMessage) return;
 
@@ -121,11 +146,9 @@
 		return `${value} ${sizes[i]}`;
 	}
 
-	$: if ($messages) {
-		scrollToBottom();
-	}
-
-	$: console.log(selectedFile);
+	// $: if ($messages) {
+	// 	scrollToBottom();
+	// }
 </script>
 
 <div
@@ -158,7 +181,11 @@
 									<div class="flex items-center">
 										<Tooltip.Provider>
 											<Tooltip.Root>
-												<Tooltip.Trigger class="hover:bg-gray-100 rounded-lg p-2" aria-label="Copy">
+												<Tooltip.Trigger
+													class="hover:bg-gray-100 rounded-lg p-2"
+													aria-label="Copy"
+													onclick={() => copyText(msg.content)}
+												>
 													<img
 														src={copyIcon}
 														class="self-end cursor-pointer"
@@ -175,7 +202,11 @@
 
 										<Tooltip.Provider>
 											<Tooltip.Root>
-												<Tooltip.Trigger class="hover:bg-gray-100 rounded-lg p-2" aria-label="Like">
+												<Tooltip.Trigger
+													class="hover:bg-gray-100 rounded-lg p-2"
+													aria-label="Like"
+													onclick={() => msg.id && handleFeedback(msg.id, 'LIKE')}
+												>
 													<img
 														src={like}
 														width="15"
@@ -195,6 +226,7 @@
 												<Tooltip.Trigger
 													class="hover:bg-gray-100 rounded-lg p-2"
 													aria-label="Dislike"
+													onclick={() => msg.id && handleFeedback(msg.id, 'DISLIKE')}
 												>
 													<img
 														src={thumDown}
@@ -209,6 +241,11 @@
 												</Tooltip.Content>
 											</Tooltip.Root>
 										</Tooltip.Provider>
+										{#if msg.feedback}
+											<span class="ml-2 text-xs text-[#808990]">
+												{msg.feedback === 'LIKE' ? 'liked' : 'disliked'}
+											</span>
+										{/if}
 										<!-- <img
 											src={megaphone}
 											width="16"
@@ -262,7 +299,11 @@
 
 									<Tooltip.Provider>
 										<Tooltip.Root>
-											<Tooltip.Trigger class="hover:bg-gray-100 rounded-lg p-2" aria-label="Copy">
+											<Tooltip.Trigger
+												class="hover:bg-gray-100 rounded-lg p-2"
+												aria-label="Copy"
+												onclick={() => copyText(msg.content)}
+											>
 												<img
 													src={copyIcon}
 													class="self-end cursor-pointer"

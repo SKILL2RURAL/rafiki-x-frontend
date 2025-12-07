@@ -7,6 +7,7 @@
 	import { chats, chatStore } from '$lib/stores/chatStore';
 	import type { Conversation } from '$lib/types/chat';
 	import ReuseableDrawer from '../../Common/ReuseableDrawer.svelte';
+	import * as AlertDialog from '$lib/components/ui/alert-dialog/index';
 
 	let {
 		isOpen = $bindable(false),
@@ -45,7 +46,18 @@
 
 	const grouped = $derived(groupChats($chats));
 
-	async function handleDeleteSingleConversation(conversationId: string) {
+	let isAlertOpen = $state(false);
+	let deletingId = $state<number | null>(null);
+	let openMenuId = $state<number | null>(null);
+	let isClearAllOpen = $state(false);
+
+	function openDeleteConfirm(id: number) {
+		deletingId = id;
+		isAlertOpen = true;
+		openMenuId = null;
+	}
+
+	async function handleDeleteSingleConversation(conversationId: number) {
 		await chatStore.deleteSingleConversation(conversationId);
 	}
 </script>
@@ -67,54 +79,69 @@
 					{#if grouped.today.length > 0}
 						<p class="text-[16px] font-medium text-[#808990]">Today</p>
 						{#each grouped.today as chat}
-							<a
-								href={`/${chat.id}`}
+							<div
 								class="flex items-center justify-between w-full text-[#253B4B] text-[16px] font-medium"
-								onclick={() => (isOpen = false)}
 							>
-								<p>{chat.title}</p>
-							</a>
+								<a
+									href={`/${chat.id}`}
+									class="flex items-center justify-between w-full text-[#253B4B] text-[16px] font-medium"
+									onclick={() => (isOpen = false)}
+								>
+									<p>{chat.title}</p>
+								</a>
 
-							<DropdownMenu.Root>
-								<DropdownMenu.Trigger>
-									<Ellipsis class="rotate-90" size={18} color="black" />
-								</DropdownMenu.Trigger>
-								<DropdownMenu.Content>
-									<DropdownMenu.Group>
-										<DropdownMenu.Label
-											class="text-red-500"
-											onclick={() => {
-												handleDeleteSingleConversation(chat.id.toString());
-											}}
-											>Delete
-										</DropdownMenu.Label>
-									</DropdownMenu.Group>
-								</DropdownMenu.Content>
-							</DropdownMenu.Root>
+								<DropdownMenu.Root
+									open={openMenuId === chat.id}
+									onOpenChange={(v) => (openMenuId = v ? chat.id : null)}
+								>
+									<DropdownMenu.Trigger>
+										<Ellipsis class="rotate-90" size={18} color="black" />
+									</DropdownMenu.Trigger>
+									<DropdownMenu.Content>
+										<DropdownMenu.Group>
+											<DropdownMenu.Label
+												class="text-red-500"
+												onclick={() => openDeleteConfirm(chat.id)}
+												>Delete
+											</DropdownMenu.Label>
+										</DropdownMenu.Group>
+									</DropdownMenu.Content>
+								</DropdownMenu.Root>
+							</div>
 						{/each}
 					{/if}
 
 					{#if grouped.yesterday.length > 0}
 						<p class="text-[16px] font-medium text-[#808990]">Yesterday</p>
 						{#each grouped.yesterday as chat}
-							<a
-								href={`/${chat.id}`}
+							<div
 								class="flex items-center justify-between w-full text-[#253B4B] text-[16px] font-medium"
-								onclick={() => (isOpen = false)}
 							>
-								<p>{chat.title}</p>
+								<a
+									href={`/${chat.id}`}
+									class="flex items-center justify-between w-full text-[#253B4B] text-[16px] font-medium"
+									onclick={() => (isOpen = false)}
+								>
+									<p>{chat.title}</p>
+								</a>
 
-								<DropdownMenu.Root>
+								<DropdownMenu.Root
+									open={openMenuId === chat.id}
+									onOpenChange={(v) => (openMenuId = v ? chat.id : null)}
+								>
 									<DropdownMenu.Trigger>
 										<Ellipsis class="rotate-90" size={18} color="black" />
 									</DropdownMenu.Trigger>
 									<DropdownMenu.Content>
 										<DropdownMenu.Group>
-											<DropdownMenu.Label class="text-red-500">Delete</DropdownMenu.Label>
+											<DropdownMenu.Label
+												class="text-red-500"
+												onclick={() => openDeleteConfirm(chat.id)}>Delete</DropdownMenu.Label
+											>
 										</DropdownMenu.Group>
 									</DropdownMenu.Content>
 								</DropdownMenu.Root>
-							</a>
+							</div>
 						{/each}
 					{/if}
 
@@ -127,7 +154,10 @@
 								<a href={`/${chat.id}`} onclick={() => (isOpen = false)}>
 									<p>{chat.title}</p>
 								</a>
-								<DropdownMenu.Root>
+								<DropdownMenu.Root
+									open={openMenuId === chat.id}
+									onOpenChange={(v) => (openMenuId = v ? chat.id : null)}
+								>
 									<DropdownMenu.Trigger>
 										<Ellipsis class="rotate-90" size={18} color="black" />
 									</DropdownMenu.Trigger>
@@ -135,9 +165,7 @@
 										<DropdownMenu.Group>
 											<DropdownMenu.Label
 												class="text-red-500 cursor-pointer"
-												onclick={() => {
-													handleDeleteSingleConversation(chat.id.toString());
-												}}>Delete</DropdownMenu.Label
+												onclick={() => openDeleteConfirm(chat.id)}>Delete</DropdownMenu.Label
 											>
 										</DropdownMenu.Group>
 									</DropdownMenu.Content>
@@ -162,9 +190,70 @@
 					<p class="bg-gradient text-transparent bg-clip-text">Go back</p>
 				</div>
 			</Button>
-			<Button class="bg-gradient rounded-xl border border-[#FFFFFF] h-[50px] w-[200px]"
-				>Clear all chat</Button
+			<Button
+				class="bg-gradient rounded-xl border border-[#FFFFFF] h-[50px] w-[200px]"
+				onclick={() => (isClearAllOpen = true)}>Clear all chat</Button
 			>
 		</div>
 	</div>
 </ReuseableDrawer>
+
+<AlertDialog.Root
+	open={isAlertOpen}
+	onOpenChange={(v) => {
+		isAlertOpen = v;
+		if (!v) deletingId = null;
+	}}
+>
+	<AlertDialog.Overlay />
+	<AlertDialog.Content>
+		<AlertDialog.Header>
+			<AlertDialog.Title>Delete Conversation</AlertDialog.Title>
+			<AlertDialog.Description>
+				This action cannot be undone. Are you sure you want to delete this conversation?
+			</AlertDialog.Description>
+		</AlertDialog.Header>
+		<AlertDialog.Footer>
+			<AlertDialog.Cancel
+				onclick={() => {
+					isAlertOpen = false;
+					deletingId = null;
+				}}>Cancel</AlertDialog.Cancel
+			>
+			<AlertDialog.Action
+				class="bg-red-500 hover:bg-red-500/70"
+				onclick={async () => {
+					if (deletingId !== null) {
+						await handleDeleteSingleConversation(deletingId);
+					}
+					isAlertOpen = false;
+					deletingId = null;
+					openMenuId = null;
+				}}>Delete</AlertDialog.Action
+			>
+		</AlertDialog.Footer>
+	</AlertDialog.Content>
+</AlertDialog.Root>
+
+<AlertDialog.Root open={isClearAllOpen} onOpenChange={(v) => (isClearAllOpen = v)}>
+	<AlertDialog.Overlay />
+	<AlertDialog.Content>
+		<AlertDialog.Header>
+			<AlertDialog.Title>Clear all conversations</AlertDialog.Title>
+			<AlertDialog.Description>
+				This will permanently delete all your conversations. Do you want to continue?
+			</AlertDialog.Description>
+		</AlertDialog.Header>
+		<AlertDialog.Footer>
+			<AlertDialog.Cancel onclick={() => (isClearAllOpen = false)}>Cancel</AlertDialog.Cancel>
+			<AlertDialog.Action
+				class="bg-red-500 hover:bg-red-500/70"
+				onclick={async () => {
+					await chatStore.deleteAllConversations();
+					isClearAllOpen = false;
+					openMenuId = null;
+				}}>Delete All</AlertDialog.Action
+			>
+		</AlertDialog.Footer>
+	</AlertDialog.Content>
+</AlertDialog.Root>

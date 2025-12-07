@@ -5,6 +5,9 @@ export interface Message {
 	createdAt: string;
 	tokenCount?: string | null;
 	isTyping?: boolean;
+	feedback?: 'LIKE' | 'DISLIKE' | null;
+	feedbackText?: string | null;
+	feedbackAt?: string | null;
 	attachments?: {
 		originalFileName: string | undefined;
 		fileSize: number | undefined;

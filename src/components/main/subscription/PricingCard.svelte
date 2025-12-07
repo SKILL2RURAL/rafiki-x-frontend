@@ -1,10 +1,10 @@
 <script lang="ts">
-	import { createEventDispatcher } from 'svelte';
-	import { Check } from 'lucide-svelte';
-	import { Button } from '$lib/components/ui/button';
-	import BillingToggle from './BillingToggle.svelte';
-	import type { Currency, BillingPeriod } from './types';
 	import AshBackground from '$lib/assets/img/ash-background.webp';
+	import { Button } from '$lib/components/ui/button';
+	import { createEventDispatcher } from 'svelte';
+	import BillingToggle from './BillingToggle.svelte';
+	import type { BillingPeriod, Currency } from './types';
+	import Check from '$lib/assets/icons/green-check.png';
 
 	export let title: string;
 	export let price: number;
@@ -31,7 +31,7 @@
 </script>
 
 <div
-	class="relative overflow-hidden rounded-[20px] z-0 transition-all {highlighted
+	class="relative overflow-hidden shadow-xl rounded-[20px] z-0 transition-all {highlighted
 		? 'bg-[#B2E0FF]'
 		: 'bg-gray-50'}"
 >
@@ -41,7 +41,7 @@
 			alt=""
 			width="40"
 			height="50"
-			class="absolute inset-0 w-full h-full object-cover z-0"
+			class="absolute inset-0 w-full h-full object-cover z-0 opacity-30"
 		/>
 	{/if}
 	<div class="relative z-10 p-8 pb-20 flex-1">
@@ -62,7 +62,9 @@
 		<!-- CTA Button -->
 		<Button
 			variant={buttonVariant}
-			class="mb-6 w-full h-[50px] {highlighted ? 'bg-white text-[#51A3DA] hover:bg-gray-50' : ''}"
+			class="mb-6 w-full h-[50px] rounded-[8px] {highlighted
+				? 'bg-white text-[#51A3DA] hover:bg-gray-50'
+				: 'border border-[#C4C4C4]'}"
 			disabled={isCurrentPlan}
 			onclick={handleClick}
 		>
@@ -73,8 +75,10 @@
 		<ul class="space-y-3">
 			{#each features as feature}
 				<li class="flex items-start gap-3">
-					<Check class="mt-0.5 h-5 w-5 shrink-0 text-green-500" />
-					<span class="text-sm text-gray-700">{feature}</span>
+					<div class="bg-[#D1FADF] rounded-full size-[24px] flex items-center justify-center">
+						<img src={Check} alt="" width="13" height="13" />
+					</div>
+					<span class="text-[16px] font-normal text-[#667085]">{feature}</span>
 				</li>
 			{/each}
 		</ul>

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { fly } from 'svelte/transition';
 	import { browser } from '$app/environment';
 	import { goto } from '$app/navigation';
 	import arrowIcon from '$lib/assets/icons/caret-left-fill.svg';
@@ -58,21 +59,36 @@
 
 		<!-- FEEDBACK  -->
 		<div class={`absolute top-1/2 -translate-y-1/2 right-0 hidden lg:flex`}>
-			<button
-				aria-label="feedback"
-				class=" bg-linear-to-r from-[#51A3DA] to-[#60269E] rounded-l-full p-1 h-[320px]"
-				onclick={() => (showFeedback = !showFeedback)}
-			>
-				<img src={arrowIcon} alt="arrow icon" width="20" height="20" />
-			</button>
-
-			<div class={showFeedback ? 'block' : 'hidden'}>
-				{#if isFeedbackInput}
-					<FeedbackInput {closeFeedback} />
-				{:else}
-					<Feedback showFeedbackInput={() => (isFeedbackInput = true)} />
-				{/if}
-			</div>
+			{#if showFeedback}
+				<div
+					class="flex items-stretch"
+					in:fly={{ x: 320, duration: 250 }}
+					out:fly={{ x: 320, duration: 200 }}
+				>
+					<button
+						aria-label="feedback"
+						class=" bg-linear-to-r from-[#51A3DA] to-[#60269E] rounded-l-full p-1 h-[320px]"
+						onclick={() => (showFeedback = false)}
+					>
+						<img src={arrowIcon} alt="arrow icon" width="20" height="20" />
+					</button>
+					{#if isFeedbackInput}
+						<FeedbackInput {closeFeedback} />
+					{:else}
+						<Feedback showFeedbackInput={() => (isFeedbackInput = true)} />
+					{/if}
+				</div>
+			{:else}
+				<div class="flex items-stretch">
+					<button
+						aria-label="feedback"
+						class=" bg-linear-to-r from-[#51A3DA] to-[#60269E] rounded-l-full p-1 h-[320px]"
+						onclick={() => (showFeedback = true)}
+					>
+						<img src={arrowIcon} alt="arrow icon" width="20" height="20" />
+					</button>
+				</div>
+			{/if}
 		</div>
 	</div>
 	<CreateAccountModal isOpen={isCreateAccountOpen} onClose={() => (isCreateAccountOpen = false)} />

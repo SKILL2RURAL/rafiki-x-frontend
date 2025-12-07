@@ -37,17 +37,24 @@
 
 <Layout>
 	<!-- Header -->
-	<div class="relative" style="font-family: 'Impact', sans-serif;">
-		<div class="mb-8 text-center">
-			<h1 class="mb-6 text-3xl font-black text-[#253B4B]">Upgrade Your RafikiX Plan</h1>
+	<div class="relative p-10" style="font-family: 'Impact', sans-serif;">
+		<div class="text-center">
+			<h1 class="text-3xl mb-5 font-black text-[#253B4B]">Upgrade Your RafikiX Plan</h1>
 			<CurrencyToggle bind:selected={currency} />
 		</div>
 
 		<!-- Close Button -->
+		<a href="/">
+			<div
+				class="absolute top-0 right-0 rounded-full size-[34px] flex items-center justify-center bg-gradient"
+			>
+				<X color="white" />
+			</div>
+		</a>
 	</div>
 
 	<!-- Pricing Cards -->
-	<div class="grid gap-6 md:grid-cols-2">
+	<div class="grid gap-12 md:grid-cols-2 px-20">
 		<PricingCard
 			title="Free"
 			price={0}
