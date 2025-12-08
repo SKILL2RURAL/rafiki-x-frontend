@@ -21,7 +21,12 @@
 			>
 				<X />
 			</button>
-			<h1 class="text-[24px] font-bold font-mulish text-white">My Resume</h1>
+			<h1
+				class="text-[24px] font-bold font-mulish tracking-wider text-white"
+				style="font-family: 'Impact', sans-serif;"
+			>
+				My Resume
+			</h1>
 			<!-- {#if files.length === 0} -->
 			<ResumeUploader />
 

@@ -44,7 +44,12 @@
 			>
 				<X />
 			</button>
-			<h2 class="font-bold text-[24px] text-white mb-5">Career Guide</h2>
+			<h2
+				class="font-bold text-[24px] text-white mb-5 tracking-wider"
+				style="font-family: 'Impact', sans-serif;"
+			>
+				Career Guide
+			</h2>
 			<div
 				class="bg-white rounded-[20px] p-10 pb-15 lg:pb-30 shadow-md flex lg:grid grid-cols-4 gap-5 overflow-x-auto no-scrollbar max-w-[80vw] sm:max-w-[90vw] lg:max-w-full"
 			>

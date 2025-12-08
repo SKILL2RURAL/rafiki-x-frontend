@@ -5,6 +5,7 @@
 	import { getStores } from '$app/stores';
 	import MobileSidebar from './MobileSidebar.svelte';
 	import { Button } from '$lib/components/ui/button';
+	import { goto } from '$app/navigation';
 	const { page } = getStores();
 	const pathname = $derived($page.url.pathname);
 
@@ -20,6 +21,10 @@
 <nav
 	class="min-h-(--navbar-height) flex justify-between lg:justify-end items-center p-5 bg-[#fcfcfc]"
 >
+	<Button
+		class="bg-linear-to-br from-[#51A3DA] to-[#60269E] rounded-[4px] text-[16px] font-bold px-8 py-6"
+		onclick={() => goto('/login')}>Sign In</Button
+	>
 	<div class="flex lg:hidden items-center justify-between w-full">
 		<button
 			onclick={() => {
