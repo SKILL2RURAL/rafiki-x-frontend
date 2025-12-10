@@ -5,8 +5,10 @@
 </script>
 
 <Layout>
-	<div class="w-full min-h-full flex flex-col items-center my-0 justify-center">
-		<img src={logo} alt="Rafiki X" width="38" height="38" class="mb-5" />
-		<WelcomeScreen />
+	<div class="w-full min-h-full flex flex-col items-center justify-center px-4 sm:px-6 lg:px-10">
+		<img src={logo} alt="Rafiki X" width="38" height="38" class="mb-4 md:mb-6" />
+		<div class="w-full max-w-6xl">
+			<WelcomeScreen />
+		</div>
 	</div>
 </Layout>

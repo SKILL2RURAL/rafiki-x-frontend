@@ -23,6 +23,7 @@
 	import * as Avatar from '$lib/components/ui/avatar/index.js';
 	import ChatHistoryDrawer from './ChatHistoryDrawer.svelte';
 	import type { Conversation } from '$lib/types/chat';
+	import { auth, logout as authLogout } from '$lib/stores/authStore';
 
 	let { onOpenCreateAccount }: { onOpenCreateAccount?: () => void } = $props();
 
@@ -76,7 +77,7 @@
 		return groups;
 	}
 
-	const grouped = $derived(groupChats($chats));
+	// const grouped = $derived(groupChats($chats));
 
 	function groupChatsLimited(chatsList: Conversation[], limit: number) {
 		const g = groupChats(chatsList);
@@ -117,7 +118,7 @@
 			<div class="my-5 space-y-3 mt-10">
 				<a
 					href="/"
-					class={`text-[14px] font-normal p-2 rounded-[8px] cursor-pointer flex items-center gap-2 ${!isSidebarOpen ? 'justify-center' : ''} ${pathname === '/' ? 'bg-gradient text-white' : 'text-[#808990]'} w-full`}
+					class={`text-[14px] font-normal p-2 rounded-[8px] cursor-pointer flex items-center gap-2 ${pathname === '/' ? 'bg-gradient text-white' : 'text-[#808990]'} w-full`}
 				>
 					<MessageCircle size={17} color={pathname === '/' ? 'white' : '#808990'} />
 					{#if isSidebarOpen}
@@ -126,7 +127,7 @@
 				</a>
 				<a
 					href="/my-resume"
-					class={` text-[14px] font-normal p-2 rounded-[8px] cursor-pointer flex items-center gap-2 ${!isSidebarOpen ? 'justify-center' : ''} ${pathname.includes('my-resume') ? 'bg-gradient text-white' : 'text-[#808990]'} w-full`}
+					class={` text-[14px] font-normal p-2 rounded-[8px] cursor-pointer flex items-center gap-2 ${pathname.includes('my-resume') ? 'bg-gradient text-white' : 'text-[#808990]'} w-full`}
 				>
 					{#if pathname.includes('my-resume')}
 						<img src={pdfLight} alt="" width="20" height="20" />
@@ -139,7 +140,7 @@
 				</a>
 				<a
 					href="/career-guide"
-					class={` text-[14px] font-normal p-2 rounded-[8px] cursor-pointer flex items-center gap-2 ${!isSidebarOpen ? 'justify-center' : ''} ${pathname.includes('career-guide') ? 'bg-gradient text-white' : 'text-[#808990]'} w-full`}
+					class={` text-[14px] font-normal p-2 rounded-[8px] cursor-pointer flex items-center gap-2 ${pathname.includes('career-guide') ? 'bg-gradient text-white' : 'text-[#808990]'} w-full`}
 				>
 					{#if pathname.includes('/career-guide')}
 						<img src={briefcaseLight} alt="" width="20" height="20" />
@@ -155,7 +156,7 @@
 
 			<!-- Chat history  -->
 			<div class="flex-col mt-10">
-				{#if isSidebarOpen}
+				{#if isSidebarOpen && $auth.accessToken}
 					<div>
 						{#if $chats && $chats.length > 0}
 							<div class="space-y-3 overflow-y-auto no-scrollbar">
@@ -207,13 +208,15 @@
 									{/each}
 								{/if}
 
-								<button
-									class="flex items-center justify-between w-full gap-3 mt-5"
-									onclick={() => (isDrawerOpen = true)}
-								>
-									<p class="text-sm font-normal text-[#80899A]">View All Chat history</p>
-									<img src={greaterArrow} alt="direction icon" width="7" height="13" />
-								</button>
+								{#if $chats.length > 3}
+									<button
+										class="flex items-center justify-between w-full gap-3 mt-5"
+										onclick={() => (isDrawerOpen = true)}
+									>
+										<p class="text-sm font-normal text-[#80899A]">View All Chat history</p>
+										<img src={greaterArrow} alt="direction icon" width="7" height="13" />
+									</button>
+								{/if}
 							</div>
 						{:else}
 							<div class="flex flex-col items-center">
@@ -226,7 +229,7 @@
 			</div>
 		</div>
 
-		<div class=" bg-white mt-auto h-[300px] pt-5">
+		<div class=" bg-white flex flex-col justify-end mt-auto h-[250px] pt-5">
 			<button
 				class={`w-full rounded-[11px] p-px mb-10 ${isSidebarOpen ? 'bg-linear-to-br from-[#51A3DA] to-[#60269E]' : ''}`}
 				onclick={() => goto('/learn-more')}
@@ -249,50 +252,48 @@
 				<h5 class="text-[#253B4B] text-[12px] mb-5 font-medium uppercase">Settings</h5>
 			{/if}
 
-			<div
-				class="space-y-7 mx-auto flex flex-col ${!isSidebarOpen
-					? 'items-center'
-					: ''}   font-semibold text-[#80899A] text-sm"
-			>
+			<div class="space-y-7 flex flex-col font-semibold text-[#80899A] text-sm">
 				<button class={`flex items-center gap-3`} onclick={() => goto('/subscription')}>
 					<img src={premium} alt="Rafiki X" width="20" height="20" />
 					{#if isSidebarOpen}
 						<p>Go premium</p>
 					{/if}
 				</button>
-				<a href="/my-profile" class={` flex items-center gap-3`}>
-					{#if $profile.data?.profilePhoto}
-						<Avatar.Root class="size-[20px]">
-							<Avatar.Image src={$profile.data?.profilePhoto} alt="profile" />
-							<Avatar.Fallback
-								>{$profile.data?.firstName?.[0] + $profile.data?.lastName?.[0]}</Avatar.Fallback
-							>
-						</Avatar.Root>
-					{:else}
-						<img src={noProfile} alt="Rafiki X" class="size-[20px]" />
-					{/if}
+				{#if $auth.accessToken}
+					<a href="/my-profile" class={` flex items-center gap-3`}>
+						{#if $profile.data?.profilePhoto}
+							<Avatar.Root class="size-[20px]">
+								<Avatar.Image src={$profile.data?.profilePhoto} alt="profile" />
+								<Avatar.Fallback
+									>{$profile.data?.firstName?.[0] + $profile.data?.lastName?.[0]}</Avatar.Fallback
+								>
+							</Avatar.Root>
+						{:else}
+							<img src={noProfile} alt="Rafiki X" class="size-[20px]" />
+						{/if}
 
-					{#if isSidebarOpen}
-						<p>My profile</p>
+						{#if isSidebarOpen}
+							<p>My profile</p>
+						{/if}
+					</a>
+				{/if}
+
+				{#if $auth.accessToken}
+					{#if $auth.accessToken}
+						<button
+							class={`flex items-center gap-3`}
+							onclick={() => {
+								authLogout();
+								// goto('/login');
+							}}
+						>
+							<img src={logout} alt="Rafiki X" width="20" height="20" />
+							{#if isSidebarOpen}
+								<p>Logout</p>
+							{/if}
+						</button>
 					{/if}
-				</a>
-				<button class={`flex items-center gap-3`} onclick={() => onOpenCreateAccount?.()}>
-					{#if isSidebarOpen}
-						<p>Create account</p>
-					{/if}
-				</button>
-				<button
-					class={`flex items-center gap-3`}
-					onclick={() => {
-						localStorage.removeItem('accessToken');
-						goto('/login');
-					}}
-				>
-					<img src={logout} alt="Rafiki X" width="20" height="20" />
-					{#if isSidebarOpen}
-						<p>Logout</p>
-					{/if}
-				</button>
+				{/if}
 			</div>
 		</div>
 	</div>

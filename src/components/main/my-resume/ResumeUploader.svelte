@@ -12,9 +12,12 @@
 	import { toast } from 'svelte-sonner';
 	import Drawer from '../../Common/ReuseableDrawer.svelte';
 	import TextEditor from './TextEditor.svelte';
+	import { auth } from '$lib/stores/authStore';
+	let { onRequireAuth }: { onRequireAuth?: () => void } = $props();
 
 	// GET ALL RESUMES ON MOUNT
 	onMount(async () => {
+		if (!$auth.accessToken) return;
 		await chatStore.getAllResumes();
 	});
 
@@ -33,6 +36,10 @@
 	function handleFileChange(event: Event) {
 		const files = (event.target as HTMLInputElement).files;
 		if (files && files.length > 0) {
+			if (!$auth.accessToken) {
+				onRequireAuth?.();
+				return;
+			}
 			const newFile: Resume = {
 				id: Date.now(),
 				fileName: files[0].name,
@@ -79,6 +86,10 @@
 
 	// FUNCTION TO DELETE A SINGLE RESUME
 	async function deleteSingleResume(file: Resume) {
+		if (!$auth.accessToken) {
+			onRequireAuth?.();
+			return;
+		}
 		try {
 			await chatStore.deleteResume(file.id).then((res) => {
 				if (res) {
@@ -124,6 +135,10 @@
 	<Button
 		class="w-full h-[48px] rounded-[8px] border p-2.5 bg-[#F7FBFD] text-black mt-4 hover:bg-[#F7FBFD]"
 		onclick={() => {
+			if (!$auth.accessToken) {
+				onRequireAuth?.();
+				return;
+			}
 			isDrawerOpen = true;
 		}}>Add text Content</Button
 	>

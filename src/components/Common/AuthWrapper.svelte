@@ -1,16 +1,22 @@
 <script lang="ts">
 	import { auth } from '$lib/stores/authStore';
-	import { goto } from '$app/navigation';
+	// import { goto } from '$app/navigation';
 	import { page } from '$app/state';
 	import { onMount } from 'svelte';
 	import logo from '$lib/assets/logo.svg';
 
 	const publicRoutes = [
+		'/',
 		'/login',
 		'/register',
 		'/forget-password',
 		'/reset-password',
-		'/verify-email'
+		'/verify-email',
+		'/subscription',
+		'/my-resume',
+		'/carerr-guide',
+		'/[chatId]',
+		'/learn-more'
 	];
 
 	onMount(() => {
@@ -18,7 +24,7 @@
 			if ($auth.isInitialAuthCheckComplete) {
 				const currentPath = page.url.pathname;
 				if (!$auth.accessToken && !publicRoutes.includes(currentPath)) {
-					goto('/login');
+					// goto('/login');
 				}
 			}
 		});

@@ -4,5 +4,7 @@
 </script>
 
 <Layout>
-	<LearnMore />
+    <div class="px-4 sm:px-6 lg:px-10 w-full max-w-6xl mx-auto">
+        <LearnMore />
+    </div>
 </Layout>

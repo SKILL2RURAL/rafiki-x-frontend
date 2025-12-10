@@ -13,8 +13,6 @@
 	import paperclip from '$lib/assets/icons/paperclip.png';
 	import botLogo from '$lib/assets/icons/logo-gradient.png';
 	import copyIcon from '$lib/assets/icons/copyIcon.png';
-	import like from '$lib/assets/icons/likeIcon.png';
-	import thumDown from '$lib/assets/icons/thumbDown.png';
 	// import megaphone from '$lib/assets/icons/megaphone.png';
 	// import mic from '$lib/assets/icons/mic.png';
 	import MarkdownContent from './MarkdownContent.svelte';
@@ -30,13 +28,25 @@
 	import { X } from 'lucide-svelte';
 	import { cn } from '$lib/utils';
 	import * as Tooltip from '$lib/components/ui/tooltip/index.js';
+	import { guestRemainingMessages } from '$lib/stores/chatStore';
+	import CreateAccountModal from '../Layout/CreateAccountModal.svelte';
+	import GuestToast from './GuestToast.svelte';
+	import { auth } from '$lib/stores/authStore';
 
-	let selectedFile: File | null = null;
+	let selectedFile: File | null = $state(null);
 	let fileInput: HTMLInputElement;
 	let scrollAnchor: HTMLDivElement;
 	let fileKeys: string[] = [];
-	let uploadingFile = false;
+	let uploadingFile = $state(false);
 	let microphone: Microphone;
+	let showGuestToast = $state(true);
+	let isCreateAccountOpen = $state(false);
+
+	$effect(() => {
+		if ($guestRemainingMessages === 0) {
+			isCreateAccountOpen = true;
+		}
+	});
 
 	async function copyText(text: string) {
 		try {
@@ -47,21 +57,7 @@
 		}
 	}
 
-	async function handleFeedback(messageId: number, type: 'LIKE' | 'DISLIKE') {
-		const defaultText =
-			type === 'LIKE' ? 'Very helpful response!' : 'The response was not relevant to my question';
-		try {
-			await chatStore.submitMessageFeedback(messageId, {
-				feedbackType: type,
-				feedbackText: defaultText
-			});
-			toast.success(
-				type === 'LIKE' ? 'Response Liked successfully' : 'Response Disliked successfully'
-			);
-		} catch (e) {
-			toast.error('Failed to submit feedback');
-		}
-	}
+	import MessageFeedback from './MessageFeedback.svelte';
 
 	async function handleSend() {
 		if ($sendingMessage) return;
@@ -73,37 +69,51 @@
 
 		const updatedMessage: Message[] = [...$messages];
 
-		updatedMessage.push({
+		const newUserMsg: Message = {
 			id: new Date().getTime(),
 			role: 'USER',
 			content: $newMessage.trim(),
-			createdAt: new Date().toISOString(),
-			attachments: [
+			createdAt: new Date().toISOString()
+		};
+		if (selectedFile) {
+			newUserMsg.attachments = [
 				{
-					originalFileName: selectedFile?.name,
-					fileSize: selectedFile?.size,
-					fileType: selectedFile?.type
+					originalFileName: selectedFile.name,
+					fileSize: selectedFile.size,
+					fileType: selectedFile.type
 				}
-			]
-		});
+			];
+		}
+
+		updatedMessage.push(newUserMsg);
 
 		chatStore.setMessages(updatedMessage);
 
 		// SEND MESSAGE
-		chatStore.sendMessage({
-			message: $newMessage.trim(),
-			createNewConversation: false,
-			conversationId: Number(page.params.chatId),
-			fileKeys
-		});
+		const token = typeof localStorage !== 'undefined' ? localStorage.getItem('accessToken') : null;
+		if (!token) {
+			await chatStore.sendGuestMessage($newMessage.trim());
+			showGuestToast = true;
+		} else {
+			chatStore.sendMessage({
+				message: $newMessage.trim(),
+				createNewConversation: false,
+				conversationId: Number(page.params.chatId),
+				fileKeys
+			});
+		}
 
 		// RESET STATE
 		chatStore.setNewMessage('');
 		selectedFile = null;
 		fileKeys = [];
 
-		// GET CONVERSATIONS AGAIN
-		chatStore.getConversations({});
+		// GET CONVERSATIONS AGAIN (only for authenticated)
+		const isLoggedIn =
+			typeof localStorage !== 'undefined' ? !!localStorage.getItem('accessToken') : false;
+		if (isLoggedIn) {
+			chatStore.getConversations({});
+		}
 	}
 
 	function triggerFileUpload() {
@@ -200,52 +210,11 @@
 											</Tooltip.Root>
 										</Tooltip.Provider>
 
-										<Tooltip.Provider>
-											<Tooltip.Root>
-												<Tooltip.Trigger
-													class="hover:bg-gray-100 rounded-lg p-2"
-													aria-label="Like"
-													onclick={() => msg.id && handleFeedback(msg.id, 'LIKE')}
-												>
-													<img
-														src={like}
-														width="15"
-														height="15"
-														class="cursor-pointer"
-														alt="Like Icon"
-													/>
-												</Tooltip.Trigger>
-												<Tooltip.Content side="bottom">
-													<p>Like</p>
-												</Tooltip.Content>
-											</Tooltip.Root>
-										</Tooltip.Provider>
-
-										<Tooltip.Provider>
-											<Tooltip.Root>
-												<Tooltip.Trigger
-													class="hover:bg-gray-100 rounded-lg p-2"
-													aria-label="Dislike"
-													onclick={() => msg.id && handleFeedback(msg.id, 'DISLIKE')}
-												>
-													<img
-														src={thumDown}
-														width="15"
-														height="15"
-														class="cursor-pointer"
-														alt="thumb down"
-													/>
-												</Tooltip.Trigger>
-												<Tooltip.Content side="bottom">
-													<p>Dislike</p>
-												</Tooltip.Content>
-											</Tooltip.Root>
-										</Tooltip.Provider>
-										{#if msg.feedback}
-											<span class="ml-2 text-xs text-[#808990]">
-												{msg.feedback === 'LIKE' ? 'liked' : 'disliked'}
-											</span>
-										{/if}
+										<MessageFeedback
+											messageId={msg.id}
+											isTyping={msg.isTyping}
+											feedback={msg.feedback}
+										/>
 										<!-- <img
 											src={megaphone}
 											width="16"
@@ -344,7 +313,15 @@
 	<div bind:this={scrollAnchor}></div>
 
 	<!-- Input Area -->
-	<div class="fixed bg-white bottom-15 w-[80vw] sm:w-[90vw] lg:w-[70vw] flex flex-col gap-4">
+	<div
+		class="fixed bg-white bottom-5 lg:bottom-15 w-[80vw] sm:w-[90vw] lg:w-[70vw] flex flex-col gap-4"
+	>
+		{#if $guestRemainingMessages !== null && $guestRemainingMessages > 0 && showGuestToast}
+			<GuestToast
+				remainingMessages={$guestRemainingMessages}
+				onClose={() => (showGuestToast = false)}
+			/>
+		{/if}
 		<div class="border border-[#E8E8E8] rounded-[20px] p-4 bg-white shadow-md">
 			<div class="flex flex-col px-3 py-2 gap-4">
 				<div class="flex">
@@ -417,11 +394,11 @@
 					</div>
 
 					<div class="flex items-center gap-5">
-						<!-- Mic Button -->
-						<Microphone bind:this={microphone} conversationId={Number(page.params.chatId)} />
+						{#if $auth.accessToken}
+							<Microphone bind:this={microphone} conversationId={Number(page.params.chatId)} />
+						{/if}
 
-						<!-- RECORDING ACTIONS  -->
-						{#if $isRecording}
+						{#if $auth.accessToken && $isRecording}
 							<div class="flex items-center gap-3">
 								<button
 									onclick={() => microphone.cancelRecording()}
@@ -460,4 +437,5 @@
 			By messaging RafikiX, you agree to our Terms and Conditions
 		</p> -->
 	</div>
+	<CreateAccountModal isOpen={isCreateAccountOpen} onClose={() => (isCreateAccountOpen = false)} />
 </div>

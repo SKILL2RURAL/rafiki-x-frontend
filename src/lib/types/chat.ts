@@ -39,6 +39,8 @@ export interface ChatState {
 	isRecording: boolean;
 	isTranscribing: boolean;
 	newMessage: string;
+	guestSessionId: string | null;
+	guestRemainingMessages: number | null;
 }
 
 export interface Resume {

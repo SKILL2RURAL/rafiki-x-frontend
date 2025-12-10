@@ -5,8 +5,14 @@
 	import { chatStore, initialMessage } from '$lib/stores/chatStore';
 	import { page } from '$app/state';
 	import Layout from '../../../components/main/Layout/Layout.svelte';
+	import { auth } from '$lib/stores/authStore';
 
 	$effect(() => {
+		const authUnsub = auth.subscribe(($auth) => {
+			if (!$auth.accessToken) {
+				goto('/guest');
+			}
+		});
 		const id = Number(page.params.chatId);
 		(async () => {
 			try {
@@ -30,6 +36,7 @@
 		return () => {
 			chatStore.setMessages([]);
 			unsubscribe();
+			authUnsub();
 		};
 	});
 </script>

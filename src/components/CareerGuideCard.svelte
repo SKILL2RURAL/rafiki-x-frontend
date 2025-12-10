@@ -4,18 +4,23 @@
 	import { sendingMessage } from '$lib/stores/chatStore';
 	import { MoveUpRight } from 'lucide-svelte';
 
-	const { sendMessage } = chatStore;
+const { sendMessage } = chatStore;
+import { auth } from '$lib/stores/authStore';
 
-	let { title, image }: { title: string; image: string } = $props();
+let { title, image, onRequireAuth }: { title: string; image: string; onRequireAuth?: () => void } = $props();
 
-	async function handleSend(value: string) {
-		await sendMessage({
-			message: value,
-			createNewConversation: true
-		}).then((res) => {
-			goto(`/${res.conversationId}`);
-		});
-	}
+async function handleSend(value: string) {
+    if (!$auth.accessToken) {
+        onRequireAuth?.();
+        return;
+    }
+    await sendMessage({
+        message: value,
+        createNewConversation: true
+    }).then((res) => {
+        goto(`/${res.conversationId}`);
+    });
+}
 </script>
 
 <button

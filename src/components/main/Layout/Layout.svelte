@@ -1,10 +1,11 @@
 <script lang="ts">
 	import { fly } from 'svelte/transition';
-	import { browser } from '$app/environment';
-	import { goto } from '$app/navigation';
+	// import { getStores } from '$app/stores';
+	// import { browser } from '$app/environment';
+	// import { goto } from '$app/navigation';
 	import arrowIcon from '$lib/assets/icons/caret-left-fill.svg';
-	import { auth } from '$lib/stores/authStore';
-	import { onMount } from 'svelte';
+	// import { auth } from '$lib/stores/authStore';
+	// import { onMount } from 'svelte';
 	import Navbar from './Navbar.svelte';
 	import Sidebar from './Sidebar.svelte';
 	import FeedbackInput from '../FeedbackInput.svelte';
@@ -21,21 +22,28 @@
 		isFeedbackInput = false;
 	}
 
-	let loading = $state(true);
+	let loading = $state(false);
 	let isCreateAccountOpen = $state(false);
 
-	onMount(() => {
-		if (browser) {
-			const storedToken = localStorage.getItem('accessToken');
-			if (!storedToken) {
-				loading = false;
-				goto('/login');
-				return;
-			}
-			auth.update((s) => ({ ...s, accessToken: storedToken }));
-			loading = false;
-		}
-	});
+	// const { page } = getStores();
+	// const pathname = $derived($page.url.pathname);
+
+	// onMount(() => {
+	// 	if (browser) {
+	// 		const storedToken = localStorage.getItem('accessToken');
+	// 		if (!storedToken) {
+	// 			loading = false;
+	// 			if (pathname !== '/') {
+	// 				goto('/login');
+	// 				return;
+	// 			}
+	// 		} else {
+	// 			auth.update((s) => ({ ...s, accessToken: storedToken }));
+	// 			loading = false;
+	// 		}
+	// 		loading = false;
+	// 	}
+	// });
 </script>
 
 <!-- If loading  -->
@@ -47,7 +55,7 @@
 	>
 		<Sidebar onOpenCreateAccount={() => (isCreateAccountOpen = true)} />
 		<div class="w-full h-screen">
-			<Navbar />
+			<Navbar onOpenCreateAccount={() => (isCreateAccountOpen = true)} />
 			<main class="p-5 pt-0 lg:pl-0 lg:pr-8 lg:pb-5 lg:pt-0 w-full">
 				<div
 					class="bg-white rounded-[20px] border border-[#E8E8E8] h-[90vh] w-full overflow-y-auto p-5 lg:ml-3"

@@ -17,7 +17,9 @@ const initialState: ChatState = {
 	isTranscribing: false,
 	isRecording: false,
 	isUploadingVoiceNote: false,
-	newMessage: ''
+	newMessage: '',
+	guestSessionId: null,
+	guestRemainingMessages: null
 };
 
 function createChatStore() {
@@ -93,8 +95,41 @@ function createChatStore() {
 			}
 		},
 
+		// Send Guest Message
+		sendGuestMessage: async (message: string) => {
+			update((state) => ({ ...state, isSending: true }));
+			try {
+				const { data } = await api.post('/chat/guest/message', { message });
+				const assistant: Message = {
+					id: new Date().getTime(),
+					content: data.data.aiMessage,
+					role: 'ASSISTANT',
+					createdAt: new Date().toISOString(),
+					isTyping: true
+				};
+				update((state) => ({
+					...state,
+					messages: [...state.messages, assistant],
+					guestRemainingMessages: data.data.remainingMessages ?? state.guestRemainingMessages,
+					guestSessionId: data.data.sessionId ?? state.guestSessionId
+				}));
+				return data.data;
+			} catch (error) {
+				console.log(error);
+				throw error;
+			} finally {
+				update((state) => ({ ...state, isSending: false }));
+			}
+		},
+
 		// Get Conversations
 		getConversations: async ({ activeOnly }: { activeOnly?: boolean }) => {
+			const token =
+				typeof localStorage !== 'undefined' ? localStorage.getItem('accessToken') : null;
+			if (!token) {
+				update((state) => ({ ...state, conversations: [], isLoading: false }));
+				return;
+			}
 			update((state) => ({ ...state, isLoading: true }));
 
 			const params = activeOnly ? '?activeOnly=true' : '';
@@ -321,3 +356,7 @@ export const initialMessage = derived(chatStore, ($chatStore) => $chatStore.init
 export const isRecording = derived(chatStore, ($chatStore) => $chatStore.isRecording);
 export const isTranscribing = derived(chatStore, ($chatStore) => $chatStore.isTranscribing);
 export const newMessage = derived(chatStore, ($chatStore) => $chatStore.newMessage);
+export const guestRemainingMessages = derived(
+	chatStore,
+	($chatStore) => $chatStore.guestRemainingMessages
+);
