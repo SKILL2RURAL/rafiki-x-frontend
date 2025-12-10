@@ -11,8 +11,14 @@
 	import { onMount } from 'svelte';
 	import { chats, chatStore } from '$lib/stores/chatStore';
 	import noChat from '$lib/assets/icons/empty-state.png';
+	import { auth, logout as authLogout } from '$lib/stores/authStore';
 
-	const { isOpen, onClose } = $props();
+	let {
+		isOpen,
+		onClose,
+		onOpenCreateAccount
+	}: { isOpen: boolean; onClose: (v: boolean) => void; onOpenCreateAccount?: () => void } =
+		$props();
 
 	onMount(() => {
 		chatStore.getConversations({});
@@ -22,25 +28,25 @@
 		goto(`/${chatId}`);
 		chatStore.getSingleConversation(chatId).then((success) => {
 			if (success) {
-				onClose();
+				onClose(false);
 			}
 		});
 	}
 </script>
 
 <Drawer.Root open={isOpen} onOpenChange={onClose} direction="left">
-	<Drawer.Content class="data-[vaul-drawer-direction=left]:w-[100vw]">
+	<Drawer.Content class="data-[vaul-drawer-direction=left]:w-screen">
 		<aside class="p-5 py-10 flex flex-col justify-between h-screen">
 			<div class="flex justify-between items-end">
 				<div class="flex items-end gap-3 leading-none">
 					<img src={logo} alt="Rafiki X" width="40" height="40" />
 					<p
-						class="text-[24px] font-semibold bg-gradient-to-r from-[#51A3DA] to-[#60269E] text-transparent bg-clip-text"
+						class="text-[24px] font-semibold bg-linear-to-r from-[#51A3DA] to-[#60269E] text-transparent bg-clip-text"
 					>
 						RafikiX
 					</p>
 				</div>
-				<button class="bg-[#1E1E1E33] p-2 rounded-[8px]" onclick={onClose}>
+				<button class="bg-[#1E1E1E33] p-2 rounded-[8px]" onclick={() => onClose(false)}>
 					<img src={X} alt="" width="20" height="20" />
 				</button>
 			</div>
@@ -58,26 +64,28 @@
 				</div>
 			</div> -->
 
-			<div>
-				{#if chats && $chats.length > 0}
-					<div class="space-y-3 overflow-y-auto no-scrollbar h-[50vh]">
-						{#each $chats as chat}
-							<button
-								class={`flex justify-between items-center cursor-pointer w-full gap-5`}
-								onclick={() => routeToChat(chat.id)}
-							>
-								<p class="text-[#253B4B] text-[16px] text-left line-clamp-1">{chat.title}</p>
-								<ChevronRight color="#80899A" />
-							</button>
-						{/each}
-					</div>
-				{:else}
-					<div class="flex flex-col items-center">
-						<img src={noChat} alt="" width="80" height="80" />
-						<p class="text-sm font-semibold text-[#80899A]">No Chat history</p>
-					</div>
-				{/if}
-			</div>
+			{#if $auth.accessToken}
+				<div>
+					{#if chats && $chats.length > 0}
+						<div class="space-y-3 overflow-y-auto no-scrollbar h-[50vh]">
+							{#each $chats as chat}
+								<button
+									class={`flex justify-between items-center cursor-pointer w-full gap-5`}
+									onclick={() => routeToChat(chat.id)}
+								>
+									<p class="text-[#253B4B] text-[16px] text-left line-clamp-1">{chat.title}</p>
+									<ChevronRight color="#80899A" />
+								</button>
+							{/each}
+						</div>
+					{:else}
+						<div class="flex flex-col items-center">
+							<img src={noChat} alt="" width="80" height="80" />
+							<p class="text-sm font-semibold text-[#80899A]">No Chat history</p>
+						</div>
+					{/if}
+				</div>
+			{/if}
 
 			<!-- Settings  -->
 			<div class="mr-3">
@@ -98,23 +106,32 @@
 				<h5 class="text-[#253B4B] text-[12px] mb-5 font-medium">Settings</h5>
 
 				<div class="space-y-7 font-semibold text-[#80899A] text-sm">
-					<button class="flex items-center gap-3">
-						<img src={premium} alt="Rafiki X" width="20" height="20" />
-						<p class="">Go premium today</p>
-					</button>
-					<button class="flex items-center gap-3" onclick={() => goto('/my-profile')}>
-						<img src={noProfile} alt="Rafiki X" width="20" height="20" />
-						<p>My profile</p>
-					</button>
 					<button
 						class="flex items-center gap-3"
 						onclick={() => {
-							goto('/login');
+							goto('/subscription');
+							onClose(false);
 						}}
 					>
-						<img src={logout} alt="Rafiki X" width="20" height="20" />
-						<p>Logout</p>
+						<img src={premium} alt="Rafiki X" width="20" height="20" />
+						<p class="">Go premium today</p>
 					</button>
+					{#if $auth.accessToken}
+						<button class="flex items-center gap-3" onclick={() => goto('/my-profile')}>
+							<img src={noProfile} alt="Rafiki X" width="20" height="20" />
+							<p>My profile</p>
+						</button>
+						<button
+							class="flex items-center gap-3"
+							onclick={() => {
+								authLogout();
+								// goto('/login');
+							}}
+						>
+							<img src={logout} alt="Rafiki X" width="20" height="20" />
+							<p>Logout</p>
+						</button>
+					{/if}
 				</div>
 			</div>
 		</aside>

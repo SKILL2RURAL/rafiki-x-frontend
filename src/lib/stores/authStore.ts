@@ -201,6 +201,18 @@ export async function resetPassword(token: string, newPassword: string) {
 	}
 }
 
+export function logout() {
+	if (browser) {
+		localStorage.removeItem('accessToken');
+	}
+	auth.update((state) => ({
+		...state,
+		email: null,
+		firstName: null,
+		accessToken: null
+	}));
+}
+
 export async function logOut() {
 	auth.set({
 		...initial,

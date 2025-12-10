@@ -16,7 +16,7 @@
 	<Dialog.Overlay class="bg-black/30 backdrop-blur-md" />
 	<Dialog.Content
 		showCloseButton={false}
-		class="rounded-[20px] p-0 border-0 max-w-md bg-linear-to-b from-[#5449AC] via-[#FFFFFF00] to-[#FFFFFF00] from-2% via-40% to-60% text-white"
+		class="rounded-[20px] p-0 border-0 max-w-md bg-linear-to-b from-[#5449AC] via-[#FFFFFF00] to-[#FFFFFF00] from-2% via-40% to-60% text-white min-w-[35vw]"
 	>
 		<div class="p-6">
 			<Dialog.Header>

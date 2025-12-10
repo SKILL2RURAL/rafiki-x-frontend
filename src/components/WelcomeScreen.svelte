@@ -8,6 +8,7 @@
 	import { Input } from '$lib/components/ui/input';
 	import Spinner from '$lib/components/ui/spinner/spinner.svelte';
 	import { chatStore, sendingMessage } from '$lib/stores/chatStore';
+	import { auth } from '$lib/stores/authStore';
 
 	const { sendMessage } = chatStore;
 
@@ -24,8 +25,23 @@
 
 	// FUNCTION TO START A NEW CONVERSATION
 	async function handleSend(value?: string) {
+		const content = value ? value : text.trim();
+		if (!$auth.accessToken) {
+			chatStore.setMessages([
+				{
+					id: new Date().getTime(),
+					role: 'USER',
+					content,
+					createdAt: new Date().toISOString(),
+					attachments: []
+				}
+			]);
+			await chatStore.sendGuestMessage(content);
+			goto('/guest');
+			return;
+		}
 		await sendMessage({
-			message: value ? value : text.trim(),
+			message: content,
 			createNewConversation: true
 		}).then((res) => {
 			goto(`/${res.conversationId}`);
@@ -36,7 +52,10 @@
 <div
 	class="bg-gradient-background px-3 py-10 lg:p-10 rounded-[20px] text-center font-mulish text-white relative flex flex-col"
 >
-	<h1 class="font-bold text-[24px] text-white mt-5 lg:mt-0">
+	<h1
+		class="font-bold text-[24px] text-white mt-5 lg:mt-0 tracking-wider"
+		style="font-family: 'Impact', sans-serif;"
+	>
 		Welcome to <span class="bg-white p-2 px-3 rounded-[100px] font-bold text-[20px]">
 			<span class="bg-gradient from-[#51A3DA] to-[#60269E] text-transparent bg-clip-text"
 				>RafikiX</span
@@ -82,10 +101,10 @@
 
 		<!-- QUICK LINKS  -->
 		<div
-			class="mt-3 lg:mt-5 grid grid-cols-3 gap-5 w-[70vw] md:w-full overflow-x-auto no-scrollbar pb-1 mx-auto"
+			class="mt-3 lg:mt-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 lg:gap-5 w-full"
 		>
 			<button
-				class="shadow-md rounded-[100px] flex items-center justify-center gap-2 px-6 lg:px-4 py-3 whitespace-nowrap min-w-[150px] lg:min-w-fit bg-white"
+				class="shadow-md rounded-[100px] flex items-center justify-center gap-2 px-4 sm:px-6 lg:px-4 py-3 w-full bg-white"
 				onclick={() =>
 					handleSend(
 						"I want to write a story, but I'm not sure where to start. Can you ask me some questions to help me get started and then help me write it?"
@@ -93,10 +112,10 @@
 				disabled={$sendingMessage}
 			>
 				<img src={book} alt="" width="18" height="18" />
-				<p class="text-[14px] lg:font-normal text-[#1E1E1E]">Write a Story</p>
+				<p class="text-[13px] sm:text-[14px] lg:font-normal text-[#1E1E1E]">Write a Story</p>
 			</button>
 			<button
-				class="shadow-md rounded-[100px] flex items-center justify-center gap-2 px-6 lg:px-4 py-3 whitespace-nowrap min-w-[150px] lg:min-w-fit bg-white"
+				class="shadow-md rounded-[100px] flex items-center justify-center gap-2 px-4 sm:px-6 lg:px-4 py-3 w-full bg-white"
 				onclick={() =>
 					handleSend(
 						"I'd like to have a chat about my career. I'm at a crossroads and could use some help exploring my options. Can you ask me some questions to understand my situation better?"
@@ -104,10 +123,10 @@
 				disabled={$sendingMessage}
 			>
 				<img src={pen} alt="pen" width="15" height="15" />
-				<p class="text-[14px] lg:font-normal text-[#1E1E1E]">Career Chat</p>
+				<p class="text-[13px] sm:text-[14px] lg:font-normal text-[#1E1E1E]">Career Chat</p>
 			</button>
 			<button
-				class="shadow-md rounded-[100px] flex items-center justify-center gap-2 px-6 lg:px-4 py-3 whitespace-nowrap min-w-[150px] lg:min-w-fit bg-white"
+				class="shadow-md rounded-[100px] flex items-center justify-center gap-2 px-4 sm:px-6 lg:px-4 py-3 w-full bg-white"
 				onclick={() =>
 					handleSend(
 						"I have an interview coming up and I'm feeling nervous. Can you help me prepare by running through some common interview questions and giving me feedback?"
@@ -115,7 +134,7 @@
 				disabled={$sendingMessage}
 			>
 				<img src={mic} alt="mic" width="20" height="20" />
-				<p class="text-[14px] lg:font-normal text-[#1E1E1E]">Interview Prep</p>
+				<p class="text-[13px] sm:text-[14px] lg:font-normal text-[#1E1E1E]">Interview Prep</p>
 			</button>
 		</div>
 	</div>

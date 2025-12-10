@@ -1,11 +1,14 @@
-<script>
+<script lang="ts">
 	// import Button from '$lib/components/ui/button/button.svelte';
 	import { Menu } from 'lucide-svelte';
 	import logo from '$lib/assets/logo.svg';
 	import { getStores } from '$app/stores';
 	import MobileSidebar from './MobileSidebar.svelte';
 	import { Button } from '$lib/components/ui/button';
+	import { goto } from '$app/navigation';
+	import { auth } from '$lib/stores/authStore';
 	const { page } = getStores();
+	let { onOpenCreateAccount }: { onOpenCreateAccount?: () => void } = $props();
 	const pathname = $derived($page.url.pathname);
 
 	let isSidebarOpen = $state(false);
@@ -29,17 +32,24 @@
 			<Menu size={30} class="cursor-pointer" />
 		</button>
 
-		<div class="flex justify-center items-center gap-2 overflow-auto text-[16px] w-full">
-			{#each links as link}
-				<a
-					href={link.href}
-					class={`block py-1 text-center ${pathname === link.href ? 'bg-linear-to-r from-[#51A3DA] to-[#60269E] bg-clip-text text-transparent border-b border-[#51A3DA]' : 'text-[#808990]'}`}
-					>{link.name}</a
-				>
-			{/each}
-		</div>
-		<img src={logo} alt="logo" class="h-[20px] w-[50px]" />
+		{#if !$auth.accessToken}
+			<Button class="bg-gradient h-[40px] w-[100px]" onclick={() => goto('/login')}>Sign up</Button>
+		{:else}
+			<div class="flex justify-center items-center gap-2 overflow-auto text-[16px] w-full">
+				{#each links as link}
+					<a
+						href={link.href}
+						class={`block py-1 text-center ${pathname === link.href ? 'bg-linear-to-r from-[#51A3DA] to-[#60269E] bg-clip-text text-transparent border-b border-[#51A3DA]' : 'text-[#808990]'}`}
+						>{link.name}</a
+					>
+				{/each}
+			</div>
+			<img src={logo} alt="logo" class="h-[20px] w-[50px]" />
+		{/if}
 	</div>
-	<!-- <Button class="bg-gradient h-[40px] w-[100px] hidden lg:block">Sign in</Button> -->
 </nav>
-<MobileSidebar isOpen={isSidebarOpen} onClose={() => (isSidebarOpen = false)} />
+<MobileSidebar
+	isOpen={isSidebarOpen}
+	onClose={() => (isSidebarOpen = false)}
+	{onOpenCreateAccount}
+/>
