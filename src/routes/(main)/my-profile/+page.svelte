@@ -2,7 +2,7 @@
 	import { api } from '$lib/api';
 	import * as Avatar from '$lib/components/ui/avatar/index.js';
 	import { fetchProfile, profile, uploadProfilePhoto } from '$lib/stores/profile';
-	import { ChevronRight, Lock, Mail, Trash2 } from 'lucide-svelte';
+	import { ChevronRight } from 'lucide-svelte';
 	import { onMount } from 'svelte';
 	import { toast } from 'svelte-sonner';
 	import { get } from 'svelte/store';

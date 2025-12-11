@@ -4,6 +4,7 @@ import { auth } from './stores/authStore';
 import { toast } from 'svelte-sonner';
 import { goto } from '$app/navigation';
 import { resolve } from '$app/paths';
+import { browser } from '$app/environment';
 
 export const api = axios.create({
 	baseURL: '/api'
@@ -15,7 +16,8 @@ const publicEndpoints = [
 	'/auth/login',
 	'/auth/forgot-password',
 	'/auth/reset-password',
-	'/auth/verify-email'
+	'/auth/verify-email',
+	'/chat/guest/message'
 ];
 
 // REQUEST INTERCEPTOR
@@ -46,15 +48,29 @@ api.interceptors.response.use(
 		// 401 - Unauthorized
 		if (err.response?.status === 401 && !isPublic) {
 			toast.error('Unauthorized. Please login again.');
-			localStorage.removeItem('accessToken');
-			goto(resolve('/login'));
+			if (browser) {
+				localStorage.removeItem('accessToken');
+				goto(resolve('/login'));
+			}
 			return Promise.reject(err);
 		}
 
 		// 403 - Forbidden
 		if (err.response?.status === 403 && !isPublic) {
-			localStorage.removeItem('accessToken');
-			goto(resolve('/login'));
+			if (browser) {
+				localStorage.removeItem('accessToken');
+				goto(resolve('/login'));
+			}
+			return Promise.reject(err);
+		}
+
+		if (err.response?.status === 429) {
+			toast.error('Too many requests. Please wait and try again.');
+			return Promise.reject(err);
+		}
+
+		if (err.response?.data?.message) {
+			toast.error(err.response.data.message);
 			return Promise.reject(err);
 		}
 
