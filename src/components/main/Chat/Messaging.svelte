@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { tick } from 'svelte';
+	// import { tick } from 'svelte';
 	import {
 		chatStore,
 		isRecording,
@@ -141,10 +141,10 @@
 		}
 	}
 
-	async function scrollToBottom() {
-		await tick();
-		scrollAnchor?.scrollIntoView({ behavior: 'smooth', block: 'end' });
-	}
+	// async function scrollToBottom() {
+	// 	await tick();
+	// 	scrollAnchor?.scrollIntoView({ behavior: 'smooth', block: 'end' });
+	// }
 
 	function formatFileSize(bytes: number): string {
 		if (bytes === 0) return '0 B';
@@ -179,7 +179,6 @@
 										<Typewriter
 											text={msg.content}
 											on:typingComplete={() => chatStore.setMessageTypingStatus(msg.id!, false)}
-											on:tick={scrollToBottom}
 										/>
 									{:else}
 										<MarkdownContent raw={msg.content} />
@@ -210,11 +209,13 @@
 											</Tooltip.Root>
 										</Tooltip.Provider>
 
-										<MessageFeedback
-											messageId={msg.id}
-											isTyping={msg.isTyping}
-											feedback={msg.feedback}
-										/>
+										{#if $auth.accessToken}
+											<MessageFeedback
+												messageId={msg.id}
+												isTyping={msg.isTyping}
+												feedback={msg.feedback}
+											/>
+										{/if}
 										<!-- <img
 											src={megaphone}
 											width="16"

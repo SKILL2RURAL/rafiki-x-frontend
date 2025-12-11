@@ -36,53 +36,55 @@
 </script>
 
 <Layout>
-    <!-- Header -->
-    <div class="relative p-5 md:p-10" style="font-family: 'Impact', sans-serif;">
-        <div class="text-center">
-            <h1 class="text-2xl md:text-3xl mb-5 font-black text-[#253B4B]">Upgrade Your RafikiX Plan</h1>
-            <div class="flex justify-center"><CurrencyToggle bind:selected={currency} /></div>
-        </div>
+	<!-- Header -->
+	<div class="relative p-5 md:p-10" style="font-family: 'Impact', sans-serif;">
+		<div class="text-center">
+			<h1 class="text-2xl md:text-3xl mb-5 font-black text-[#253B4B]">Upgrade Your RafikiX Plan</h1>
+			<div class="flex justify-center"><CurrencyToggle bind:selected={currency} /></div>
+		</div>
 
-        <!-- Close Button -->
-        <a href="/">
-            <div
-                class="absolute top-2 right-2 md:top-0 md:right-0 rounded-full size-[34px] flex items-center justify-center bg-gradient"
-            >
-                <X color="white" />
-            </div>
-        </a>
-    </div>
+		<!-- Close Button -->
+		<a href="/">
+			<div
+				class="absolute top-2 right-2 md:top-0 md:right-0 rounded-full size-[34px] flex items-center justify-center bg-gradient"
+			>
+				<X color="white" />
+			</div>
+		</a>
+	</div>
 
-    <!-- Pricing Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 md:gap-12 px-4 sm:px-8 md:px-20 max-w-6xl mx-auto">
-        <PricingCard
-            title="Free"
-            price={0}
-            {currency}
-            bind:billingPeriod={freePlanPeriod}
-            description="See what RafikiX can do"
-            features={freePlanFeatures}
-            buttonText="Current Plan"
-            buttonVariant="outline"
-            isCurrentPlan={true}
-        />
+	<!-- Pricing Cards -->
+	<div
+		class="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 md:gap-12 px-4 sm:px-8 md:px-20 max-w-6xl mx-auto"
+	>
+		<PricingCard
+			title="Free"
+			price={0}
+			{currency}
+			bind:billingPeriod={freePlanPeriod}
+			description="See what RafikiX can do"
+			features={freePlanFeatures}
+			buttonText="Current Plan"
+			buttonVariant="outline"
+			isCurrentPlan={true}
+		/>
 
-        <PricingCard
-            title="Plus"
-            price={currency === 'naira' ? 19200 : 12}
-            {currency}
-            bind:billingPeriod={plusPlanPeriod}
-            description="Do more with RafikiX Plus"
-            features={plusPlanFeatures}
-            buttonText="Upgrade to Plan"
-            buttonVariant="default"
-            highlighted={true}
-            on:upgrade={handleUpgrade}
-        />
-    </div>
+		<PricingCard
+			title="Plus"
+			price={currency === 'naira' ? 19200 : 12}
+			{currency}
+			bind:billingPeriod={plusPlanPeriod}
+			description="Do more with RafikiX Plus"
+			features={plusPlanFeatures}
+			buttonText="Upgrade to Plan"
+			buttonVariant="default"
+			highlighted={true}
+			on:upgrade={handleUpgrade}
+		/>
+	</div>
 
-    <!-- Footer -->
-    <p class="mt-8 px-4 text-center text-sm text-gray-600">
-        By messaging RafikiX, you agree to our Terms and Conditions
-    </p>
+	<!-- Footer -->
+	<p class="mt-8 px-4 text-center text-sm text-gray-600">
+		By messaging RafikiX, you agree to our Terms and Conditions
+	</p>
 </Layout>
