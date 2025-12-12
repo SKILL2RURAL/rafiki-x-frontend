@@ -50,7 +50,7 @@
 				<X />
 			</button>
 			<h2
-				class="font-bold text-[20px] md:text-[24px] text-white mb-5 tracking-wider"
+				class="text-[20px] md:text-[24px] text-white mb-5 tracking-wider"
 				style="font-family: 'Impact', sans-serif;"
 			>
 				Career Guide

@@ -56,9 +56,9 @@
 		<Sidebar onOpenCreateAccount={() => (isCreateAccountOpen = true)} />
 		<div class="w-full h-screen">
 			<Navbar onOpenCreateAccount={() => (isCreateAccountOpen = true)} />
-			<main class="p-5 pt-0 lg:pl-0 lg:pr-8 lg:pb-5 lg:pt-0 w-full">
+			<main class="lg:p-5 pt-0 lg:pl-0 lg:pr-8 lg:pb-5 lg:pt-0 w-full">
 				<div
-					class="bg-white rounded-[20px] border border-[#E8E8E8] h-[90vh] w-full overflow-y-auto p-5 lg:ml-3"
+					class="lg:bg-white rounded-[20px] lg:border border-[#E8E8E8] h-[90vh] w-full overflow-y-auto no-scrollbar lg:p-5 lg:ml-3"
 				>
 					{@render children()}
 				</div>

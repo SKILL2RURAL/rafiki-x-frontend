@@ -25,7 +25,7 @@
 				<X />
 			</button>
 			<h1
-				class="text-[20px] md:text-[24px] font-bold font-mulish tracking-wider text-white"
+				class="text-[20px] md:text-[24px] tracking-wider text-white"
 				style="font-family: 'Impact', sans-serif;"
 			>
 				My Resume

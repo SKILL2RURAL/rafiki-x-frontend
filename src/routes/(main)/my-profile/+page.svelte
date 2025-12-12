@@ -17,6 +17,7 @@
 	import DefualtProfileImage from '../../../lib/assets/icons/default-profile.png';
 	import { cn } from '$lib/utils';
 	import Layout from '../../../components/main/Layout/Layout.svelte';
+	import ProfileLoadingSkeleton from '../../../components/main/Profile/ProfileLoadingSkeleton.svelte';
 
 	let isDeleteDialogOpen = $state(false);
 	let isChangePasswordModalOpen = $state(false);
@@ -84,12 +85,15 @@
 
 <Layout>
 	{#if $profile.isLoading}
-		<p class="text-gray-500">Loading profile...</p>
-	{:else if $profile.error}
-		<p class="text-red-500">{$profile.error}</p>
+		<ProfileLoadingSkeleton />
 	{:else if $profile.data}
-		<div class="lg:px-10">
-			<h1 class="text-[#253B4B] text-[24px] font-normal mb-5">My Account</h1>
+		<div class="px-5 lg:px-10">
+			<h1
+				class="text-[#253B4B] text-[24px] font-normal mb-5"
+				style="font-family: 'Impact', sans-serif;"
+			>
+				My Account
+			</h1>
 
 			<!-- ✅ Profile picture section -->
 			<div>
@@ -155,7 +159,9 @@
 					<div class="flex space-x-5 items-center">
 						<img src={EnvelopeFill} alt="profile" class="w-[20px] h-[20px]" />
 						<div class="text-start">
-							<h5 class="text-[#253B4B] text-[18px] font-medium max-w-[200px] md:w-full">
+							<h5
+								class="text-[#253B4B] text-[18px] font-medium max-w-[250px] lg:max-w-[300px] md:w-full truncate"
+							>
 								{$profile.data.email}
 							</h5>
 							<p class="text-[#808990] text-[14px] font-satoshi-regular">Email address</p>
@@ -234,7 +240,5 @@
 			isOpen={isChangeEmailModalOpen}
 			onClose={() => (isChangeEmailModalOpen = false)}
 		/>
-	{:else}
-		<p>No profile data found.</p>
 	{/if}
 </Layout>

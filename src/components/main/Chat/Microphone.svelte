@@ -148,7 +148,7 @@
 	>
 		<button
 			class={cn(
-				`p-2 h-[48px] bg-white hover:bg-gray-100 flex items-center justify-center w-[48px] border rounded-full`,
+				`p-2 md:p-2 bg-white hover:bg-gray-100 flex items-center justify-center border rounded-full h-[40px] w-[40px] md:h-[48px] md:w-[48px]`,
 				{
 					'bg-gradient': $isRecording
 				}
@@ -159,7 +159,7 @@
 			{#if $isTranscribing}
 				<Spinner color="black" />
 			{:else}
-				<Mic color={$isRecording ? 'white' : 'black'} />
+				<Mic color={$isRecording ? 'white' : 'black'} class="w-4 h-4 md:w-5 md:h-5" />
 			{/if}
 		</button>
 	</div>
