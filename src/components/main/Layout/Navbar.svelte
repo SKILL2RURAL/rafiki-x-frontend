@@ -47,9 +47,11 @@
 			<img src={logo} alt="logo" class="h-[20px] w-[50px]" />
 		{/if}
 	</div>
-	<Button class="hidden lg:block bg-gradient h-[40px] w-[100px]" onclick={() => goto('/login')}
-		>Sign up</Button
-	>
+	{#if !$auth.accessToken}
+		<Button class="hidden lg:block bg-gradient h-[40px] w-[100px]" onclick={() => goto('/login')}
+			>Sign up</Button
+		>
+	{/if}
 </nav>
 <MobileSidebar
 	isOpen={isSidebarOpen}

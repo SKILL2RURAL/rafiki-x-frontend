@@ -144,7 +144,8 @@
 }
 
 @theme {
-	--font-impact: Impact --font-mulish: Mulish, system-ui, sans-serif;
+	--font-impact: Impact;
+	--font-mulish: Mulish, system-ui, sans-serif;
 	--font-satoshi-regular: Satoshi-Regular, system-ui, sans-serif;
 	--font-plus-jakarta-sans-semibold: PlusJakartaSans-Semibold, system-ui, sans-serif;
 	--font-plus-jakarta-sans-medium: PlusJakartaSans-Medium, system-ui, sans-serif;

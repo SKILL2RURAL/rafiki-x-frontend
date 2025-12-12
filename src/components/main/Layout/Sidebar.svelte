@@ -229,7 +229,7 @@
 			</div>
 		</div>
 
-		<div class=" bg-white flex flex-col justify-end mt-auto h-[250px] pt-5">
+		<div class=" flex flex-col justify-end mt-auto h-[250px] pt-5">
 			<button
 				class={`w-full rounded-[11px] p-px mb-10 ${isSidebarOpen ? 'bg-linear-to-br from-[#51A3DA] to-[#60269E]' : ''}`}
 				onclick={() => goto('/learn-more')}

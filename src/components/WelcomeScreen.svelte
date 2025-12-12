@@ -53,11 +53,12 @@
 	class="bg-gradient-background px-3 py-10 lg:p-10 rounded-[20px] text-center font-mulish text-white relative flex flex-col"
 >
 	<h1
-		class="font-bold text-[24px] text-white mt-5 lg:mt-0 tracking-wider"
+		class="text-[24px] text-white mt-5 lg:mt-0 tracking-wider"
 		style="font-family: 'Impact', sans-serif;"
 	>
 		Welcome to <span class="bg-white p-2 px-3 rounded-[100px] font-bold text-[20px]">
-			<span class="bg-gradient from-[#51A3DA] to-[#60269E] text-transparent bg-clip-text"
+			<span
+				class="bg-gradient from-[#51A3DA] to-[#60269E] text-transparent bg-clip-text font-mulish"
 				>RafikiX</span
 			>
 		</span>
