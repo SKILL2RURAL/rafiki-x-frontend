@@ -41,7 +41,7 @@
 				<Tooltip.Provider>
 					<Tooltip.Root>
 						<Tooltip.Trigger
-							class="hover:bg-gray-100 rounded-lg p-2"
+							class="hover:bg-gray-100 rounded-full p-2"
 							aria-label="Copy"
 							onclick={() => copyText(msg.content)}
 						>

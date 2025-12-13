@@ -39,7 +39,7 @@
 		<Tooltip.Provider>
 			<Tooltip.Root>
 				<Tooltip.Trigger
-					class={`rounded-lg p-2 ${isLiked ? 'opacity-50 cursor-not-allowed hover:bg-[#F7FBFD]' : 'hover:bg-gray-100'}`}
+					class={`rounded-full p-2 ${isLiked ? 'opacity-50 cursor-not-allowed hover:bg-[#F7FBFD]' : 'hover:bg-gray-100'}`}
 					aria-label="Like"
 					onclick={() => !isLiked && handleFeedback('LIKE')}
 				>
@@ -60,7 +60,7 @@
 		<Tooltip.Provider>
 			<Tooltip.Root>
 				<Tooltip.Trigger
-					class={`rounded-lg p-2 ${isDisliked ? 'opacity-50 cursor-not-allowed hover:bg-[#F7FBFD]' : 'hover:bg-gray-100'}`}
+					class={`rounded-full p-2 ${isDisliked ? 'opacity-50 cursor-not-allowed hover:bg-[#F7FBFD]' : 'hover:bg-gray-100'}`}
 					aria-label="Dislike"
 					onclick={() => !isDisliked && handleFeedback('DISLIKE')}
 				>
