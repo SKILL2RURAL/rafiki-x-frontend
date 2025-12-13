@@ -34,11 +34,11 @@
 					class="bg-[#F7F6F5] rounded-l-[10px] rounded-tr-[34px] rounded-br-[10px] p-4 flex items-center gap-3"
 				>
 					{#if msg.attachments && msg.attachments[0].fileType?.startsWith('image')}
-						<img src={image} class="w-[40px] h-[40px] object-contain" alt="selected file" />
+						<img src={image} class="size-10 object-contain" alt="selected file" />
 					{:else}
-						<img src={pdf} class="w-[40px] h-[40px] object-contain" alt="selected file" />
+						<img src={pdf} class="size-10 object-contain" alt="selected file" />
 					{/if}
-					<div class="pr-[12px]">
+					<div class="pr-3">
 						<p class="text-sm font-medium max-w-[500px] truncate">
 							{msg.attachments[0].originalFileName}
 						</p>
@@ -60,7 +60,7 @@
 			<Tooltip.Provider>
 				<Tooltip.Root>
 					<Tooltip.Trigger
-						class="hover:bg-gray-100 rounded-lg p-2"
+						class="hover:bg-gray-100 rounded-full p-2"
 						aria-label="Copy"
 						onclick={() => copyText(msg.content)}
 					>
@@ -80,4 +80,3 @@
 		</div>
 	</div>
 </div>
-
