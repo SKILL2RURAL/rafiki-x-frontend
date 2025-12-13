@@ -1,5 +1,5 @@
 <script lang="ts">
-	// import { tick } from 'svelte';
+	import { tick } from 'svelte';
 	import { messages, sendingMessage } from '$lib/stores/chatStore';
 	import botLogo from '$lib/assets/icons/logo-gradient.png';
 	// import megaphone from '$lib/assets/icons/megaphone.png';
@@ -40,7 +40,7 @@
 </script>
 
 <div
-	class="flex-1 flex-col mx-auto justify-between font-mulish font-medium lg:max-w-[70vw] h-full relative"
+	class="flex flex-col mx-auto justify-between font-mulish font-medium lg:max-w-[70vw] h-full relative"
 >
 	<!--Chat area-->
 	<div class="space-y-4 grow pb-[200px]">
