@@ -112,13 +112,22 @@
 		<!-- Settings -->
 		<div class="min-h-0 overflow-auto no-scrollbar">
 			<!-- Logo  -->
-			<img src={logo} alt="Rafiki X" width="45" height="45" />
+			<div class="flex gap-2 items-end">
+				<img src={logo} alt="Rafiki X" width="45" height="45" />
+				{#if isSidebarOpen}
+					<p
+						class="font-mulish font-bold text-[24px] bg-linear-to-br from-[#51A3DA] to-[#60269E] text-transparent bg-clip-text"
+					>
+						RafikiX
+					</p>
+				{/if}
+			</div>
 
 			<!-- Links  -->
 			<div class="my-5 space-y-3 mt-10">
 				<a
 					href="/"
-					class={`text-[14px] font-normal p-2 rounded-[8px] cursor-pointer flex items-center gap-2 ${pathname === '/' ? 'bg-gradient text-white' : 'text-[#808990]'} w-full`}
+					class={`text-[14px] font-normal p-2 rounded-xl cursor-pointer flex items-center gap-2 ${pathname === '/' ? 'bg-gradient text-white' : 'text-[#808990]'} w-full`}
 				>
 					<MessageCircle size={17} color={pathname === '/' ? 'white' : '#808990'} />
 					{#if isSidebarOpen}
@@ -127,7 +136,7 @@
 				</a>
 				<a
 					href="/my-resume"
-					class={` text-[14px] font-normal p-2 rounded-[8px] cursor-pointer flex items-center gap-2 ${pathname.includes('my-resume') ? 'bg-gradient text-white' : 'text-[#808990]'} w-full`}
+					class={` text-[14px] font-normal p-2 rounded-xl cursor-pointer flex items-center gap-2 ${pathname.includes('my-resume') ? 'bg-gradient text-white' : 'text-[#808990]'} w-full`}
 				>
 					{#if pathname.includes('my-resume')}
 						<img src={pdfLight} alt="" width="20" height="20" />
@@ -140,7 +149,7 @@
 				</a>
 				<a
 					href="/career-guide"
-					class={` text-[14px] font-normal p-2 rounded-[8px] cursor-pointer flex items-center gap-2 ${pathname.includes('career-guide') ? 'bg-gradient text-white' : 'text-[#808990]'} w-full`}
+					class={` text-[14px] font-normal p-2 rounded-xl cursor-pointer flex items-center gap-2 ${pathname.includes('career-guide') ? 'bg-gradient text-white' : 'text-[#808990]'} w-full`}
 				>
 					{#if pathname.includes('/career-guide')}
 						<img src={briefcaseLight} alt="" width="20" height="20" />
@@ -262,14 +271,14 @@
 				{#if $auth.accessToken}
 					<a href="/my-profile" class={` flex items-center gap-3`}>
 						{#if $profile.data?.profilePhoto}
-							<Avatar.Root class="size-[20px]">
+							<Avatar.Root class="size-5">
 								<Avatar.Image src={$profile.data?.profilePhoto} alt="profile" />
 								<Avatar.Fallback
 									>{$profile.data?.firstName?.[0] + $profile.data?.lastName?.[0]}</Avatar.Fallback
 								>
 							</Avatar.Root>
 						{:else}
-							<img src={noProfile} alt="Rafiki X" class="size-[20px]" />
+							<img src={noProfile} alt="Rafiki X" class="size-5" />
 						{/if}
 
 						{#if isSidebarOpen}

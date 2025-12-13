@@ -148,15 +148,15 @@
 					{#if selectedFile}
 						<div
 							class={cn(
-								'bg-linear-to-r from-[#51A3DA]/10 to-[#60269E]/10 border-[0.4px] border-[#C8CCD0] rounded-[8px] p-5 py-3 flex gap-5',
+								'bg-linear-to-r from-[#51A3DA]/10 to-[#60269E]/10 border-[0.4px] border-[#C8CCD0] rounded-xl p-5 py-3 flex gap-5',
 								{ 'opacity-50': uploadingFile }
 							)}
 						>
 							<div class="flex items-center gap-3">
 								{#if selectedFile.type.startsWith('image')}
-									<img src={image} class="w-[40px] h-[40px] object-contain" alt="selected file" />
+									<img src={image} class="size-10 object-contain" alt="selected file" />
 								{:else}
-									<img src={pdf} class="w-[40px] h-[40px] object-contain" alt="selected file" />
+									<img src={pdf} class="size-10 object-contain" alt="selected file" />
 								{/if}
 								<div>
 									<p class="text-sm font-medium max-w-[500px] truncate">{selectedFile.name}</p>
@@ -166,7 +166,7 @@
 								</div>
 							</div>
 							<button
-								class="size-[20px] rounded-full bg-white flex items-center justify-center cursor-pointer"
+								class="size-5 rounded-full bg-white flex items-center justify-center cursor-pointer"
 								onclick={() => (selectedFile = null)}
 							>
 								<X size={18} />
@@ -175,7 +175,7 @@
 					{:else}
 						<button
 							onclick={triggerFileUpload}
-							class="p-2 size-[40px] md:size-[48px] border rounded-full hover:bg-gray-100"
+							class="p-2 size-10 md:size-12 border rounded-full hover:bg-gray-100"
 						>
 							<img src={paperclip} class="mx-auto w-4 h-4 md:w-5 md:h-5" alt="file picker" />
 						</button>
@@ -198,13 +198,13 @@
 						<div class="flex items-center gap-3">
 							<button
 								onclick={() => microphone?.cancelRecording()}
-								class="size-[40px] md:size-[45px] border border-[#E2E2E2] flex items-center justify-center rounded-full hover:bg-gray-100"
+								class="size-10 md:size-[45px] border border-[#E2E2E2] flex items-center justify-center rounded-full hover:bg-gray-100"
 							>
 								<X class="w-4 h-4 md:w-[18px] md:h-[18px]" />
 							</button>
 							<button
 								onclick={() => microphone?.stopRecording()}
-								class="size-[40px] md:size-[45px] border border-[#E2E2E2] flex items-center justify-center rounded-full hover:bg-gray-100"
+								class="size-10 md:size-[45px] border border-[#E2E2E2] flex items-center justify-center rounded-full hover:bg-gray-100"
 							>
 								<img src={check} alt="" class="w-4 h-4 md:w-[18px] md:h-[18px]" />
 							</button>
@@ -214,7 +214,7 @@
 					{#if $newMessage.length > 0 && !$isRecording && !$isTranscribing}
 						<button
 							disabled={$sendingMessage || $newMessage.length === 0 || uploadingFile}
-							class="p-2 size-[40px] md:size-[48px] border rounded-full hover:bg-gray-100 flex items-center justify-center disabled:opacity-30"
+							class="p-2 size-10 md:size-12 border rounded-full hover:bg-gray-100 flex items-center justify-center disabled:opacity-30"
 							onclick={handleSend}
 						>
 							{#if $sendingMessage}

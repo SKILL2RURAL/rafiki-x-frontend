@@ -75,7 +75,7 @@
 	<div bind:this={scrollAnchor}></div>
 
 	<!-- Input Area -->
-	<div class="fixed bottom-0 lg:bottom-7.5 bg-white w-full lg:w-[71vw] px-5">
+	<div class="sticky bottom-0 lg:-bottom-5 bg-white w-full lg:w-[71vw] px-5">
 		<InputArea />
 		<p class="text-[#686868] text-center text-[14px] font-normal py-3">
 			By messaging RafikiX, you agree to our Terms and Conditions

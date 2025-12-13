@@ -166,7 +166,8 @@ button {
 }
 
 button:disabled {
-	cursor: not-allowed;
+	cursor: wait;
+	opacity: 0.5 !important;
 }
 
 .bg-gradient {
