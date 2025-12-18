@@ -1,7 +1,8 @@
 import { api } from '$lib/api';
 import { AxiosError } from 'axios';
 import { toast } from 'svelte-sonner';
-import { writable, derived } from 'svelte/store';
+import { writable, derived, get } from 'svelte/store';
+import { auth } from './authStore';
 
 // Types for Subscription Status
 export interface PlanLimit {
@@ -142,6 +143,19 @@ export function generateFeatures(limits: PlanLimits): string[] {
 
 // Fetch subscription status
 export async function fetchSubscriptionStatus() {
+	// Check if user has access token before making the API call
+	const accessToken = get(auth).accessToken;
+
+	if (!accessToken) {
+		// No token, don't make the API call
+		subscriptionStatus.set({
+			status: null,
+			isLoading: false,
+			error: null
+		});
+		return;
+	}
+
 	subscriptionStatus.update((state) => ({ ...state, isLoading: true, error: null }));
 
 	try {

@@ -7,6 +7,8 @@
 	import PricingCard from '../../../components/main/subscription/PricingCard.svelte';
 	import PricingCardSkeleton from '../../../components/main/subscription/PricingCardSkeleton.svelte';
 	import CurrencyToggle from '../../../components/main/subscription/CurrencyToggle.svelte';
+	import CreateAccountModal from '../../../components/main/Layout/CreateAccountModal.svelte';
+	import { auth } from '../../../lib/stores/authStore';
 	import {
 		subscriptionPlans,
 		fetchSubscriptionPlans,
@@ -16,34 +18,42 @@
 		currentPlan
 	} from '../../../lib/stores/subscription';
 
-	let currency: Currency = 'naira';
-	let freePlanPeriod: BillingPeriod = 'monthly';
-	let supportPlanPeriod: BillingPeriod = 'yearly';
+	let currency = $state<Currency>('naira');
+	let freePlanPeriod = $state<BillingPeriod>('monthly');
+	let supportPlanPeriod = $state<BillingPeriod>('yearly');
+	let isCreateAccountOpen = $state(false);
 
 	// Reactive stores
-	$: plans = $subscriptionPlans.plans;
-	$: isLoading = $subscriptionPlans.isLoading;
-	$: error = $subscriptionPlans.error;
-	$: userCurrentPlan = $currentPlan;
+	const plans = $derived($subscriptionPlans.plans);
+	const isLoading = $derived($subscriptionPlans.isLoading);
+	const error = $derived($subscriptionPlans.error);
+	const userCurrentPlan = $derived($currentPlan);
+	const isAuthenticated = $derived(!!$auth.accessToken);
 
 	// Get price for support plan based on currency and billing period
-	$: supportPrice = getSupportPlanPrice(plans, supportPlanPeriod, currency);
+	const supportPrice = $derived(getSupportPlanPrice(plans, supportPlanPeriod, currency));
 
 	// Get free plan features
-	$: freePlanFeatures = plans?.free ? generateFeatures(plans.free.limits) : [];
+	const freePlanFeatures = $derived(plans?.free ? generateFeatures(plans.free.limits) : []);
 
 	// Get support plan features
-	$: supportPlanFeatures = plans?.support ? generateFeatures(plans.support.limits) : [];
+	const supportPlanFeatures = $derived(
+		plans?.support ? generateFeatures(plans.support.limits) : []
+	);
 
 	// Determine which plan is current
-	$: isFreePlanCurrent = userCurrentPlan === 'FREE';
-	$: isSupportPlanCurrent = userCurrentPlan === 'SUPPORT';
+	const isFreePlanCurrent = $derived(userCurrentPlan === 'FREE');
+	const isSupportPlanCurrent = $derived(userCurrentPlan === 'SUPPORT');
 
 	function handleClose() {
 		goto('/');
 	}
 
 	function handleUpgrade() {
+		if (!isAuthenticated) {
+			isCreateAccountOpen = true;
+			return;
+		}
 		console.log('Upgrade to Support plan');
 		// Add your upgrade logic here
 	}
@@ -133,3 +143,5 @@
 		By messaging RafikiX, you agree to our Terms and Conditions
 	</p>
 </Layout>
+
+<CreateAccountModal isOpen={isCreateAccountOpen} onClose={() => (isCreateAccountOpen = false)} />
