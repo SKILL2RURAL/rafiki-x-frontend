@@ -1,11 +1,11 @@
 <script lang="ts">
 	import { fly } from 'svelte/transition';
 	// import { getStores } from '$app/stores';
-	// import { browser } from '$app/environment';
+	import { browser } from '$app/environment';
 	// import { goto } from '$app/navigation';
 	import arrowIcon from '$lib/assets/icons/caret-left-fill.svg';
-	// import { auth } from '$lib/stores/authStore';
-	// import { onMount } from 'svelte';
+	import { auth } from '$lib/stores/authStore';
+	import { onMount } from 'svelte';
 	import Navbar from './Navbar.svelte';
 	import Sidebar from './Sidebar.svelte';
 	import FeedbackInput from '../FeedbackInput.svelte';
@@ -16,10 +16,17 @@
 
 	let showFeedback = $state(false);
 	let isFeedbackInput = $state(false);
+	let selectedRating = $state<number | null>(null);
 
 	function closeFeedback() {
 		showFeedback = false;
 		isFeedbackInput = false;
+		selectedRating = null;
+	}
+
+	function handleShowFeedbackInput(rating: number) {
+		selectedRating = rating;
+		isFeedbackInput = true;
 	}
 
 	let loading = $state(false);
@@ -28,22 +35,16 @@
 	// const { page } = getStores();
 	// const pathname = $derived($page.url.pathname);
 
-	// onMount(() => {
-	// 	if (browser) {
-	// 		const storedToken = localStorage.getItem('accessToken');
-	// 		if (!storedToken) {
-	// 			loading = false;
-	// 			if (pathname !== '/') {
-	// 				goto('/login');
-	// 				return;
-	// 			}
-	// 		} else {
-	// 			auth.update((s) => ({ ...s, accessToken: storedToken }));
-	// 			loading = false;
-	// 		}
-	// 		loading = false;
-	// 	}
-	// });
+	onMount(() => {
+		if (browser) {
+			const storedToken = localStorage.getItem('accessToken');
+
+			// CHECK IF USER IS LOGGED IN
+			if (!storedToken) {
+				auth.update((state) => ({ ...state, accessToken: null, email: null, firstName: null }));
+			}
+		}
+	});
 </script>
 
 <!-- If loading  -->
@@ -75,22 +76,22 @@
 				>
 					<button
 						aria-label="feedback"
-						class=" bg-linear-to-r from-[#51A3DA] to-[#60269E] rounded-l-full p-1 h-[320px]"
+						class=" bg-linear-to-r from-[#51A3DA] to-[#60269E] rounded-l-full p-1 h-80"
 						onclick={() => (showFeedback = false)}
 					>
 						<img src={arrowIcon} alt="arrow icon" width="20" height="20" />
 					</button>
-					{#if isFeedbackInput}
-						<FeedbackInput {closeFeedback} />
+					{#if isFeedbackInput && selectedRating !== null}
+						<FeedbackInput {closeFeedback} rating={selectedRating} />
 					{:else}
-						<Feedback showFeedbackInput={() => (isFeedbackInput = true)} />
+						<Feedback showFeedbackInput={handleShowFeedbackInput} />
 					{/if}
 				</div>
 			{:else}
 				<div class="flex items-stretch">
 					<button
 						aria-label="feedback"
-						class=" bg-linear-to-r from-[#51A3DA] to-[#60269E] rounded-l-full p-1 h-[320px]"
+						class=" bg-linear-to-r from-[#51A3DA] to-[#60269E] rounded-l-full p-1 h-80"
 						onclick={() => (showFeedback = true)}
 					>
 						<img src={arrowIcon} alt="arrow icon" width="20" height="20" />
