@@ -356,6 +356,7 @@ export const initialMessage = derived(chatStore, ($chatStore) => $chatStore.init
 export const isRecording = derived(chatStore, ($chatStore) => $chatStore.isRecording);
 export const isTranscribing = derived(chatStore, ($chatStore) => $chatStore.isTranscribing);
 export const newMessage = derived(chatStore, ($chatStore) => $chatStore.newMessage);
+export const isLoadingChats = derived(chatStore, ($chatStore) => $chatStore.isLoading);
 export const guestRemainingMessages = derived(
 	chatStore,
 	($chatStore) => $chatStore.guestRemainingMessages

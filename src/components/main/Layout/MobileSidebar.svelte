@@ -9,9 +9,10 @@
 	import noProfile from '$lib/assets/icons/no-profile.png';
 	import logout from '$lib/assets/icons/door-open.png';
 	import { onMount } from 'svelte';
-	import { chats, chatStore } from '$lib/stores/chatStore';
+	import { chats, chatStore, isLoadingChats } from '$lib/stores/chatStore';
 	import noChat from '$lib/assets/icons/empty-state.png';
 	import { auth, logout as authLogout } from '$lib/stores/authStore';
+	import ChatHistorySkeleton from './ChatHistorySkeleton.svelte';
 
 	let {
 		isOpen,
@@ -66,7 +67,9 @@
 
 			{#if $auth.accessToken}
 				<div>
-					{#if chats && $chats.length > 0}
+					{#if $isLoadingChats}
+						<ChatHistorySkeleton />
+					{:else if chats && $chats.length > 0}
 						<div class="space-y-3 overflow-y-auto no-scrollbar h-[50vh]">
 							{#each $chats as chat}
 								<button

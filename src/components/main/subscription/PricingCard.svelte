@@ -16,6 +16,7 @@
 	export let buttonVariant: 'default' | 'outline' = 'default';
 	export let isCurrentPlan = false;
 	export let highlighted = false;
+	export let isLoading = false;
 
 	const dispatch = createEventDispatcher();
 
@@ -65,10 +66,10 @@
 			class="mb-6 w-full h-[50px] rounded-[8px] {highlighted
 				? 'bg-white text-[#51A3DA] hover:bg-gray-50'
 				: 'border border-[#C4C4C4]'}"
-			disabled={isCurrentPlan}
+			disabled={isCurrentPlan || isLoading}
 			onclick={handleClick}
 		>
-			{buttonText}
+			{isLoading ? 'Processing...' : buttonText}
 		</Button>
 
 		<!-- Features List -->

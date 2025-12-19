@@ -4,10 +4,11 @@
 	import X from '@lucide/svelte/icons/x';
 	import Ellipsis from '@lucide/svelte/icons/ellipsis';
 	import noChat from '$lib/assets/icons/empty-state.png';
-	import { chats, chatStore } from '$lib/stores/chatStore';
+	import { chats, chatStore, isLoadingChats } from '$lib/stores/chatStore';
 	import type { Conversation } from '$lib/types/chat';
 	import ReuseableDrawer from '../../Common/ReuseableDrawer.svelte';
 	import * as AlertDialog from '$lib/components/ui/alert-dialog/index';
+	import ChatHistorySkeleton from './ChatHistorySkeleton.svelte';
 
 	let {
 		isOpen = $bindable(false),
@@ -74,7 +75,9 @@
 			</button>
 		</div>
 		<div class="px-5 py-5 h-[90vh] overflow-auto">
-			{#if $chats.length > 0}
+			{#if $isLoadingChats}
+				<ChatHistorySkeleton />
+			{:else if $chats.length > 0}
 				<div class="space-y-4">
 					{#if grouped.today.length > 0}
 						<p class="text-[16px] font-medium text-[#808990]">Today</p>

@@ -18,7 +18,8 @@
 	import greaterArrow from '$lib/assets/icons/greaterArrow.png';
 	import { browser } from '$app/environment';
 	import { onMount } from 'svelte';
-	import { chats, chatStore } from '$lib/stores/chatStore';
+	import { chats, chatStore, isLoadingChats } from '$lib/stores/chatStore';
+	import ChatHistorySkeleton from './ChatHistorySkeleton.svelte';
 	import { profile } from '$lib/stores/profile';
 	import * as Avatar from '$lib/components/ui/avatar/index.js';
 	import ChatHistoryDrawer from './ChatHistoryDrawer.svelte';
@@ -167,7 +168,9 @@
 			<div class="flex-col mt-10">
 				{#if isSidebarOpen && $auth.accessToken}
 					<div>
-						{#if $chats && $chats.length > 0}
+						{#if $isLoadingChats}
+							<ChatHistorySkeleton />
+						{:else if $chats && $chats.length > 0}
 							<div class="space-y-3 overflow-y-auto no-scrollbar">
 								{#if groupedLimited.today.length > 0}
 									<p class="mb-4 font-medium text-[12px] text-[#909090] uppercase">Today</p>
