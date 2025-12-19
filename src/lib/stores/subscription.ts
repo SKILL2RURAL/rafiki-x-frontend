@@ -73,6 +73,31 @@ export interface PlansResponse {
 	support: SupportPlan;
 }
 
+// Types for Subscription Initialization
+export interface InitializeSubscriptionPayload {
+	billingCycle: 'MONTHLY' | 'YEARLY';
+	currency: 'NGN' | 'USD';
+	callbackUrl: string;
+}
+
+export interface PaymentData {
+	success: boolean;
+	authorizationUrl: string;
+	accessCode: string;
+	reference: string;
+	amount: number;
+	currency: string;
+}
+
+export interface InitializeSubscriptionResponse {
+	success: boolean;
+	authorizationUrl: string;
+	accessCode: string;
+	reference: string;
+	amount: number;
+	currency: string;
+}
+
 // Subscription Status Store
 interface SubscriptionState {
 	status: SubscriptionStatus | null;
@@ -254,4 +279,70 @@ export function getSupportPlanPrice(
 
 	const apiCurrency = currency === 'naira' ? 'ngn' : 'usd';
 	return plans.support.pricing[billingPeriod][apiCurrency];
+}
+
+// Initialize subscription (start payment process)
+export async function initializeSubscription(
+	billingCycle: 'monthly' | 'yearly',
+	currency: 'naira' | 'dollars',
+	callbackUrl: string
+): Promise<InitializeSubscriptionResponse | null> {
+	try {
+		// Convert to API format
+		const apiBillingCycle = billingCycle === 'monthly' ? 'MONTHLY' : 'YEARLY';
+		const apiCurrency = currency === 'naira' ? 'NGN' : 'USD';
+
+		const payload: InitializeSubscriptionPayload = {
+			billingCycle: apiBillingCycle,
+			currency: apiCurrency,
+			callbackUrl
+		};
+
+		const { data } = await api.post('/subscription/subscribe', payload);
+
+		if (data.success && data.data) {
+			const paymentData: PaymentData = data.data;
+
+			// Return the payment data
+			return {
+				success: paymentData.success,
+				authorizationUrl: paymentData.authorizationUrl,
+				accessCode: paymentData.accessCode,
+				reference: paymentData.reference,
+				amount: paymentData.amount,
+				currency: paymentData.currency
+			};
+		} else {
+			// Handle error response (e.g., "You already have an active subscription")
+			const errorMessage = data.message || 'Failed to initialize subscription';
+			toast.error(errorMessage);
+			return null;
+		}
+	} catch (error) {
+		console.error('Error initializing subscription:', error);
+		// Don't show toast here as the API interceptor will handle it
+		return null;
+	}
+}
+
+// Cancel subscription
+export async function cancelSubscription(): Promise<boolean> {
+	try {
+		const { data } = await api.post('/subscription/cancel');
+
+		if (data.success) {
+			toast.success(data.message || 'Subscription cancelled successfully');
+			// Refresh subscription status after cancellation
+			await fetchSubscriptionStatus();
+			return true;
+		} else {
+			const errorMessage = data.message || 'Failed to cancel subscription';
+			toast.error(errorMessage);
+			return false;
+		}
+	} catch (error) {
+		console.error('Error cancelling subscription:', error);
+		// Don't show toast here as the API interceptor will handle it
+		return false;
+	}
 }

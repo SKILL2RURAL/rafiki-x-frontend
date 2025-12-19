@@ -17,11 +17,20 @@
 		getSupportPlanPrice,
 		currentPlan
 	} from '../../../lib/stores/subscription';
+	import {
+		handleUpgrade,
+		handleCancel,
+		handleSupportPlanAction,
+		handleRetry,
+		handlePaymentCallback
+	} from '../../../components/main/subscription/subscriptionUtils';
 
 	let currency = $state<Currency>('naira');
 	let freePlanPeriod = $state<BillingPeriod>('monthly');
 	let supportPlanPeriod = $state<BillingPeriod>('yearly');
 	let isCreateAccountOpen = $state(false);
+	let isInitializing = $state({ value: false });
+	let isCancelling = $state({ value: false });
 
 	// Reactive stores
 	const plans = $derived($subscriptionPlans.plans);
@@ -49,22 +58,36 @@
 		goto('/');
 	}
 
-	function handleUpgrade() {
-		if (!isAuthenticated) {
-			isCreateAccountOpen = true;
-			return;
-		}
-		console.log('Upgrade to Support plan');
-		// Add your upgrade logic here
+	async function onUpgrade() {
+		await handleUpgrade(
+			isAuthenticated,
+			supportPlanPeriod,
+			currency,
+			() => (isCreateAccountOpen = true),
+			isInitializing
+		);
 	}
 
-	function handleRetry() {
-		fetchSubscriptionPlans();
+	async function onCancel() {
+		await handleCancel(isAuthenticated, () => (isCreateAccountOpen = true), isCancelling);
+	}
+
+	async function onSupportPlanAction() {
+		await handleSupportPlanAction(
+			isSupportPlanCurrent,
+			isAuthenticated,
+			supportPlanPeriod,
+			currency,
+			() => (isCreateAccountOpen = true),
+			isInitializing,
+			isCancelling
+		);
 	}
 
 	onMount(() => {
 		fetchSubscriptionPlans();
 		fetchSubscriptionStatus();
+		handlePaymentCallback();
 	});
 </script>
 
@@ -99,7 +122,7 @@
 			<div class="text-center">
 				<p class="text-red-600 mb-4">{error}</p>
 				<button
-					onclick={handleRetry}
+					onclick={() => handleRetry()}
 					class="px-4 py-2 bg-[#51A3DA] text-white rounded-lg hover:bg-[#3d8bb8] transition-colors"
 				>
 					Try Again
@@ -129,11 +152,12 @@
 				bind:billingPeriod={supportPlanPeriod}
 				description={plans.support.description}
 				features={supportPlanFeatures}
-				buttonText={isSupportPlanCurrent ? 'Current Plan' : 'Upgrade to Plan'}
+				buttonText={isSupportPlanCurrent ? 'Cancel Plan' : 'Upgrade to Plan'}
 				buttonVariant={isSupportPlanCurrent ? 'outline' : 'default'}
 				highlighted={true}
 				isCurrentPlan={isSupportPlanCurrent}
-				on:upgrade={handleUpgrade}
+				isLoading={isInitializing.value || isCancelling.value}
+				on:upgrade={onSupportPlanAction}
 			/>
 		</div>
 	{/if}
