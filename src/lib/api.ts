@@ -69,10 +69,10 @@ api.interceptors.response.use(
 			return Promise.reject(err);
 		}
 
-		if (err.response?.data?.message) {
-			toast.error(err.response.data.message);
-			return Promise.reject(err);
-		}
+		// if (err.response?.data?.message) {
+		// 	toast.error(err.response.data.message);
+		// 	return Promise.reject(err);
+		// }
 
 		if (err.response?.status === 500) {
 			// toast.error('Internal Server Error. Please try again later.');
