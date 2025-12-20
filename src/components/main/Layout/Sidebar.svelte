@@ -168,9 +168,9 @@
 			<div class="flex-col mt-10">
 				{#if isSidebarOpen && $auth.accessToken}
 					<div>
-						{#if $isLoadingChats}
-							<ChatHistorySkeleton />
-						{:else if $chats && $chats.length > 0}
+						<!-- {#if $isLoadingChats}
+							<ChatHistorySkeleton /> -->
+						{#if $chats && $chats.length > 0}
 							<div class="space-y-3 overflow-y-auto no-scrollbar">
 								{#if groupedLimited.today.length > 0}
 									<p class="mb-4 font-medium text-[12px] text-[#909090] uppercase">Today</p>
