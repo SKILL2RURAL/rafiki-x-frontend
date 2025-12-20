@@ -1,29 +1,26 @@
 <script lang="ts">
-	import Layout from '../../../components/main/Layout/Layout.svelte';
 	import { X } from 'lucide-svelte';
-	import { goto } from '$app/navigation';
 	import { onMount } from 'svelte';
-	import type { BillingPeriod, Currency } from '../../../components/main/subscription/types';
+	import CreateAccountModal from '../../../components/main/Layout/CreateAccountModal.svelte';
+	import Layout from '../../../components/main/Layout/Layout.svelte';
+	import CurrencyToggle from '../../../components/main/subscription/CurrencyToggle.svelte';
 	import PricingCard from '../../../components/main/subscription/PricingCard.svelte';
 	import PricingCardSkeleton from '../../../components/main/subscription/PricingCardSkeleton.svelte';
-	import CurrencyToggle from '../../../components/main/subscription/CurrencyToggle.svelte';
-	import CreateAccountModal from '../../../components/main/Layout/CreateAccountModal.svelte';
+	import {
+		handlePaymentCallback,
+		handleRetry,
+		handleSupportPlanAction
+	} from '../../../components/main/subscription/subscriptionUtils';
+	import type { BillingPeriod, Currency } from '../../../components/main/subscription/types';
 	import { auth } from '../../../lib/stores/authStore';
 	import {
-		subscriptionPlans,
+		currentPlan,
 		fetchSubscriptionPlans,
 		fetchSubscriptionStatus,
 		generateFeatures,
 		getSupportPlanPrice,
-		currentPlan
+		subscriptionPlans
 	} from '../../../lib/stores/subscription';
-	import {
-		handleUpgrade,
-		handleCancel,
-		handleSupportPlanAction,
-		handleRetry,
-		handlePaymentCallback
-	} from '../../../components/main/subscription/subscriptionUtils';
 
 	let currency = $state<Currency>('naira');
 	let freePlanPeriod = $state<BillingPeriod>('monthly');
@@ -53,24 +50,6 @@
 	// Determine which plan is current
 	const isFreePlanCurrent = $derived(userCurrentPlan === 'FREE');
 	const isSupportPlanCurrent = $derived(userCurrentPlan === 'SUPPORT');
-
-	function handleClose() {
-		goto('/');
-	}
-
-	async function onUpgrade() {
-		await handleUpgrade(
-			isAuthenticated,
-			supportPlanPeriod,
-			currency,
-			() => (isCreateAccountOpen = true),
-			isInitializing
-		);
-	}
-
-	async function onCancel() {
-		await handleCancel(isAuthenticated, () => (isCreateAccountOpen = true), isCancelling);
-	}
 
 	async function onSupportPlanAction() {
 		await handleSupportPlanAction(
