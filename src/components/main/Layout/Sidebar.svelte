@@ -168,7 +168,7 @@
 			<div class="flex-col mt-10">
 				{#if isSidebarOpen && $auth.accessToken}
 					<div>
-						{#if $isLoadingChats}
+						{#if $isLoadingChats && $chats.length === 0}
 							<ChatHistorySkeleton />
 						{:else if $chats && $chats.length > 0}
 							<div class="space-y-3 overflow-y-auto no-scrollbar">
