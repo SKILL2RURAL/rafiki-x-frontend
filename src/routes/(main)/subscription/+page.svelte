@@ -54,24 +54,6 @@
 	const isFreePlanCurrent = $derived(userCurrentPlan === 'FREE');
 	const isSupportPlanCurrent = $derived(userCurrentPlan === 'SUPPORT');
 
-	function handleClose() {
-		goto('/');
-	}
-
-	async function onUpgrade() {
-		await handleUpgrade(
-			isAuthenticated,
-			supportPlanPeriod,
-			currency,
-			() => (isCreateAccountOpen = true),
-			isInitializing
-		);
-	}
-
-	async function onCancel() {
-		await handleCancel(isAuthenticated, () => (isCreateAccountOpen = true), isCancelling);
-	}
-
 	async function onSupportPlanAction() {
 		await handleSupportPlanAction(
 			isSupportPlanCurrent,
