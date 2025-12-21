@@ -9,7 +9,8 @@
 	import {
 		handlePaymentCallback,
 		handleRetry,
-		handleSupportPlanAction
+		handleSupportPlanAction,
+		handleCancel
 	} from '../../../components/main/subscription/subscriptionUtils';
 	import type { BillingPeriod, Currency } from '../../../components/main/subscription/types';
 	import { auth } from '../../../lib/stores/authStore';
@@ -61,6 +62,13 @@
 			isInitializing,
 			isCancelling
 		);
+	}
+
+	async function onFreePlanAction() {
+		if (isSupportPlanCurrent) {
+			// If on support plan, cancel it when selecting free plan
+			await handleCancel(isAuthenticated, () => (isCreateAccountOpen = true), isCancelling);
+		}
 	}
 
 	onMount(() => {
@@ -122,6 +130,8 @@
 				buttonText={isFreePlanCurrent ? 'Current Plan' : 'Select Plan'}
 				buttonVariant="outline"
 				isCurrentPlan={isFreePlanCurrent}
+				isLoading={isCancelling.value}
+				on:upgrade={onFreePlanAction}
 			/>
 
 			<PricingCard
