@@ -30,6 +30,31 @@
 	let uploadingFile = $state(false);
 	let microphone: Microphone | null = $state(null);
 	let showGuestToast = $state(true);
+	let dotCount = $state(0);
+
+	$effect(() => {
+		if ($isRecording || $isTranscribing) {
+			const dotSequence = [1, 2, 3, 4, 5, 6, 0];
+			let sequenceIndex = 0;
+			dotCount = dotSequence[sequenceIndex];
+
+			const interval = setInterval(() => {
+				sequenceIndex = (sequenceIndex + 1) % dotSequence.length;
+				dotCount = dotSequence[sequenceIndex];
+			}, 300); // Change dot count every 300ms
+
+			return () => {
+				clearInterval(interval);
+				dotCount = 0;
+			};
+		} else {
+			dotCount = 0; // Reset when not recording/transcribing
+		}
+	});
+
+	function getDots(count: number): string {
+		return '.'.repeat(count);
+	}
 
 	function triggerFileUpload() {
 		fileInput?.click();
@@ -121,11 +146,11 @@
 			<div class="flex">
 				{#if $isRecording}
 					<p class="text-[#80899A] text-[16px] font-medium animate-pulse repeat-infinite">
-						Listening........
+						Listening{getDots(dotCount)}
 					</p>
 				{:else if $isTranscribing}
 					<p class="text-[#80899A] text-[16px] font-medium animate-pulse repeat-infinite">
-						Analyzing your input........
+						Analyzing your input{getDots(dotCount)}
 					</p>
 				{:else}
 					<img src={search} class="ml-2" width="16" height="16" alt="Search Icon" />

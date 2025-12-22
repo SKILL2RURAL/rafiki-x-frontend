@@ -302,6 +302,13 @@ function createChatStore() {
 			messageId: number,
 			payload: { feedbackType: 'LIKE' | 'DISLIKE'; feedbackText: string }
 		) => {
+			update((state) => ({
+				...state,
+				messages: state.messages.map((m) =>
+					m.id === messageId ? { ...m, feedback: payload.feedbackType } : m
+				)
+			}));
+
 			try {
 				const { data } = await api.post(`/chat/messages/${messageId}/feedback`, payload);
 
