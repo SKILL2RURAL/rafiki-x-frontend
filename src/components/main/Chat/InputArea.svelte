@@ -125,7 +125,7 @@
 					</p>
 				{:else if $isTranscribing}
 					<p class="text-[#80899A] text-[16px] font-medium animate-pulse repeat-infinite">
-						Gathering thoughts........
+						Analyzing your input........
 					</p>
 				{:else}
 					<img src={search} class="ml-2" width="16" height="16" alt="Search Icon" />
