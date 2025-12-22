@@ -1,11 +1,10 @@
 <script lang="ts">
-	import * as Tooltip from '$lib/components/ui/tooltip/index.js';
 	import like from '$lib/assets/icons/likeIcon.png';
 	import likeActive from '$lib/assets/icons/likeIconActive.png';
 	import thumDown from '$lib/assets/icons/thumbDown.png';
 	import thumbDownActive from '$lib/assets/icons/thumbDownActive.png';
+	import * as Tooltip from '$lib/components/ui/tooltip/index.js';
 	import { chatStore } from '$lib/stores/chatStore';
-	import { toast } from 'svelte-sonner';
 	let {
 		messageId,
 		isTyping,
@@ -20,17 +19,11 @@
 		if (feedback === type) return;
 		const defaultText =
 			type === 'LIKE' ? 'Very helpful response!' : 'The response was not relevant to my question';
-		try {
-			await chatStore.submitMessageFeedback(messageId, {
-				feedbackType: type,
-				feedbackText: defaultText
-			});
-			toast.success(
-				type === 'LIKE' ? 'Response Liked successfully' : 'Response Disliked successfully'
-			);
-		} catch (e) {
-			toast.error('Failed to submit feedback');
-		}
+
+		await chatStore.submitMessageFeedback(messageId, {
+			feedbackType: type,
+			feedbackText: defaultText
+		});
 	}
 </script>
 
