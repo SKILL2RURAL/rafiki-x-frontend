@@ -157,7 +157,7 @@
 				buttonVariant="outline"
 				isCurrentPlan={isFreePlanCurrent}
 				isLoading={isCancelling.value}
-				on:upgrade={onFreePlanAction}
+				on:upgrade={onManagePlan}
 			/>
 
 			<PricingCard
