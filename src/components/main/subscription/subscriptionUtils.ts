@@ -66,8 +66,6 @@ export async function handleUpgrade(
 		}
 	} catch (error) {
 		console.error('Error during subscription initialization:', error);
-	} finally {
-		isInitializing.value = false;
 	}
 }
 
@@ -88,11 +86,14 @@ export async function handleCancel(
 
 	try {
 		await cancelSubscription();
+		// Note: cancelSubscription already calls fetchSubscriptionStatus()
+		// The loading state will be reset when the plan changes (handled in component)
 	} catch (error) {
 		console.error('Error during subscription cancellation:', error);
-	} finally {
+		// On error, reset the loading state immediately
 		isCancelling.value = false;
 	}
+	// On success, keep loading state true until plan changes (handled by $effect in component)
 }
 
 // Handle support plan action (upgrade or cancel)
