@@ -1,86 +1,18 @@
 <script lang="ts">
-	import { api } from '$lib/api';
 	import * as Avatar from '$lib/components/ui/avatar/index.js';
-	import { fetchProfile, profile, uploadProfilePhoto } from '$lib/stores/profile';
-	import { ChevronRight } from 'lucide-svelte';
+	import { fetchProfile, profile } from '$lib/stores/profile';
 	import { onMount } from 'svelte';
-	import { toast } from 'svelte-sonner';
-	import { get } from 'svelte/store';
-	import ChangeEmailModal from '../../../components/main/Profile/ChangeEmailModal.svelte';
-	import ChangeNameModal from '../../../components/main/Profile/ChangeNameModal.svelte';
-	import ChangePasswordModal from '../../../components/main/Profile/ChangePasswordModal.svelte';
-	import DeleteAccountConfirmDialog from '../../../components/main/Profile/DeleteAccountConfirmDialog.svelte';
-	import PersonCircle from '../../../lib/assets/icons/person-circle.png';
-	import EnvelopeFill from '../../../lib/assets/icons/envelope-fill.png';
-	import LockFill from '../../../lib/assets/icons/lock-fill.png';
-	import TrashFill from '../../../lib/assets/icons/trash-fill.png';
-	import DefualtProfileImage from '../../../lib/assets/icons/default-profile.png';
 	import { cn } from '$lib/utils';
 	import Layout from '../../../components/main/Layout/Layout.svelte';
 	import ProfileLoadingSkeleton from '../../../components/main/Profile/ProfileLoadingSkeleton.svelte';
+	import ProfileTab from '../../../components/main/Profile/ProfileTab.svelte';
+	import BillingsTab from '../../../components/main/Profile/BillingsTab.svelte';
 
-	let isDeleteDialogOpen = $state(false);
-	let isChangePasswordModalOpen = $state(false);
-	let isChangeNameModalOpen = $state(false);
-	let isChangeEmailModalOpen = $state(false);
-	let isUploading = $state(false);
-
-	let form = $state({
-		firstName: '',
-		lastName: '',
-		email: '',
-		country: '',
-		gender: '',
-		ageGroup: '',
-		profilePhoto: ''
-	});
+	let activeTab = $state<'profile' | 'billings'>('profile');
 
 	onMount(async () => {
 		await fetchProfile();
-		const data = get(profile).data;
-		if (data) {
-			form = {
-				firstName: data.firstName || '',
-				lastName: data.lastName || '',
-				email: data.email || '',
-				country: data.country || '',
-				gender: data.gender || '',
-				ageGroup: data.ageGroup || '',
-				profilePhoto: data.profilePhoto || ''
-			};
-		}
 	});
-
-	async function handleFileChange(event: Event) {
-		try {
-			isUploading = true;
-
-			const input = event.target as HTMLInputElement;
-			if (!input?.files?.length) return;
-
-			const file = input.files[0];
-			if (!file.type.startsWith('image/')) {
-				toast.error('Please upload a valid image file.');
-				return;
-			}
-
-			const uploadedUrl = await uploadProfilePhoto(file);
-			if (uploadedUrl) {
-				await api.put('/user/profile', { profilePhoto: uploadedUrl });
-				toast.success('Profile photo updated!');
-
-				// Optimistic UI update
-				form.profilePhoto = uploadedUrl;
-
-				await fetchProfile();
-			}
-		} catch (error: any) {
-			console.error('Error updating profile photo:', error?.response?.data || error);
-			toast.error('Failed to update profile photo.');
-		} finally {
-			isUploading = false;
-		}
-	}
 </script>
 
 <Layout>
@@ -88,157 +20,65 @@
 		<ProfileLoadingSkeleton />
 	{:else if $profile.data}
 		<div class="px-5 lg:px-10">
-			<h1
-				class="text-[#253B4B] text-[24px] font-normal mb-5"
-				style="font-family: 'Impact', sans-serif;"
-			>
-				My Account
-			</h1>
-
-			<!-- ✅ Profile picture section -->
-			<div>
-				<p class="text-[#253B4B] text-[18px] font-light mb-3">Profile picture</p>
-				<div class={cn('flex items-center gap-4 mb-5', { 'opacity-50': isUploading })}>
-					<!-- PROFILE IMAGE  -->
-					<div class={cn('w-20 h-20 rounded-full', { 'opacity-50': isUploading })}>
-						{#if form.profilePhoto}
-							<Avatar.Root class="w-20 h-20">
-								<Avatar.Image src={form.profilePhoto} alt="profile" />
-								<Avatar.Fallback>{form.firstName?.[0] + form.lastName?.[0]}</Avatar.Fallback>
-							</Avatar.Root>
-						{:else}
-							<img src={DefualtProfileImage} alt="profile" class="w-20 h-20 rounded-full" />
-						{/if}
-					</div>
-
-					<div class="space-y-2">
-						<p class="text-[#808990]">Must be JPG, PNG, 2MB Max</p>
-						<label
-							class="text-[#253B4B] text-[14px] font-normal border border-[#808990] rounded-[4px] p-2 cursor-pointer"
-						>
-							<input
-								type="file"
-								disabled={isUploading}
-								accept="image/*"
-								onchange={handleFileChange}
-								class="hidden"
-							/>
-							Change Picture
-						</label>
-					</div>
-				</div>
+			<!-- Header with Title and Avatar -->
+			<div class="flex items-center justify-between mb-5">
+				<h1
+					class="text-[#253B4B] text-[24px] font-normal"
+					style="font-family: 'Impact', sans-serif;"
+				>
+					My Account
+				</h1>
 			</div>
 
-			<!-- Basic Information Section -->
-			<div class="shadow-md rounded-[20px] p-10">
-				<h3 class="text-[#253B4B] text-[18px] font-semibold font-mulish">Basic information</h3>
+			<!-- Navigation Tabs -->
+			<div class="flex gap-4 mb-6 bg-[#F4F4F5] rounded-[10px] p-3 w-fit">
 				<button
-					class="flex justify-between items-center py-5 border-b border-[#E8E8E8] w-full"
-					onclick={() => (isChangeNameModalOpen = true)}
+					onclick={() => (activeTab = 'profile')}
+					class={cn(
+						'px-4 py-2 text-[16px] font-medium rounded-[8px] transition-colors relative',
+						activeTab === 'profile' ? 'bg-[#F2F8FC]' : 'text-[#808990] hover:text-[#253B4B]'
+					)}
+					style={activeTab === 'profile'
+						? 'border: 1px solid transparent; background-image: linear-gradient(#F2F8FC, #F2F8FC), linear-gradient(to right, #51A3DA, #195176); background-origin: border-box; background-clip: padding-box, border-box;'
+						: ''}
 				>
-					<div class="flex space-x-5 items-center">
-						<img src={PersonCircle} alt="profile" class="w-[20px] h-[20px]" />
-						<div class="flex flex-col items-start">
-							<h5 class="text-[#253B4B] text-[18px] font-medium">
-								{$profile.data.firstName + ' ' + $profile.data.lastName}
-							</h5>
-							<p class="text-[#808990] text-[14px] font-satoshi-regular">Full name</p>
-						</div>
-					</div>
-					<div class="hidden lg:block">
-						<div class="bg-gradient rounded-full cursor-pointer p-1">
-							<ChevronRight color="white" size={25} />
-						</div>
-					</div>
+					{#if activeTab === 'profile'}
+						<p class="bg-linear-to-r from-[#51A3DA] to-[#60269E] bg-clip-text text-transparent">
+							Profile
+						</p>
+					{:else}
+						<p>Profile</p>
+					{/if}
 				</button>
-
 				<button
-					onclick={() => (isChangeEmailModalOpen = true)}
-					class="flex justify-between items-center py-5 w-full"
+					onclick={() => (activeTab = 'billings')}
+					class={cn(
+						'px-4 py-2 text-[16px] font-medium rounded-[8px] transition-colors relative',
+						activeTab === 'billings' ? 'bg-[#F2F8FC]' : 'text-[#808990] hover:text-[#253B4B]'
+					)}
+					style={activeTab === 'billings'
+						? 'border: 1px solid transparent; background-image: linear-gradient(#F2F8FC, #F2F8FC), linear-gradient(to right, #51A3DA, #195176); background-origin: border-box; background-clip: padding-box, border-box;'
+						: ''}
 				>
-					<div class="flex space-x-5 items-center">
-						<img src={EnvelopeFill} alt="profile" class="w-[20px] h-[20px]" />
-						<div class="text-start">
-							<h5
-								class="text-[#253B4B] text-[18px] font-medium max-w-[250px] lg:max-w-[300px] md:w-full truncate"
-							>
-								{$profile.data.email}
-							</h5>
-							<p class="text-[#808990] text-[14px] font-satoshi-regular">Email address</p>
-						</div>
-					</div>
-					<!-- <div class="hidden lg:block">
-						<div class="bg-gradient rounded-full cursor-pointer text-white px-4 text-[12px]">
-							Default
-						</div>
-					</div> -->
+					{#if activeTab === 'billings'}
+						<p class="bg-linear-to-r from-[#51A3DA] to-[#60269E] bg-clip-text text-transparent">
+							Billings
+						</p>
+					{:else}
+						<p>Billings</p>
+					{/if}
 				</button>
-
-				<div>
-					<h3 class="text-[#253B4B] text-[18px] font-medium">Security</h3>
-					<button
-						onclick={() => (isChangePasswordModalOpen = true)}
-						class="flex justify-between items-center py-5 w-full"
-					>
-						<div class="flex space-x-5 items-center">
-							<img src={LockFill} alt="profile" class="w-[20px] h-[20px]" />
-							<div>
-								<h5 class="text-[#253B4B] text-[18px] font-medium text-left">Password</h5>
-								<p class="text-[#808990] text-[14px] font-satoshi-regular text-left">
-									Change your account password
-								</p>
-							</div>
-						</div>
-						<div class="hidden lg:block">
-							<div class="bg-gradient rounded-full cursor-pointer p-1">
-								<ChevronRight color="white" size={25} />
-							</div>
-						</div>
-					</button>
-				</div>
-
-				<!-- Danger Zone -->
-				<div>
-					<h3 class="text-[#253B4B] text-[18px] font-medium">Danger Zone</h3>
-					<button
-						class="flex justify-between items-center py-5 w-full"
-						onclick={() => (isDeleteDialogOpen = true)}
-					>
-						<div class="flex space-x-5 items-center">
-							<img src={TrashFill} alt="profile" class="w-[20px] h-[20px]" />
-							<div>
-								<h5 class="text-[#DE1106] text-[18px] font-medium text-left">Delete account</h5>
-								<p class="text-[#808990] text-[14px] font-satoshi-regular text-left">
-									You won't be able to undo this action if you continue.
-								</p>
-							</div>
-						</div>
-						<div class="hidden lg:block">
-							<div class="bg-gradient rounded-full cursor-pointer p-1">
-								<ChevronRight color="white" size={25} />
-							</div>
-						</div>
-					</button>
-				</div>
 			</div>
+
+			<!-- Profile Tab Content -->
+			{#if activeTab === 'profile'}
+				<ProfileTab />
+			{/if}
+
+			<!-- Billings Tab Content -->
+			{#if activeTab === 'billings'}
+				<BillingsTab />
+			{/if}
 		</div>
-
-		<!-- Modals -->
-		<DeleteAccountConfirmDialog
-			isOpen={isDeleteDialogOpen}
-			onClose={() => (isDeleteDialogOpen = false)}
-		/>
-		<ChangePasswordModal
-			isOpen={isChangePasswordModalOpen}
-			onClose={() => (isChangePasswordModalOpen = false)}
-		/>
-		<ChangeNameModal
-			isOpen={isChangeNameModalOpen}
-			onClose={() => (isChangeNameModalOpen = false)}
-		/>
-		<ChangeEmailModal
-			isOpen={isChangeEmailModalOpen}
-			onClose={() => (isChangeEmailModalOpen = false)}
-		/>
 	{/if}
 </Layout>

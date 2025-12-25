@@ -13,6 +13,7 @@
 	import noChat from '$lib/assets/icons/empty-state.png';
 	import { auth, logout as authLogout } from '$lib/stores/authStore';
 	import ChatHistorySkeleton from './ChatHistorySkeleton.svelte';
+	import LogoutConfirmationModal from './LogoutConfirmationModal.svelte';
 
 	let {
 		isOpen,
@@ -20,6 +21,9 @@
 		onOpenCreateAccount
 	}: { isOpen: boolean; onClose: (v: boolean) => void; onOpenCreateAccount?: () => void } =
 		$props();
+
+	// Local state for logout confirmation modal
+	let isLogoutModalOpen = $state(false);
 
 	onMount(() => {
 		chatStore.getConversations({});
@@ -127,8 +131,8 @@
 						<button
 							class="flex items-center gap-3"
 							onclick={() => {
-								authLogout();
-								// goto('/login');
+								isLogoutModalOpen = true;
+								onClose(false);
 							}}
 						>
 							<img src={logout} alt="Rafiki X" width="20" height="20" />
@@ -140,3 +144,12 @@
 		</aside>
 	</Drawer.Content>
 </Drawer.Root>
+
+<LogoutConfirmationModal
+	isOpen={isLogoutModalOpen}
+	onClose={() => (isLogoutModalOpen = false)}
+	onConfirm={() => {
+		authLogout();
+		isLogoutModalOpen = false;
+	}}
+/>

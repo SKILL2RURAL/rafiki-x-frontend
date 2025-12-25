@@ -3,6 +3,9 @@
 	import Button from '$lib/components/ui/button/button.svelte';
 	import logo from '$lib/assets/icons/logo-with-name.png';
 	import { X } from 'lucide-svelte';
+	import linkedinIcon from '$lib/assets/icons/linkedln-icon.png';
+	import facebookIcon from '$lib/assets/icons/facebook-icon.png';
+	import twitterIcon from '$lib/assets/icons/x-icon.png';
 
 	export let isOpen: boolean = false;
 	export let onClose: () => void = () => {};
@@ -55,16 +58,22 @@
 				style="font-family: 'Mullish', sans-serif;"
 			>
 				<div class="flex flex-col items-center gap-2">
-					<div class="size-10 rounded-full bg-[#F1F5F9]"></div>
+					<div class="size-13 rounded-full bg-white shadow-lg flex items-center justify-center">
+						<img src={linkedinIcon} alt="LinkedIn" class="size-[18px] object-contain" />
+					</div>
+					<span class="text-[14px] text-[#253B4B]">LinkedIn</span>
+				</div>
+				<div class="flex flex-col items-center gap-2">
+					<div class="size-13 rounded-full bg-white shadow-lg flex items-center justify-center">
+						<img src={facebookIcon} alt="Facebook" class="size-[18px] object-contain" />
+					</div>
 					<span class="text-[14px] text-[#253B4B]">Facebook</span>
 				</div>
 				<div class="flex flex-col items-center gap-2">
-					<div class="size-10 rounded-full bg-[#F1F5F9]"></div>
-					<span class="text-[14px] text-[#253B4B]">X</span>
-				</div>
-				<div class="flex flex-col items-center gap-2">
-					<div class="size-10 rounded-full bg-[#F1F5F9]"></div>
-					<span class="text-[14px] text-[#253B4B]">LinkedIn</span>
+					<div class="size-13 rounded-full bg-white shadow-lg flex items-center justify-center">
+						<img src={twitterIcon} alt="Twitter" class="size-[18px] object-contain" />
+					</div>
+					<span class="text-[14px] text-[#253B4B]">X(Twitter)</span>
 				</div>
 			</div>
 		</div>

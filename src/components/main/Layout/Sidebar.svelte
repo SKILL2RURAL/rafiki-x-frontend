@@ -23,10 +23,14 @@
 	import { profile } from '$lib/stores/profile';
 	import * as Avatar from '$lib/components/ui/avatar/index.js';
 	import ChatHistoryDrawer from './ChatHistoryDrawer.svelte';
+	import LogoutConfirmationModal from './LogoutConfirmationModal.svelte';
 	import type { Conversation } from '$lib/types/chat';
 	import { auth, logout as authLogout } from '$lib/stores/authStore';
 
 	let { onOpenCreateAccount }: { onOpenCreateAccount?: () => void } = $props();
+
+	// Local state for logout confirmation modal
+	let isLogoutModalOpen = $state(false);
 
 	const todayHistory = history.find((item) => item.day === 'TODAY');
 
@@ -295,8 +299,7 @@
 						<button
 							class={`flex items-center gap-3`}
 							onclick={() => {
-								authLogout();
-								// goto('/login');
+								isLogoutModalOpen = true;
 							}}
 						>
 							<img src={logout} alt="Rafiki X" width="20" height="20" />
@@ -314,4 +317,13 @@
 <ChatHistoryDrawer
 	bind:isOpen={isDrawerOpen}
 	onClose={(value: boolean) => (isDrawerOpen = value)}
+/>
+
+<LogoutConfirmationModal
+	isOpen={isLogoutModalOpen}
+	onClose={() => (isLogoutModalOpen = false)}
+	onConfirm={() => {
+		authLogout();
+		isLogoutModalOpen = false;
+	}}
 />
