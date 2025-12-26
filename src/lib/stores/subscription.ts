@@ -98,6 +98,24 @@ export interface InitializeSubscriptionResponse {
 	currency: string;
 }
 
+// Types for Transaction History
+export interface Transaction {
+	id: number;
+	amount: number;
+	status: 'SUCCESS' | 'PENDING' | 'FAILED';
+	currency: string;
+	paidAt: string | null;
+	createdAt: string;
+	paymentChannel: string;
+	reference: string;
+}
+
+export interface TransactionsResponse {
+	success: boolean;
+	message: string;
+	data: Transaction[];
+}
+
 // Subscription Status Store
 interface SubscriptionState {
 	status: SubscriptionStatus | null;
@@ -127,6 +145,25 @@ const initialPlansState: PlansState = {
 };
 
 export const subscriptionPlans = writable<PlansState>(initialPlansState);
+
+// Transactions Store
+interface TransactionsState {
+	transactions: Transaction[];
+	isLoading: boolean;
+	error: string | null;
+	totalPages: number;
+	currentPage: number;
+}
+
+const initialTransactionsState: TransactionsState = {
+	transactions: [],
+	isLoading: false,
+	error: null,
+	totalPages: 0,
+	currentPage: 0
+};
+
+export const transactions = writable<TransactionsState>(initialTransactionsState);
 
 // Derived stores
 export const currentPlan = derived(subscriptionStatus, ($status) => $status.status?.plan || 'FREE');
@@ -343,6 +380,79 @@ export async function cancelSubscription(): Promise<boolean> {
 	} catch (error) {
 		console.error('Error cancelling subscription:', error);
 		// Don't show toast here as the API interceptor will handle it
+		return false;
+	}
+}
+
+// Fetch transaction history
+export async function fetchTransactions(page: number = 0, size: number = 5): Promise<boolean> {
+	// Check if user has access token before making the API call
+	const accessToken = get(auth).accessToken;
+
+	if (!accessToken) {
+		transactions.set({
+			transactions: [],
+			isLoading: false,
+			error: null,
+			totalPages: 0,
+			currentPage: 0
+		});
+		return false;
+	}
+
+	transactions.update((state) => ({ ...state, isLoading: true, error: null }));
+
+	try {
+		const { data } = await api.get<TransactionsResponse>('/subscription/transactions', {
+			params: {
+				page,
+				size
+			}
+		});
+
+		if (data.success && data.data) {
+			const hasMore = data.data.length === size;
+			const totalPages = hasMore ? page + 2 : page + 1;
+
+			transactions.set({
+				transactions: data.data,
+				isLoading: false,
+				error: null,
+				totalPages,
+				currentPage: page
+			});
+			return true;
+		} else {
+			const errorMessage = data.message || 'Failed to load transaction history';
+			transactions.set({
+				transactions: [],
+				isLoading: false,
+				error: errorMessage,
+				totalPages: 0,
+				currentPage: 0
+			});
+			return false;
+		}
+	} catch (error) {
+		console.error('Error fetching transactions:', error);
+		let errorMessage = 'Failed to load transaction history';
+
+		if (error instanceof AxiosError) {
+			errorMessage = error.response?.data?.message || errorMessage;
+		}
+
+		transactions.set({
+			transactions: [],
+			isLoading: false,
+			error: errorMessage,
+			totalPages: 0,
+			currentPage: 0
+		});
+
+		// Only show toast for non-401 errors
+		if (error instanceof AxiosError && error.response?.status !== 401) {
+			toast.error(errorMessage);
+		}
 		return false;
 	}
 }

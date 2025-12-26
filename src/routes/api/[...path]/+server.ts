@@ -20,14 +20,27 @@ export const POST: RequestHandler = async ({ params, request }) => {
 	const path = Array.isArray(params.path) ? params.path.join('/') : params.path;
 	const targetUrl = `${API_BASE_URL}/${path}`;
 
-	const body = await request.text();
+	const contentType = request.headers.get('content-type') || '';
+	const isFormData = contentType.includes('multipart/form-data');
+
+	let body: BodyInit;
+	const headers: HeadersInit = {
+		Authorization: request.headers.get('authorization') || ''
+	};
+
+	if (isFormData) {
+		// For FormData, preserve it and let fetch set the Content-Type with boundary
+		body = await request.formData();
+		// Don't set Content-Type - fetch will set it automatically with boundary
+	} else {
+		// For JSON and other content types
+		body = await request.text();
+		headers['Content-Type'] = 'application/json';
+	}
 
 	const response = await fetch(targetUrl, {
 		method: 'POST',
-		headers: {
-			'Content-Type': 'application/json',
-			Authorization: request.headers.get('authorization') || ''
-		},
+		headers,
 		body
 	});
 
@@ -39,14 +52,27 @@ export const PUT: RequestHandler = async ({ params, request }) => {
 	const path = Array.isArray(params.path) ? params.path.join('/') : params.path;
 	const targetUrl = `${API_BASE_URL}/${path}`;
 
-	const body = await request.text();
+	const contentType = request.headers.get('content-type') || '';
+	const isFormData = contentType.includes('multipart/form-data');
+
+	let body: BodyInit;
+	const headers: HeadersInit = {
+		Authorization: request.headers.get('authorization') || ''
+	};
+
+	if (isFormData) {
+		// For FormData, preserve it and let fetch set the Content-Type with boundary
+		body = await request.formData();
+		// Don't set Content-Type - fetch will set it automatically with boundary
+	} else {
+		// For JSON and other content types
+		body = await request.text();
+		headers['Content-Type'] = 'application/json';
+	}
 
 	const response = await fetch(targetUrl, {
 		method: 'PUT',
-		headers: {
-			'Content-Type': 'application/json',
-			Authorization: request.headers.get('authorization') || ''
-		},
+		headers,
 		body
 	});
 
