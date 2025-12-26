@@ -1,6 +1,6 @@
 import { api } from '$lib/api';
 import type { ChatState, Conversation, Message, MessagePayload } from '$lib/types/chat';
-import axios, { AxiosError } from 'axios';
+import { AxiosError } from 'axios';
 import { derived, writable } from 'svelte/store';
 
 const initialState: ChatState = {
@@ -176,15 +176,7 @@ function createChatStore() {
 			formData.append('language', 'en-US');
 
 			try {
-				const { data } = await axios.post(
-					'http://ec2-51-21-61-45.eu-north-1.compute.amazonaws.com:8080/api/voice/note',
-					formData,
-					{
-						headers: {
-							Authorization: `Bearer ${localStorage.getItem('accessToken')}`
-						}
-					}
-				);
+				const { data } = await api.post('/voice/note', formData);
 				if (data.transcription && data.transcription.length > 0) {
 					return data.transcription;
 				}
@@ -200,15 +192,7 @@ function createChatStore() {
 			formData.append('folder', 'chat');
 
 			try {
-				const { data } = await axios.post(
-					'http://ec2-51-21-61-45.eu-north-1.compute.amazonaws.com:8080/api/upload',
-					formData,
-					{
-						headers: {
-							Authorization: `Bearer ${localStorage.getItem('accessToken')}`
-						}
-					}
-				);
+				const { data } = await api.post('/upload', formData);
 				if (data.data) {
 					return data.data;
 				}
