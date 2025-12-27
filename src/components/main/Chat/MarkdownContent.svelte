@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { marked } from 'marked';
-	import { onMount } from 'svelte';
+	import { onMount, afterUpdate } from 'svelte';
 
 	/** Props */
 	export let raw: string = '';
@@ -14,24 +14,43 @@
 		html = marked.parse(raw) as string;
 	}
 
-	onMount(() => {
-		if (container) {
-			const tables = container.querySelectorAll('table');
-			tables.forEach((table) => {
-				const wrapper = document.createElement('div');
-				wrapper.className = 'overflow-x-auto';
-				table.parentNode?.insertBefore(wrapper, table);
-				wrapper.appendChild(table);
-			});
-		}
-		// Add smooth scrolling for anchor links
-		document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+	function wrapTables() {
+		if (!container) return;
+
+		// Find all tables that are not already wrapped
+		const tables = container.querySelectorAll('table:not(.table-wrapped)');
+		tables.forEach((table) => {
+			// Check if table is already wrapped
+			if (table.parentElement?.classList.contains('table-wrapper')) {
+				table.classList.add('table-wrapped');
+				return;
+			}
+
+			const wrapper = document.createElement('div');
+			wrapper.className = 'table-wrapper overflow-x-auto w-full';
+			table.parentNode?.insertBefore(wrapper, table);
+			wrapper.appendChild(table);
+			table.classList.add('table-wrapped');
+		});
+
+		// Add smooth scrolling for anchor links (only add listener if not already added)
+		container.querySelectorAll('a[href^="#"]:not([data-smooth-scroll])').forEach((anchor) => {
+			anchor.setAttribute('data-smooth-scroll', 'true');
 			anchor.addEventListener('click', (e) => {
 				e.preventDefault();
 				const target = document.querySelector(anchor.getAttribute('href')!);
 				target?.scrollIntoView({ behavior: 'smooth' });
 			});
 		});
+	}
+
+	afterUpdate(() => {
+		// Wrap tables after DOM updates (including during typing)
+		wrapTables();
+	});
+
+	onMount(() => {
+		wrapTables();
 	});
 </script>
 
@@ -108,9 +127,10 @@
 
 	:global(.markdown-content table) {
 		border-collapse: collapse;
-		margin: 1rem 0;
+		margin: 0;
 		font-size: 0.875rem;
-		min-width: max-content; /* Ensure table doesn't shrink */
+		width: 100%;
+		table-layout: auto;
 	}
 
 	:global(.markdown-content th),
@@ -121,8 +141,9 @@
 	}
 
 	:global(.markdown-content td) {
-		/* background-color: red; */
-		max-width: 600px;
+		max-width: 300px;
+		word-wrap: break-word;
+		overflow-wrap: break-word;
 	}
 
 	:global(.markdown-content th) {
@@ -139,9 +160,17 @@
 		background-color: #f3f4f6;
 	}
 
-	:global(.markdown-content .overflow-x-auto) {
+	:global(.markdown-content .table-wrapper) {
 		overflow-x: auto;
 		margin: 1rem 0;
+		width: 100%;
+		max-width: 100%;
+		-webkit-overflow-scrolling: touch;
+	}
+
+	:global(.markdown-content .table-wrapper table) {
+		min-width: max-content;
+		width: auto;
 	}
 
 	/* Dark mode styles */
