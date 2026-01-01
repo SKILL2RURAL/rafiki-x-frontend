@@ -325,5 +325,9 @@
 	onConfirm={() => {
 		authLogout();
 		isLogoutModalOpen = false;
+		// Redirect if user is on my-profile page since unauthorized users can't access it
+		if ($page.url.pathname === '/my-profile') {
+			goto('/');
+		}
 	}}
 />

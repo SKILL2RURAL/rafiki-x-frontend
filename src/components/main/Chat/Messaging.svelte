@@ -23,11 +23,11 @@
 	let scrollAnchor: HTMLDivElement | null = $state(null);
 	let isCreateAccountOpen = $state(false);
 
-	$effect(() => {
-		if ($guestRemainingMessages === 0) {
-			isCreateAccountOpen = true;
-		}
-	});
+	// $effect(() => {
+	// 	if ($guestRemainingMessages === 0) {
+	// 		isCreateAccountOpen = true;
+	// 	}
+	// });
 
 	// async function scrollToBottom() {
 	// 	await tick();
@@ -76,7 +76,7 @@
 
 	<!-- Input Area -->
 	<div class="sticky bottom-0 lg:-bottom-5 bg-white w-full lg:w-[71vw] px-5">
-		<InputArea />
+		<InputArea onOpenCreateAccount={() => (isCreateAccountOpen = true)} />
 		<p class="text-[#686868] text-center text-[14px] font-normal py-3">
 			By messaging RafikiX, you agree to our Terms and Conditions
 		</p>

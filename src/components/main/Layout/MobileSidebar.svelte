@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
+	import { page } from '$app/state';
 
 	import * as Drawer from '$lib/components/ui/drawer/index.js';
 	import X from '$lib/assets/icons/custom-x.svg';
@@ -151,5 +152,9 @@
 	onConfirm={() => {
 		authLogout();
 		isLogoutModalOpen = false;
+		// Redirect if user is on my-profile page since unauthorized users can't access it
+		if (page.url.pathname === '/my-profile') {
+			goto('/');
+		}
 	}}
 />

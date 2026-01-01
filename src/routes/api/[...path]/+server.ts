@@ -5,11 +5,19 @@ export const GET: RequestHandler = async ({ params, request }) => {
 	const path = Array.isArray(params.path) ? params.path.join('/') : params.path;
 	const targetUrl = `${API_BASE_URL}/${path}`;
 
+	const headers: HeadersInit = {
+		Authorization: request.headers.get('authorization') || ''
+	};
+
+	// Forward X-Guest-Session-Id header if present
+	const guestSessionId = request.headers.get('x-guest-session-id');
+	if (guestSessionId) {
+		headers['X-Guest-Session-Id'] = guestSessionId;
+	}
+
 	const response = await fetch(targetUrl, {
 		method: 'GET',
-		headers: {
-			Authorization: request.headers.get('authorization') || ''
-		}
+		headers
 	});
 
 	const data = await response.json();
@@ -27,6 +35,12 @@ export const POST: RequestHandler = async ({ params, request }) => {
 	const headers: HeadersInit = {
 		Authorization: request.headers.get('authorization') || ''
 	};
+
+	// Forward X-Guest-Session-Id header if present
+	const guestSessionId = request.headers.get('x-guest-session-id');
+	if (guestSessionId) {
+		headers['X-Guest-Session-Id'] = guestSessionId;
+	}
 
 	if (isFormData) {
 		// For FormData, preserve it and let fetch set the Content-Type with boundary
@@ -60,6 +74,12 @@ export const PUT: RequestHandler = async ({ params, request }) => {
 		Authorization: request.headers.get('authorization') || ''
 	};
 
+	// Forward X-Guest-Session-Id header if present
+	const guestSessionId = request.headers.get('x-guest-session-id');
+	if (guestSessionId) {
+		headers['X-Guest-Session-Id'] = guestSessionId;
+	}
+
 	if (isFormData) {
 		// For FormData, preserve it and let fetch set the Content-Type with boundary
 		body = await request.formData();
@@ -84,11 +104,19 @@ export const DELETE: RequestHandler = async ({ params, request }) => {
 	const path = Array.isArray(params.path) ? params.path.join('/') : params.path;
 	const targetUrl = `${API_BASE_URL}/${path}`;
 
+	const headers: HeadersInit = {
+		Authorization: request.headers.get('authorization') || ''
+	};
+
+	// Forward X-Guest-Session-Id header if present
+	const guestSessionId = request.headers.get('x-guest-session-id');
+	if (guestSessionId) {
+		headers['X-Guest-Session-Id'] = guestSessionId;
+	}
+
 	const response = await fetch(targetUrl, {
 		method: 'DELETE',
-		headers: {
-			Authorization: request.headers.get('authorization') || ''
-		}
+		headers
 	});
 
 	const data = await response.json();
