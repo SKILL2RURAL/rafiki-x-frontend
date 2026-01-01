@@ -74,15 +74,52 @@
 		uploadingFile = true;
 		const target = event.target as HTMLInputElement;
 		if (target.files && target.files.length > 0) {
-			if (target.files[0].size > 5 * 1024 * 1024) {
+			const file = target.files[0];
+
+			// Check file size
+			if (file.size > 5 * 1024 * 1024) {
 				toast.error('File size limit is 5MB');
 				uploadingFile = false;
+				// Reset file input
+				if (target) {
+					target.value = '';
+				}
 				return;
 			}
-			selectedFile = target.files[0];
-			const fileUploadResponse = await chatStore.uploadFileForChat(selectedFile);
-			fileKeys.push(fileUploadResponse.fileKey);
-			uploadingFile = false;
+
+			// Check if user is logged in (file uploads require authentication)
+			const token =
+				typeof localStorage !== 'undefined' ? localStorage.getItem('accessToken') : null;
+			if (!token) {
+				toast.error('Please log in to upload files');
+				uploadingFile = false;
+				if (target) {
+					target.value = '';
+				}
+				return;
+			}
+
+			try {
+				selectedFile = file;
+				const fileUploadResponse = await chatStore.uploadFileForChat(file);
+				if (fileUploadResponse?.fileKey) {
+					fileKeys.push(fileUploadResponse.fileKey);
+					toast.success('File uploaded successfully');
+				} else {
+					throw new Error('Invalid response from server');
+				}
+			} catch (error) {
+				console.error('Error uploading file:', error);
+				toast.error('Failed to upload file. Please try again.');
+				selectedFile = null;
+				fileKeys = [];
+			} finally {
+				uploadingFile = false;
+				// Reset file input to allow selecting the same file again
+				if (target) {
+					target.value = '';
+				}
+			}
 		}
 	}
 
@@ -96,6 +133,20 @@
 
 		if (!$newMessage.trim()) {
 			toast.error('Please enter a message');
+			return;
+		}
+
+		const token = typeof localStorage !== 'undefined' ? localStorage.getItem('accessToken') : null;
+
+		// Check if file is selected but upload failed (no fileKey)
+		if (selectedFile && fileKeys.length === 0 && token) {
+			toast.error('File upload failed. Please remove the file and try again.');
+			return;
+		}
+
+		// Prevent sending files with guest messages
+		if (selectedFile && !token) {
+			toast.error('Please log in to send files');
 			return;
 		}
 
@@ -118,17 +169,21 @@
 		updatedMessage.push(newUserMsg);
 		chatStore.setMessages(updatedMessage);
 
-		const token = typeof localStorage !== 'undefined' ? localStorage.getItem('accessToken') : null;
 		if (!token) {
 			await chatStore.sendGuestMessage($newMessage.trim());
 			showGuestToast = true;
 		} else {
-			chatStore.sendMessage({
-				message: $newMessage.trim(),
-				createNewConversation: false,
-				conversationId: Number(page.params.chatId),
-				fileKeys
-			});
+			try {
+				await chatStore.sendMessage({
+					message: $newMessage.trim(),
+					createNewConversation: false,
+					conversationId: Number(page.params.chatId),
+					fileKeys
+				});
+			} catch (error) {
+				console.error('Error sending message:', error);
+				toast.error('Failed to send message. Please try again.');
+			}
 		}
 		chatStore.setNewMessage('');
 		selectedFile = null;
@@ -200,7 +255,10 @@
 							</div>
 							<button
 								class="size-5 rounded-full bg-white flex items-center justify-center cursor-pointer"
-								onclick={() => (selectedFile = null)}
+								onclick={() => {
+									selectedFile = null;
+									fileKeys = [];
+								}}
 							>
 								<X size={18} />
 							</button>
