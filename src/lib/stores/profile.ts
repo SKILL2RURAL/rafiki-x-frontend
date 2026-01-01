@@ -1,5 +1,5 @@
 import { api } from '$lib/api';
-import axios, { AxiosError } from 'axios';
+import { AxiosError } from 'axios';
 import { toast } from 'svelte-sonner';
 import { writable } from 'svelte/store';
 
@@ -63,24 +63,19 @@ export async function uploadProfilePhoto(file: File): Promise<string | null> {
 		formData.append('file', file);
 		formData.append('folder', 'profile');
 
-		const { data } = await axios.post(
-			`http://ec2-51-21-61-45.eu-north-1.compute.amazonaws.com:8080/api/upload`,
-			formData,
-			{
-				headers: {
-					Authorization: `Bearer ${localStorage.getItem('accessToken')}`
-				}
-			}
-		);
+		const { data } = await api.post('/upload', formData);
 
-		profile.update((prev) => ({
-			...prev,
-			data: {
-				...(prev.data || {}),
-				profilePhoto: data.data.fileUrl
-			} as UserProfile
-		}));
-		return data.data.fileUrl;
+		if (data.data?.fileUrl) {
+			profile.update((prev) => ({
+				...prev,
+				data: {
+					...(prev.data || {}),
+					profilePhoto: data.data.fileUrl
+				} as UserProfile
+			}));
+			return data.data.fileUrl;
+		}
+		return null;
 	} catch (error) {
 		console.error('Error uploading profile photo:', error);
 		toast.error('Failed to upload profile photo.');
