@@ -2,6 +2,15 @@ import { api } from '$lib/api';
 import type { ChatState, Conversation, Message, MessagePayload } from '$lib/types/chat';
 import { AxiosError } from 'axios';
 import { derived, writable } from 'svelte/store';
+import { browser } from '$app/environment';
+
+// Load guestSessionId from localStorage if available
+const getStoredGuestSessionId = (): string | null => {
+	if (browser && typeof localStorage !== 'undefined') {
+		return localStorage.getItem('guest_session_id');
+	}
+	return null;
+};
 
 const initialState: ChatState = {
 	chats: [],
@@ -18,7 +27,7 @@ const initialState: ChatState = {
 	isRecording: false,
 	isUploadingVoiceNote: false,
 	newMessage: '',
-	guestSessionId: null,
+	guestSessionId: getStoredGuestSessionId(),
 	guestRemainingMessages: null
 };
 
@@ -97,9 +106,34 @@ function createChatStore() {
 
 		// Send Guest Message
 		sendGuestMessage: async (message: string) => {
-			update((state) => ({ ...state, isSending: true }));
+			let sessionId: string | null = null;
+			let hasExistingMessages = false;
+
+			// Get current sessionId from store state and check if this is a new conversation
+			update((state) => {
+				sessionId = state.guestSessionId;
+				// If messages array has more than 1 message, we're continuing an existing conversation
+				// (messages should have at least 1 USER and 1 ASSISTANT message from previous exchanges)
+				hasExistingMessages = state.messages.length > 1;
+				return { ...state, isSending: true };
+			});
+
 			try {
-				const { data } = await api.post('/chat/guest/message', { message });
+				// Prepare headers - only send sessionId if continuing an existing conversation
+				// Don't send sessionId on the first message of a new conversation
+				const headers: Record<string, string> = {};
+				if (sessionId && hasExistingMessages) {
+					headers['X-Guest-Session-Id'] = sessionId;
+				}
+
+				const { data } = await api.post('/chat/guest/message', { message }, { headers });
+
+				// Save sessionId to localStorage and update state
+				const newSessionId = data.data.sessionId ?? sessionId;
+				if (newSessionId && browser && typeof localStorage !== 'undefined') {
+					localStorage.setItem('guest_session_id', newSessionId);
+				}
+
 				const assistant: Message = {
 					id: new Date().getTime(),
 					content: data.data.aiMessage,
@@ -111,7 +145,7 @@ function createChatStore() {
 					...state,
 					messages: [...state.messages, assistant],
 					guestRemainingMessages: data.data.remainingMessages ?? state.guestRemainingMessages,
-					guestSessionId: data.data.sessionId ?? state.guestSessionId
+					guestSessionId: newSessionId
 				}));
 				return data.data;
 			} catch (error) {
@@ -321,10 +355,27 @@ function createChatStore() {
 
 		// set messages
 		setMessages: (messages: Message[]) => {
-			update((state) => ({
-				...state,
-				messages: messages
-			}));
+			update((state) => {
+				// If setting messages to a new array with 1 or fewer messages, it's a new conversation
+				// Clear the sessionId so we don't send it on the first message
+				const isNewConversation = messages.length <= 1 && state.messages.length > 1;
+				return {
+					...state,
+					messages: messages,
+					// Clear sessionId when starting a new conversation
+					...(isNewConversation
+						? {
+								guestSessionId: null,
+								guestRemainingMessages: null
+							}
+						: {})
+				};
+			});
+
+			// Also clear from localStorage when starting a new conversation
+			if (messages.length <= 1 && browser && typeof localStorage !== 'undefined') {
+				localStorage.removeItem('guest_session_id');
+			}
 		},
 
 		// Set message typing status

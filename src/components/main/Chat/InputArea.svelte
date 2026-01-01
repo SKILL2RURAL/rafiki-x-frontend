@@ -24,6 +24,8 @@
 	import type { Message } from '$lib/types/chat';
 	import GuestToast from './GuestToast.svelte';
 
+	let { onOpenCreateAccount }: { onOpenCreateAccount?: () => void } = $props();
+
 	let selectedFile: File | null = $state(null);
 	let fileInput: HTMLInputElement | null = $state(null);
 	let fileKeys: string[] = [];
@@ -86,6 +88,12 @@
 
 	async function handleSend() {
 		if ($sendingMessage) return;
+
+		if ($guestRemainingMessages !== null && $guestRemainingMessages === 0 && onOpenCreateAccount) {
+			onOpenCreateAccount();
+			return;
+		}
+
 		if (!$newMessage.trim()) {
 			toast.error('Please enter a message');
 			return;

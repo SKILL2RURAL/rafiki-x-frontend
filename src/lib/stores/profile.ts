@@ -28,11 +28,9 @@ const initialState: ProfileState = {
 export const profile = writable<ProfileState>(initialState);
 
 export async function fetchProfile() {
-	// profile.set({ ...initialState, isLoading: true });
 	try {
 		const { data } = await api.get('/user/profile');
 
-		// ✅ Normalize and map backend response
 		const user = data.data;
 		const normalizedUser: UserProfile = {
 			firstName: user.firstName,

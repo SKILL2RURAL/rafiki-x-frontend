@@ -5,6 +5,7 @@
 	import Input from '$lib/components/ui/input/input.svelte';
 	import { Spinner } from '$lib/components/ui/spinner';
 	import { auth, isLoading, login } from '$lib/stores/authStore';
+	import { fetchProfile } from '$lib/stores/profile';
 	import { AxiosError } from 'axios';
 	import { Eye, EyeOff } from 'lucide-svelte';
 	import { toast } from 'svelte-sonner';
@@ -17,7 +18,9 @@
 	};
 	async function handleSubmit() {
 		try {
-			await login(formData);
+			await login(formData).then(() => {
+				if ($auth.accessToken) fetchProfile();
+			});
 			auth.update((state) => ({ ...state, isLoading: false }));
 			goto('/');
 		} catch (error) {
