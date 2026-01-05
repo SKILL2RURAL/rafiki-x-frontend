@@ -113,7 +113,15 @@ export interface Transaction {
 export interface TransactionsResponse {
 	success: boolean;
 	message: string;
-	data: Transaction[];
+	data: {
+		content: Transaction[];
+		totalPages: number;
+		totalElements: number;
+		page: number;
+		last: boolean;
+		first: boolean;
+		size: number;
+	};
 }
 
 // Subscription Status Store
@@ -152,7 +160,11 @@ interface TransactionsState {
 	isLoading: boolean;
 	error: string | null;
 	totalPages: number;
-	currentPage: number;
+	page: number;
+	size: number;
+	first: boolean;
+	last: boolean;
+	totalElement: number;
 }
 
 const initialTransactionsState: TransactionsState = {
@@ -160,7 +172,11 @@ const initialTransactionsState: TransactionsState = {
 	isLoading: false,
 	error: null,
 	totalPages: 0,
-	currentPage: 0
+	page: 1,
+	size: 10,
+	first: true,
+	last: false,
+	totalElement: 0
 };
 
 export const transactions = writable<TransactionsState>(initialTransactionsState);
@@ -379,47 +395,43 @@ export async function cancelSubscription(): Promise<boolean> {
 		}
 	} catch (error) {
 		console.error('Error cancelling subscription:', error);
-		// Don't show toast here as the API interceptor will handle it
 		return false;
 	}
 }
 
 // Fetch transaction history
-export async function fetchTransactions(page: number = 0, size: number = 5): Promise<boolean> {
+export async function fetchTransactions(page: number, size: number): Promise<boolean> {
 	// Check if user has access token before making the API call
 	const accessToken = get(auth).accessToken;
 
 	if (!accessToken) {
-		transactions.set({
-			transactions: [],
-			isLoading: false,
-			error: null,
-			totalPages: 0,
-			currentPage: 0
-		});
 		return false;
 	}
 
 	transactions.update((state) => ({ ...state, isLoading: true, error: null }));
+	const params = new URLSearchParams();
+	params.append('page', page.toString());
+	params.append('size', size.toString());
 
 	try {
-		const { data } = await api.get<TransactionsResponse>('/subscription/transactions', {
-			params: {
-				page,
-				size
-			}
-		});
+		const { data } = await api.get<TransactionsResponse>(
+			'/subscription/transactions?' + params.toString()
+		);
 
 		if (data.success && data.data) {
-			const hasMore = data.data.length === size;
-			const totalPages = hasMore ? page + 2 : page + 1;
+			const res = data.data;
+			console.log('Transaction data =>', res);
 
 			transactions.set({
-				transactions: data.data,
+				transactions: res.content,
 				isLoading: false,
 				error: null,
-				totalPages,
-				currentPage: page
+				totalPages: res.totalPages,
+				page: res.page,
+				size: res.size,
+				first: res.first,
+				last: res.last,
+				totalElement: res.totalElements
 			});
 			return true;
 		} else {
@@ -429,7 +441,11 @@ export async function fetchTransactions(page: number = 0, size: number = 5): Pro
 				isLoading: false,
 				error: errorMessage,
 				totalPages: 0,
-				currentPage: 0
+				page: 1,
+				size: 0,
+				first: true,
+				last: false,
+				totalElement: 0
 			});
 			return false;
 		}
@@ -446,7 +462,11 @@ export async function fetchTransactions(page: number = 0, size: number = 5): Pro
 			isLoading: false,
 			error: errorMessage,
 			totalPages: 0,
-			currentPage: 0
+			page: 1,
+			size: 0,
+			first: true,
+			last: false,
+			totalElement: 0
 		});
 
 		// Only show toast for non-401 errors

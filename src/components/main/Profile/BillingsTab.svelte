@@ -3,40 +3,10 @@
 	import downloadIcon from '$lib/assets/icons/download-gradient.png';
 	import { transactions, fetchTransactions } from '$lib/stores/subscription';
 
-	const itemsPerPage = 5;
+	console.log($transactions);
 
-	// Initialize currentPage from store if data exists, otherwise start at 0
-	const initialStoreValue = get(transactions);
-	let currentPage = $state(
-		initialStoreValue.transactions.length > 0 ? initialStoreValue.currentPage : 0
-	);
-
-	// Fetch transactions only when needed:
-	// 1. Initial load (no data in store)
-	// 2. User changed page (currentPage changed and doesn't match store's currentPage)
 	$effect(() => {
-		const storeValue = get(transactions);
-
-		// If store has data for a different page than what we're showing, sync to store's page
-		// This happens when switching tabs - we want to show the cached page
-		if (storeValue.transactions.length > 0 && storeValue.currentPage !== currentPage) {
-			// Only sync if we're not actively loading (to avoid conflicts)
-			if (!storeValue.isLoading) {
-				currentPage = storeValue.currentPage;
-				return; // Don't fetch, just use cached data
-			}
-		}
-
-		// Only fetch if:
-		// - We have no data AND not loading, OR
-		// - User changed page (currentPage doesn't match store's currentPage) AND not loading
-		const needsFetch =
-			!storeValue.isLoading &&
-			(storeValue.transactions.length === 0 || storeValue.currentPage !== currentPage);
-
-		if (needsFetch) {
-			fetchTransactions(currentPage, itemsPerPage);
-		}
+		fetchTransactions(0, 10);
 	});
 
 	// Format date for display
@@ -61,25 +31,20 @@
 	}
 
 	// Get serial number for display (1-based)
-	function getSerialNumber(index: number): string {
-		return String(currentPage * itemsPerPage + index + 1).padStart(2, '0');
-	}
 
 	function handleDownloadInvoice(reference: string) {
 		console.log('Download invoice for:', reference);
 	}
 
 	function handlePrevious() {
-		if (currentPage > 0) {
-			currentPage--;
+		if ($transactions.page > 1) {
+			fetchTransactions($transactions.page--, 10);
 		}
 	}
 
 	function handleNext() {
-		const storeValue = get(transactions);
-		const totalPages = storeValue.totalPages;
-		if (currentPage < totalPages - 1) {
-			currentPage++;
+		if (!$transactions.last) {
+			fetchTransactions($transactions.page + 1, 10);
 		}
 	}
 </script>
@@ -125,7 +90,7 @@
 							<tr
 								class="border-b border-[#E8E8E8] text-[#101828] font-normal text-[14px] hover:bg-[#F9FAFB] transition-colors"
 							>
-								<td class="py-4 px-6 text-[14px]">{getSerialNumber(index)}</td>
+								<td class="py-4 px-6 text-[14px]">{record.id}</td>
 								<td class="py-4 px-6 text-[14px]">{record.reference}</td>
 								<td class="py-4 px-6 text-[14px]"
 									>{formatDate(record.paidAt || record.createdAt)}</td
@@ -175,20 +140,20 @@
 		{#if $transactions.transactions.length > 0}
 			<div class="flex items-center justify-between px-6 py-4 border-t border-[#E8E8E8]">
 				<p class="text-[#344054] text-[14px]">
-					Page {currentPage + 1} of {$transactions.totalPages || 1}
+					Page {$transactions.page + 1} of {$transactions.totalPages || 1}
 				</p>
 				<div class="flex gap-3">
 					<button
 						onclick={handlePrevious}
-						disabled={currentPage === 0 || $transactions.isLoading}
-						class="px-4 py-2 text-[14px] text-[#253B4B] border border-[#E8E8E8] rounded-[8px] hover:bg-[#F9FAFB] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+						disabled={$transactions.isLoading || $transactions.first}
+						class="px-4 py-2 text-[14px] text-[#253B4B] border border-[#E8E8E8] rounded-xl hover:bg-[#F9FAFB] transition-colors disabled:opacity-50 disabled:cursor-default!"
 					>
 						Previous
 					</button>
 					<button
 						onclick={handleNext}
-						disabled={currentPage >= ($transactions.totalPages || 1) - 1 || $transactions.isLoading}
-						class="px-4 py-2 text-[14px] text-[#253B4B] border border-[#E8E8E8] rounded-[8px] hover:bg-[#F9FAFB] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+						disabled={$transactions.last || $transactions.isLoading}
+						class="px-4 py-2 text-[14px] text-[#253B4B] border border-[#E8E8E8] rounded-xl hover:bg-[#F9FAFB] transition-colors disabled:opacity-50 disabled:cursor-none!"
 					>
 						Next
 					</button>

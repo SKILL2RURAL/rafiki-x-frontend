@@ -148,7 +148,7 @@
 		onclick={onAddText}>Add text Content</Button
 	> -->
 
-	<ul class="flex flex-col gap-4 mt-6 max-h-[100px] overflow-y-auto">
+	<ul class="flex flex-col gap-4 mt-6 max-h-[200px] overflow-y-auto">
 		{#each resumeFiles as file}
 			<li>
 				<div
@@ -185,7 +185,7 @@
 										<img src={downloadIcon} alt="download icon" width="24" height="24" />
 									</a>
 								</button>
-								<span class="w-[1px] h-[25px] bg-[#D9D9D9]"></span>
+								<span class="w-px h-[25px] bg-[#D9D9D9]"></span>
 								<!-- DROPDOWN MENU  -->
 								<DropdownMenu.Root>
 									<DropdownMenu.Trigger>
@@ -245,20 +245,20 @@
 			<div class="border-t border-[#33333380] p-5 flex justify-end gap-5">
 				<button
 					onclick={() => (isDrawerOpen = false)}
-					class="border bg-gradient-to-r from-[#51A3DA] to-[#60269E] p-[1px] rounded-[8px]"
+					class="border bg-linear-to-r from-[#51A3DA] to-[#60269E] p-px rounded-[8px]"
 				>
 					<div
 						class="bg-white h-[40px] w-[120px] md:h-[55px] md:w-[185px] flex items-center justify-center rounded-[9px]"
 					>
 						<p
-							class="bg-gradient-to-r from-[#51A3DA] to-[#60269E] bg-clip-text text-transparent font-mulish font-semibold"
+							class="bg-linear-to-r from-[#51A3DA] to-[#60269E] bg-clip-text text-transparent font-mulish font-semibold"
 						>
 							Go Back
 						</p>
 					</div>
 				</button>
 				<Button
-					class="bg-gradient-to-t from-[#51A3DA] to-[#60269E] h-[42px] w-[120px] md:h-[55px] md:w-[185px] font-mulish font-semibold rounded-[8px]"
+					class="bg-linear-to-t from-[#51A3DA] to-[#60269E] h-[42px] w-[120px] md:h-[55px] md:w-[185px] font-mulish font-semibold rounded-[8px]"
 					>Save</Button
 				>
 			</div>
