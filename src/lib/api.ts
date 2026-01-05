@@ -64,11 +64,6 @@ api.interceptors.response.use(
 			return Promise.reject(err);
 		}
 
-		if (err.response?.status === 429) {
-			toast.error('Too many requests. Please wait and try again.');
-			return Promise.reject(err);
-		}
-
 		// if (err.response?.data?.message) {
 		// 	toast.error(err.response.data.message);
 		// 	return Promise.reject(err);

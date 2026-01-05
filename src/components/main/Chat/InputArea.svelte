@@ -23,6 +23,7 @@
 	import { X } from 'lucide-svelte';
 	import type { Message } from '$lib/types/chat';
 	import GuestToast from './GuestToast.svelte';
+	import { Axios, AxiosError } from 'axios';
 
 	let { onOpenCreateAccount }: { onOpenCreateAccount?: () => void } = $props();
 
@@ -182,7 +183,21 @@
 				});
 			} catch (error) {
 				console.error('Error sending message:', error);
-				toast.error('Failed to send message. Please try again.');
+
+				if (error instanceof AxiosError) {
+					console.error('Error sending message:', error);
+
+					const storedMessages = $messages;
+					if (storedMessages && storedMessages.length) {
+						const messagesWithoutLast = storedMessages.slice(0, -1);
+						chatStore.setMessages(messagesWithoutLast);
+					}
+
+					toast.error(
+						error.response?.data.message ||
+							'Daily chat limit reached (5/5). Upgrade to the Support tier for unlimited access.'
+					);
+				}
 			}
 		}
 		chatStore.setNewMessage('');
