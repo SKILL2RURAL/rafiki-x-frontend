@@ -7,17 +7,27 @@
 	import ProfileLoadingSkeleton from '../../../components/main/Profile/ProfileLoadingSkeleton.svelte';
 	import ProfileTab from '../../../components/main/Profile/ProfileTab.svelte';
 	import BillingsTab from '../../../components/main/Profile/BillingsTab.svelte';
+	import Button from '$lib/components/ui/button/button.svelte';
 
 	let activeTab = $state<'profile' | 'billings'>('profile');
 
 	onMount(async () => {
 		await fetchProfile();
 	});
+
+	function refetchProfile() {
+		fetchProfile();
+	}
 </script>
 
 <Layout>
 	{#if $profile.isLoading}
 		<ProfileLoadingSkeleton />
+	{:else if $profile.error}
+		<div class="h-full flex flex-col items-center justify-center">
+			<p>An error message</p>
+			<Button class="my-5" onclick={refetchProfile}>Try again</Button>
+		</div>
 	{:else if $profile.data}
 		<div class="px-5 lg:px-10">
 			<!-- Header with Title and Avatar -->

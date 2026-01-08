@@ -54,9 +54,8 @@
 		}
 	}
 
-	function downloadFile(file: { name: string }) {
-		console.log('Download file:', file.name);
-		// openMenuIndex = null;
+	function downloadFile(file: Resume) {
+		window.open(file.fileUrl, '_blank', 'noopener,noreferrer');
 	}
 
 	// FUNCTION TO UPLOAD RESUME
@@ -123,7 +122,7 @@
 				<input type="file" class="hidden" onchange={handleFileChange} accept=".pdf,.doc,.docx" />
 			</label>
 		</p>
-		<p class="mt-2 text-[11.3px] text-[#676767] leading-4">Supported formats: PDF, TXT, PNG</p>
+		<p class="mt-2 text-[11.3px] text-[#676767] leading-4">Supported formats: PDF, DOC, DOCX</p>
 	</div>
 
 	<div class="flex items-center gap-1 mt-6">
@@ -180,10 +179,8 @@
 						{#if file.status === 'COMPLETED'}
 							<div class="flex gap-2.5 items-center">
 								<!-- DOWNLOAD BUTTON  -->
-								<button onclick={() => downloadFile} class="size-[20px]">
-									<a href={file.fileUrl} download target="_blank" referrerpolicy="strict-origin">
-										<img src={downloadIcon} alt="download icon" width="24" height="24" />
-									</a>
+								<button onclick={() => downloadFile(file)} class="size-[20px]">
+									<img src={downloadIcon} alt="download icon" width="24" height="24" />
 								</button>
 								<span class="w-px h-[25px] bg-[#D9D9D9]"></span>
 								<!-- DROPDOWN MENU  -->
@@ -198,12 +195,10 @@
 													>Make default</button
 												>
 											</DropdownMenu.Item>
-											<DropdownMenu.Item>
+											<DropdownMenu.Item onclick={() => window.open(file.fileUrl, '_blank')}>
 												<button class="block w-full text-left px-2 py-1 hover:bg-gray-100"
-													><a href={file.fileUrl} target="_blank" referrerpolicy="strict-origin"
-														>View</a
-													>
-												</button>
+													>View</button
+												>
 											</DropdownMenu.Item>
 											<DropdownMenu.Item>
 												<button
