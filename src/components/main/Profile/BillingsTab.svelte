@@ -85,7 +85,7 @@
 							<td colspan="6" class="py-8 px-6 text-center text-red-500 text-[14px]">
 								<p>An Error Occured</p>
 								<Button
-									class="my-5 bg-linear-to-l from-[#51A3DA] to-[#60269E] text-white"
+									class="my-5 bg-linear-to-r from-[#51A3DA] to-[#60269E] text-white"
 									onclick={refetchTransactions}>Fetch Transactions</Button
 								>
 							</td>
