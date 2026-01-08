@@ -26,7 +26,10 @@
 	{:else if $profile.error}
 		<div class="h-full flex flex-col items-center justify-center">
 			<p>An error message</p>
-			<Button class="my-5" onclick={refetchProfile}>Try again</Button>
+			<Button
+				class="my-5 bg-linear-to-r from-[#51A3DA] to-[#60269E] text-white"
+				onclick={refetchProfile}>Try again</Button
+			>
 		</div>
 	{:else if $profile.data}
 		<div class="px-5 lg:px-10">
