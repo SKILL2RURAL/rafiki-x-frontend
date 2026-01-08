@@ -1,9 +1,13 @@
 import { API_BASE_URL } from '$env/static/private';
 import type { RequestHandler } from '@sveltejs/kit';
 
-export const GET: RequestHandler = async ({ params, request }) => {
+export const GET: RequestHandler = async ({ params, request, url }) => {
 	const path = Array.isArray(params.path) ? params.path.join('/') : params.path;
-	const targetUrl = `${API_BASE_URL}/${path}`;
+	// Forward query parameters from the original request
+	const queryString = url.searchParams.toString();
+	const targetUrl = queryString
+		? `${API_BASE_URL}/${path}?${queryString}`
+		: `${API_BASE_URL}/${path}`;
 
 	const headers: HeadersInit = {
 		Authorization: request.headers.get('authorization') || ''
@@ -100,9 +104,13 @@ export const PUT: RequestHandler = async ({ params, request }) => {
 	return new Response(JSON.stringify(data), { status: response.status });
 };
 
-export const DELETE: RequestHandler = async ({ params, request }) => {
+export const DELETE: RequestHandler = async ({ params, request, url }) => {
 	const path = Array.isArray(params.path) ? params.path.join('/') : params.path;
-	const targetUrl = `${API_BASE_URL}/${path}`;
+	// Forward query parameters from the original request
+	const queryString = url.searchParams.toString();
+	const targetUrl = queryString
+		? `${API_BASE_URL}/${path}?${queryString}`
+		: `${API_BASE_URL}/${path}`;
 
 	const headers: HeadersInit = {
 		Authorization: request.headers.get('authorization') || ''

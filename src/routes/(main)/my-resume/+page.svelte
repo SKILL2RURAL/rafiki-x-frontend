@@ -30,6 +30,7 @@
 			>
 				My Resume
 			</h1>
+
 			<!-- {#if files.length === 0} -->
 			<ResumeUploader onRequireAuth={() => (isCreateAccountOpen = true)} />
 

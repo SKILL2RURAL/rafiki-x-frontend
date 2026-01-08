@@ -400,7 +400,7 @@ export async function cancelSubscription(): Promise<boolean> {
 }
 
 // Fetch transaction history
-export async function fetchTransactions(page: number, size: number): Promise<boolean> {
+export async function fetchTransactions(page: number): Promise<boolean> {
 	// Check if user has access token before making the API call
 	const accessToken = get(auth).accessToken;
 
@@ -409,18 +409,17 @@ export async function fetchTransactions(page: number, size: number): Promise<boo
 	}
 
 	transactions.update((state) => ({ ...state, isLoading: true, error: null }));
-	const params = new URLSearchParams();
-	params.append('page', page.toString());
-	params.append('size', size.toString());
+
+	console.log('Page from fetch transaction =>', page);
 
 	try {
 		const { data } = await api.get<TransactionsResponse>(
-			'/subscription/transactions?' + params.toString()
+			`/subscription/transactions?page=${page}&size=10`
 		);
 
 		if (data.success && data.data) {
 			const res = data.data;
-			console.log('Transaction data =>', res);
+			console.log('Transaction data fetched successfully =>', res);
 
 			transactions.set({
 				transactions: res.content,
@@ -470,7 +469,11 @@ export async function fetchTransactions(page: number, size: number): Promise<boo
 		});
 
 		// Only show toast for non-401 errors
-		if (error instanceof AxiosError && error.response?.status !== 401) {
+		if (
+			error instanceof AxiosError &&
+			error.response?.status !== 401 &&
+			error.response?.status !== 500
+		) {
 			toast.error(errorMessage);
 		}
 		return false;

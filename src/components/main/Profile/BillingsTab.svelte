@@ -2,11 +2,14 @@
 	import { get } from 'svelte/store';
 	import downloadIcon from '$lib/assets/icons/download-gradient.png';
 	import { transactions, fetchTransactions } from '$lib/stores/subscription';
+	import Button from '$lib/components/ui/button/button.svelte';
 
 	console.log($transactions);
 
 	$effect(() => {
-		fetchTransactions(0, 10);
+		if ($transactions.transactions.length === 0 && !$transactions.isLoading) {
+			fetchTransactions(0);
+		}
 	});
 
 	// Format date for display
@@ -37,15 +40,19 @@
 	}
 
 	function handlePrevious() {
-		if ($transactions.page > 1) {
-			fetchTransactions($transactions.page--, 10);
+		if (!$transactions.first) {
+			fetchTransactions($transactions.page - 1);
 		}
 	}
 
 	function handleNext() {
 		if (!$transactions.last) {
-			fetchTransactions($transactions.page + 1, 10);
+			fetchTransactions($transactions.page + 1);
 		}
+	}
+
+	function refetchTransactions() {
+		fetchTransactions($transactions.page);
 	}
 </script>
 
@@ -76,7 +83,11 @@
 					{:else if $transactions.error}
 						<tr>
 							<td colspan="6" class="py-8 px-6 text-center text-red-500 text-[14px]">
-								{$transactions.error}
+								<p>An Error Occured</p>
+								<Button
+									class="my-5 bg-linear-to-l from-[#51A3DA] to-[#60269E] text-white"
+									onclick={refetchTransactions}>Fetch Transactions</Button
+								>
 							</td>
 						</tr>
 					{:else if $transactions.transactions.length === 0}
