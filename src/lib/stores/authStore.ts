@@ -68,6 +68,8 @@ export const user = derived(auth, ($auth) => ({
 export async function login(payload: LoginPayload) {
 	auth.update((state) => ({ ...state, isLoading: true }));
 
+	payload.email = payload.email.toLowerCase();
+
 	try {
 		const { data } = await api.post('/auth/login', payload);
 		auth.update((state) => ({
