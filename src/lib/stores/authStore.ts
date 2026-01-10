@@ -204,15 +204,21 @@ export async function resetPassword(token: string, newPassword: string) {
 }
 
 export function logout() {
+	// Clear both auth state and accessToken from localStorage
 	if (browser) {
 		localStorage.removeItem('accessToken');
+		// The auth store will sync automatically via createPersisted, but we ensure it's cleared
+		auth.set({
+			...initial,
+			isInitialAuthCheckComplete: true
+		});
+	} else {
+		// Server-side: just clear the store
+		auth.set({
+			...initial,
+			isInitialAuthCheckComplete: true
+		});
 	}
-	auth.update((state) => ({
-		...state,
-		email: null,
-		firstName: null,
-		accessToken: null
-	}));
 }
 
 export async function logOut() {
