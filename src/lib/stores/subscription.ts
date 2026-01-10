@@ -32,7 +32,7 @@ export interface CurrentUsage {
 }
 
 export interface SubscriptionStatus {
-	subscriptionId: string | null;
+	subscriptionId: number | null;
 	plan: 'FREE' | 'SUPPORT' | string;
 	status: string | null;
 	billingCycle: string | null;
@@ -43,6 +43,8 @@ export interface SubscriptionStatus {
 	limits: PlanLimits;
 	currentUsage: CurrentUsage;
 	active: boolean;
+	cancelled?: boolean;
+	cancelledAt?: string | null;
 }
 
 // Types for Plans
@@ -186,6 +188,10 @@ export const currentPlan = derived(subscriptionStatus, ($status) => $status.stat
 export const isSubscriptionActive = derived(
 	subscriptionStatus,
 	($status) => $status.status?.active || false
+);
+export const isSubscriptionCancelled = derived(
+	subscriptionStatus,
+	($status) => $status.status?.cancelled === true || $status.status?.status === 'CANCELLED'
 );
 
 // Helper function to generate features from limits

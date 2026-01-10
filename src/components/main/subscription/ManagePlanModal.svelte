@@ -23,6 +23,8 @@
 	const currencySymbol = $derived(subscription?.currency === 'NGN' ? '₦' : '$');
 	const amount = $derived(subscription?.amount ?? 0);
 	const displayAmount = $derived(amount.toLocaleString());
+	const isCancelled = $derived(subscription?.cancelled ?? false);
+	const isStatusCancelled = $derived(subscription?.status === 'CANCELLED');
 
 	const nextBillingDate = $derived(
 		subscription?.endDate
@@ -32,6 +34,16 @@
 					day: 'numeric'
 				})
 			: 'N/A'
+	);
+
+	const cancelledDate = $derived(
+		subscription?.cancelledAt
+			? new Date(subscription.cancelledAt).toLocaleDateString('en-US', {
+					year: 'numeric',
+					month: 'short',
+					day: 'numeric'
+				})
+			: null
 	);
 
 	function handleCancelPlan() {
@@ -53,13 +65,20 @@
 		<div class="bg-white rounded-xl p-5 mb-6">
 			<div class="flex items-center gap-3 mb-4">
 				<img src={logo} alt="Rafiki" class="w-10 h-10 object-contain" />
-				<div>
-					<p
-						class="text-[#253B4B] font-medium text-[16px]"
-						style="font-family: 'Impact', sans-serif;"
-					>
-						Support Plan
-					</p>
+				<div class="flex-1">
+					<div class="flex items-center gap-2">
+						<p
+							class="text-[#253B4B] font-medium text-[16px]"
+							style="font-family: 'Impact', sans-serif;"
+						>
+							Support Plan
+						</p>
+						{#if isCancelled || isStatusCancelled}
+							<span class="px-2 py-1 rounded text-[12px] bg-yellow-100 text-yellow-700 font-medium">
+								CANCELLED
+							</span>
+						{/if}
+					</div>
 				</div>
 			</div>
 
@@ -70,23 +89,46 @@
 						>{currencySymbol}{displayAmount}</span
 					>
 				</p>
-				<p class="text-[#253B4B] text-[16px] font-medium">Next billing date: {nextBillingDate}</p>
+				{#if isCancelled || isStatusCancelled}
+					<p class="text-[#253B4B] text-[16px] font-medium">
+						Access until: {nextBillingDate}
+					</p>
+					{#if cancelledDate}
+						<p class="text-[#808990] text-[14px]">Cancelled on: {cancelledDate}</p>
+					{/if}
+				{:else}
+					<p class="text-[#253B4B] text-[16px] font-medium">Next billing date: {nextBillingDate}</p>
+				{/if}
 			</div>
 		</div>
 
 		<!-- Cancel Plan Button -->
-		<Button
-			class="bg-gradient w-full rounded-[12px] h-[48px] border border-[#FFFFFF] mb-4"
-			onclick={handleCancelPlan}
-		>
-			Cancel Plan
-		</Button>
+		{#if !isCancelled && !isStatusCancelled}
+			<Button
+				class="bg-gradient w-full rounded-[12px] h-[48px] border border-[#FFFFFF] mb-4"
+				onclick={handleCancelPlan}
+			>
+				Cancel Plan
+			</Button>
+		{/if}
 
 		<!-- Cancellation Info -->
-		<p class="text-[#253B4B] bg-[#EEF6FB] text-[16px] rounded-[10px] p-4 text-left leading-relaxed">
-			Your support plan is currently active. If you cancel, you'll lose access to support features
-			at the end of your current billing period. You can re-activate anytime.
-		</p>
+		{#if isCancelled || isStatusCancelled}
+			<p
+				class="text-[#253B4B] bg-yellow-50 border border-yellow-200 text-[16px] rounded-[10px] p-4 text-left leading-relaxed"
+			>
+				Your subscription has been cancelled. You'll continue to have access to support features
+				until {nextBillingDate}. After that, you'll be moved to the free plan. You can re-activate
+				your subscription anytime before the end date.
+			</p>
+		{:else}
+			<p
+				class="text-[#253B4B] bg-[#EEF6FB] text-[16px] rounded-[10px] p-4 text-left leading-relaxed"
+			>
+				Your support plan is currently active. If you cancel, you'll lose access to support features
+				at the end of your current billing period. You can re-activate anytime.
+			</p>
+		{/if}
 	</div>
 </BaseModal>
 
