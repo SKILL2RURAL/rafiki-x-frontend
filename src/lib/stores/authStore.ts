@@ -6,8 +6,9 @@ import { toast } from 'svelte-sonner';
 
 // Persistent Stores
 function createPersisted<T>(key: string, start: T): Writable<T> {
-	let initial = browser && localStorage.getItem(key) ? JSON.parse(localStorage.getItem(key)!) : start;
-	
+	let initial =
+		browser && localStorage.getItem(key) ? JSON.parse(localStorage.getItem(key)!) : start;
+
 	// If we have a refreshToken in localStorage but not in the parsed state, add it
 	if (browser && key === 'auth' && initial && !initial.refreshToken) {
 		const storedRefreshToken = localStorage.getItem('refreshToken');
