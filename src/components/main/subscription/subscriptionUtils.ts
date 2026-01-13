@@ -7,6 +7,7 @@ import {
 	fetchSubscriptionStatus,
 	fetchSubscriptionPlans
 } from '$lib/stores/subscription';
+import type { AxiosError } from 'axios';
 
 export interface SubscriptionHandlers {
 	handleUpgrade: (
@@ -28,7 +29,8 @@ export interface SubscriptionHandlers {
 		currency: Currency,
 		onShowCreateAccount: () => void,
 		isInitializing: { value: boolean },
-		isCancelling: { value: boolean }
+		isCancelling: { value: boolean },
+		isCancelled?: boolean
 	) => Promise<void>;
 	handleRetry: () => void;
 	handlePaymentCallback: () => void;
@@ -66,6 +68,11 @@ export async function handleUpgrade(
 		}
 	} catch (error) {
 		console.error('Error during subscription initialization:', error);
+		toast.error(
+			(error as unknown as AxiosError<{ message: string }>)?.response?.data?.message ||
+				'Error during subscription initialization'
+		);
+		isInitializing.value = false;
 	}
 }
 
@@ -86,6 +93,7 @@ export async function handleCancel(
 
 	try {
 		await cancelSubscription();
+		isCancelling.value = false;
 		// Note: cancelSubscription already calls fetchSubscriptionStatus()
 		// The loading state will be reset when the plan changes (handled in component)
 	} catch (error) {
@@ -96,7 +104,7 @@ export async function handleCancel(
 	// On success, keep loading state true until plan changes (handled by $effect in component)
 }
 
-// Handle support plan action (upgrade or cancel)
+// Handle support plan action (upgrade, cancel, or renew)
 export async function handleSupportPlanAction(
 	isSupportPlanCurrent: boolean,
 	isAuthenticated: boolean,
@@ -104,11 +112,23 @@ export async function handleSupportPlanAction(
 	currency: Currency,
 	onShowCreateAccount: () => void,
 	isInitializing: { value: boolean },
-	isCancelling: { value: boolean }
+	isCancelling: { value: boolean },
+	isCancelled?: boolean
 ): Promise<void> {
-	if (isSupportPlanCurrent) {
+	// If subscription is cancelled, renew it (initialize new subscription)
+	if (isSupportPlanCurrent && isCancelled) {
+		await handleUpgrade(
+			isAuthenticated,
+			supportPlanPeriod,
+			currency,
+			onShowCreateAccount,
+			isInitializing
+		);
+	} else if (isSupportPlanCurrent) {
+		// If subscription is active, cancel it
 		await handleCancel(isAuthenticated, onShowCreateAccount, isCancelling);
 	} else {
+		// If no subscription, upgrade
 		await handleUpgrade(
 			isAuthenticated,
 			supportPlanPeriod,
@@ -125,13 +145,17 @@ export function handleRetry(): void {
 }
 
 // Handle payment success callback
-export function handlePaymentCallback(): void {
+export function handlePaymentCallback(isInitializing?: { value: boolean }): void {
 	if (browser) {
 		const urlParams = new URLSearchParams(window.location.search);
 		const paymentStatus = urlParams.get('payment');
 
 		if (paymentStatus === 'success') {
 			toast.success('Payment successful! Your subscription is being activated.');
+			// Reset loading state immediately
+			if (isInitializing) {
+				isInitializing.value = false;
+			}
 			// Refresh subscription status
 			fetchSubscriptionStatus();
 			// Clean up URL

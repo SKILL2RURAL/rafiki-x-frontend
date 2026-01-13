@@ -1,6 +1,6 @@
-import axios from 'axios';
+import axios, { type AxiosError, type InternalAxiosRequestConfig } from 'axios';
 import { get } from 'svelte/store';
-import { auth, logout } from './stores/authStore';
+import { auth, logout, refreshAccessToken } from './stores/authStore';
 import { toast } from 'svelte-sonner';
 import { goto } from '$app/navigation';
 import { resolve } from '$app/paths';
@@ -17,6 +17,7 @@ const publicEndpoints = [
 	'/auth/forgot-password',
 	'/auth/reset-password',
 	'/auth/verify-email',
+	'/auth/refresh',
 	'/chat/guest/message'
 ];
 
@@ -84,6 +85,14 @@ function handleTokenExpiration(isPublic: boolean) {
 
 // Flag to prevent multiple simultaneous logout attempts
 let isLoggingOut = false;
+// Flag to prevent multiple simultaneous token refresh attempts
+let isRefreshing = false;
+// Queue to store failed requests while token is being refreshed
+let failedQueue: Array<{
+	resolve: (value?: any) => void;
+	reject: (error?: any) => void;
+	config: InternalAxiosRequestConfig;
+}> = [];
 
 // REQUEST INTERCEPTOR
 api.interceptors.request.use(
@@ -134,31 +143,124 @@ api.interceptors.response.use(
 
 		// 401 - Unauthorized (Token expired or invalid)
 		if (err.response?.status === 401 && !isPublic) {
-			if (!isLoggingOut) {
-				isLoggingOut = true;
+			const originalRequest = err.config as InternalAxiosRequestConfig & { _retry?: boolean };
 
-				// Clear auth store properly
-				logout();
+			// If this is already a retry after refresh, or refresh endpoint, don't try again
+			if (originalRequest._retry || originalRequest.url?.includes('/auth/refresh')) {
+				// Refresh failed, logout user
+				if (!isLoggingOut) {
+					isLoggingOut = true;
+					logout();
 
-				// Only show toast and redirect if not on a public route
-				if (browser) {
-					const currentPath = window.location.pathname;
-					const isOnPublicRoute = publicEndpoints.some((endpoint) =>
-						currentPath.includes(endpoint.replace('/api', ''))
-					);
+					if (browser) {
+						const currentPath = window.location.pathname;
+						const isOnPublicRoute = publicEndpoints.some((endpoint) =>
+							currentPath.includes(endpoint.replace('/api', ''))
+						);
 
-					if (!isOnPublicRoute) {
-						toast.error('Your session has expired. Please login again.');
-						goto(resolve('/login'));
+						if (!isOnPublicRoute) {
+							toast.error('Your session has expired. Please login again.');
+							goto(resolve('/login'));
+						}
 					}
-				}
 
-				// Reset flag after a short delay
-				setTimeout(() => {
-					isLoggingOut = false;
-				}, 1000);
+					setTimeout(() => {
+						isLoggingOut = false;
+					}, 1000);
+				}
+				return Promise.reject(err);
 			}
-			return Promise.reject(err);
+
+			// Try to refresh token
+			if (!isRefreshing) {
+				isRefreshing = true;
+				originalRequest._retry = true;
+
+				try {
+					const refreshed = await refreshAccessToken();
+
+					if (refreshed) {
+						// Update the authorization header with new token
+						const newToken = get(auth).accessToken;
+						if (newToken && originalRequest.headers) {
+							originalRequest.headers.Authorization = `Bearer ${newToken}`;
+						}
+
+						// Retry the original request
+						isRefreshing = false;
+						// Process any queued requests
+						failedQueue.forEach((promise) => {
+							const token = get(auth).accessToken;
+							if (token && promise.config.headers) {
+								promise.config.headers.Authorization = `Bearer ${token}`;
+							}
+							api.request(promise.config).then(promise.resolve).catch(promise.reject);
+						});
+						failedQueue = [];
+
+						return api(originalRequest);
+					} else {
+						// Refresh failed, logout user
+						isRefreshing = false;
+						if (!isLoggingOut) {
+							isLoggingOut = true;
+							logout();
+
+							if (browser) {
+								const currentPath = window.location.pathname;
+								const isOnPublicRoute = publicEndpoints.some((endpoint) =>
+									currentPath.includes(endpoint.replace('/api', ''))
+								);
+
+								if (!isOnPublicRoute) {
+									toast.error('Your session has expired. Please login again.');
+									goto(resolve('/login'));
+								}
+							}
+
+							setTimeout(() => {
+								isLoggingOut = false;
+							}, 1000);
+						}
+						return Promise.reject(err);
+					}
+				} catch (refreshError) {
+					// Refresh failed, logout user
+					isRefreshing = false;
+					failedQueue = [];
+
+					if (!isLoggingOut) {
+						isLoggingOut = true;
+						logout();
+
+						if (browser) {
+							const currentPath = window.location.pathname;
+							const isOnPublicRoute = publicEndpoints.some((endpoint) =>
+								currentPath.includes(endpoint.replace('/api', ''))
+							);
+
+							if (!isOnPublicRoute) {
+								toast.error('Your session has expired. Please login again.');
+								goto(resolve('/login'));
+							}
+						}
+
+						setTimeout(() => {
+							isLoggingOut = false;
+						}, 1000);
+					}
+					return Promise.reject(refreshError);
+				}
+			} else {
+				// Token refresh is already in progress, queue this request
+				return new Promise((resolve, reject) => {
+					failedQueue.push({
+						resolve,
+						reject,
+						config: originalRequest
+					});
+				});
+			}
 		}
 
 		// 403 - Forbidden (Token doesn't have required permissions)

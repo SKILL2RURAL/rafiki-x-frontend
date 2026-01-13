@@ -17,7 +17,6 @@
 	export let isCurrentPlan = false;
 	export let highlighted = false;
 	export let isLoading = false;
-	export let showManagePlan = false;
 
 	const dispatch = createEventDispatcher();
 
@@ -26,13 +25,8 @@
 	$: billingText = billingPeriod === 'monthly' ? 'billed monthly' : 'billed annually';
 
 	function handleClick() {
-		if (!isCurrentPlan) {
-			dispatch('upgrade');
-		}
-	}
-
-	function handleManagePlan() {
-		dispatch('manage');
+		// Allow click even if current plan (for renew functionality)
+		dispatch('upgrade');
 	}
 </script>
 
@@ -71,22 +65,11 @@
 			class="mb-3 w-full h-[50px] rounded-[8px] {highlighted
 				? 'bg-white text-[#51A3DA] hover:bg-gray-50'
 				: 'border border-[#C4C4C4]'}"
-			disabled={isCurrentPlan || isLoading}
+			disabled={isLoading || isCurrentPlan}
 			onclick={handleClick}
 		>
 			{isLoading ? 'Processing...' : buttonText}
 		</Button>
-
-		<!-- Manage Plan Button -->
-		{#if showManagePlan && isCurrentPlan}
-			<button
-				onclick={handleManagePlan}
-				class="mb-6 w-full text-sm text-[#51A3DA] hover:text-[#3d8bb8] transition-colors"
-				disabled={isLoading}
-			>
-				Manage Plan
-			</button>
-		{/if}
 
 		<!-- Features List -->
 		<ul class="space-y-3">

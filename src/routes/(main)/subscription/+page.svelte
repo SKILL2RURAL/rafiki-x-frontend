@@ -2,7 +2,6 @@
 	import { X } from 'lucide-svelte';
 	import { onMount } from 'svelte';
 	import CreateAccountModal from '../../../components/main/Layout/CreateAccountModal.svelte';
-	import ManagePlanModal from '../../../components/main/subscription/ManagePlanModal.svelte';
 	import Layout from '../../../components/main/Layout/Layout.svelte';
 	import CurrencyToggle from '../../../components/main/subscription/CurrencyToggle.svelte';
 	import PricingCard from '../../../components/main/subscription/PricingCard.svelte';
@@ -21,6 +20,7 @@
 		fetchSubscriptionStatus,
 		generateFeatures,
 		getSupportPlanPrice,
+		isSubscriptionCancelled,
 		subscriptionPlans
 	} from '../../../lib/stores/subscription';
 
@@ -28,7 +28,6 @@
 	let freePlanPeriod = $state<BillingPeriod>('monthly');
 	let supportPlanPeriod = $state<BillingPeriod>('yearly');
 	let isCreateAccountOpen = $state(false);
-	let isManagePlanOpen = $state(false);
 	let isInitializing = $state({ value: false });
 	let isCancelling = $state({ value: false });
 
@@ -53,6 +52,7 @@
 	// Determine which plan is current
 	const isFreePlanCurrent = $derived(userCurrentPlan === 'FREE');
 	const isSupportPlanCurrent = $derived(userCurrentPlan === 'SUPPORT');
+	const isCancelled = $derived($isSubscriptionCancelled);
 
 	// Track previous plan to detect changes
 	let previousPlan = $state<string | undefined>(undefined);
@@ -76,7 +76,8 @@
 			currency,
 			() => (isCreateAccountOpen = true),
 			isInitializing,
-			isCancelling
+			isCancelling,
+			isCancelled
 		);
 	}
 
@@ -87,20 +88,10 @@
 		}
 	}
 
-	function onManagePlan() {
-		// Open manage plan modal
-		isManagePlanOpen = true;
-	}
-
-	async function onCancelPlan() {
-		// Handle cancel plan action from modal
-		await handleCancel(isAuthenticated, () => (isCreateAccountOpen = true), isCancelling);
-	}
-
 	onMount(() => {
 		fetchSubscriptionPlans();
 		fetchSubscriptionStatus();
-		handlePaymentCallback();
+		handlePaymentCallback(isInitializing);
 	});
 </script>
 
@@ -157,7 +148,7 @@
 				buttonVariant="outline"
 				isCurrentPlan={isFreePlanCurrent}
 				isLoading={isCancelling.value}
-				on:upgrade={onManagePlan}
+				on:upgrade={onFreePlanAction}
 			/>
 
 			<PricingCard
@@ -167,14 +158,16 @@
 				bind:billingPeriod={supportPlanPeriod}
 				description={plans.support.description}
 				features={supportPlanFeatures}
-				buttonText={isSupportPlanCurrent ? 'Current Plan' : 'Upgrade to Plan'}
+				buttonText={isCancelled && isSupportPlanCurrent
+					? 'Renew Plan'
+					: isSupportPlanCurrent
+						? 'Current Plan'
+						: 'Upgrade to Plan'}
 				buttonVariant={isSupportPlanCurrent ? 'outline' : 'default'}
 				highlighted={true}
-				isCurrentPlan={isSupportPlanCurrent}
-				showManagePlan={isSupportPlanCurrent}
+				isCurrentPlan={isSupportPlanCurrent && !isCancelled}
 				isLoading={isInitializing.value || isCancelling.value}
 				on:upgrade={onSupportPlanAction}
-				on:manage={onManagePlan}
 			/>
 		</div>
 	{/if}
@@ -186,9 +179,3 @@
 </Layout>
 
 <CreateAccountModal isOpen={isCreateAccountOpen} onClose={() => (isCreateAccountOpen = false)} />
-
-<ManagePlanModal
-	isOpen={isManagePlanOpen}
-	onClose={() => (isManagePlanOpen = false)}
-	{onCancelPlan}
-/>
