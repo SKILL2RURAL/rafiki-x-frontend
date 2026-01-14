@@ -2,6 +2,7 @@
 	import { X } from 'lucide-svelte';
 	import { onMount } from 'svelte';
 	import CreateAccountModal from '../../../components/main/Layout/CreateAccountModal.svelte';
+	import ManagePlanModal from '../../../components/main/subscription/ManagePlanModal.svelte';
 	import Layout from '../../../components/main/Layout/Layout.svelte';
 	import CurrencyToggle from '../../../components/main/subscription/CurrencyToggle.svelte';
 	import PricingCard from '../../../components/main/subscription/PricingCard.svelte';
@@ -10,7 +11,8 @@
 		handlePaymentCallback,
 		handleRetry,
 		handleSupportPlanAction,
-		handleCancel
+		handleCancel,
+		handleRenew
 	} from '../../../components/main/subscription/subscriptionUtils';
 	import type { BillingPeriod, Currency } from '../../../components/main/subscription/types';
 	import { auth } from '../../../lib/stores/authStore';
@@ -21,13 +23,15 @@
 		generateFeatures,
 		getSupportPlanPrice,
 		isSubscriptionCancelled,
-		subscriptionPlans
+		subscriptionPlans,
+		subscriptionStatus
 	} from '../../../lib/stores/subscription';
 
 	let currency = $state<Currency>('naira');
 	let freePlanPeriod = $state<BillingPeriod>('monthly');
 	let supportPlanPeriod = $state<BillingPeriod>('yearly');
 	let isCreateAccountOpen = $state(false);
+	let isManagePlanOpen = $state(false);
 	let isInitializing = $state({ value: false });
 	let isCancelling = $state({ value: false });
 
@@ -53,6 +57,24 @@
 	const isFreePlanCurrent = $derived(userCurrentPlan === 'FREE');
 	const isSupportPlanCurrent = $derived(userCurrentPlan === 'SUPPORT');
 	const isCancelled = $derived($isSubscriptionCancelled);
+	const subscription = $derived($subscriptionStatus.status);
+
+	// Check if subscription is cancelled and hasn't passed end date
+	const canRenew = $derived.by(() => {
+		if (!isCancelled || !subscription?.endDate) return false;
+		const endDate = new Date(subscription.endDate);
+		const now = new Date();
+		return endDate > now; // Can renew if end date is in the future
+	});
+
+	const endDateFormatted = $derived.by(() => {
+		if (!subscription?.endDate) return null;
+		return new Date(subscription.endDate).toLocaleDateString('en-US', {
+			year: 'numeric',
+			month: 'long',
+			day: 'numeric'
+		});
+	});
 
 	// Track previous plan to detect changes
 	let previousPlan = $state<string | undefined>(undefined);
@@ -86,6 +108,26 @@
 			// If on support plan, cancel it when selecting free plan
 			await handleCancel(isAuthenticated, () => (isCreateAccountOpen = true), isCancelling);
 		}
+	}
+
+	async function onRenewPlan() {
+		await handleRenew(
+			isAuthenticated,
+			supportPlanPeriod,
+			currency,
+			() => (isCreateAccountOpen = true),
+			isInitializing
+		);
+	}
+
+	function onManagePlan() {
+		// Open manage plan modal
+		isManagePlanOpen = true;
+	}
+
+	async function onCancelPlan() {
+		// Handle cancel plan action from modal
+		await handleCancel(isAuthenticated, () => (isCreateAccountOpen = true), isCancelling);
 	}
 
 	onMount(() => {
@@ -166,8 +208,10 @@
 				buttonVariant={isSupportPlanCurrent ? 'outline' : 'default'}
 				highlighted={true}
 				isCurrentPlan={isSupportPlanCurrent && !isCancelled}
+				showManagePlan={isSupportPlanCurrent && !isCancelled}
 				isLoading={isInitializing.value || isCancelling.value}
 				on:upgrade={onSupportPlanAction}
+				on:manage={onManagePlan}
 			/>
 		</div>
 	{/if}
@@ -179,3 +223,9 @@
 </Layout>
 
 <CreateAccountModal isOpen={isCreateAccountOpen} onClose={() => (isCreateAccountOpen = false)} />
+
+<ManagePlanModal
+	isOpen={isManagePlanOpen}
+	onClose={() => (isManagePlanOpen = false)}
+	{onCancelPlan}
+/>

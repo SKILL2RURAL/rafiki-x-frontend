@@ -3,6 +3,7 @@ import { toast } from 'svelte-sonner';
 import type { BillingPeriod, Currency } from './types';
 import {
 	initializeSubscription,
+	renewSubscription,
 	cancelSubscription,
 	fetchSubscriptionStatus,
 	fetchSubscriptionPlans
@@ -21,6 +22,13 @@ export interface SubscriptionHandlers {
 		isAuthenticated: boolean,
 		onShowCreateAccount: () => void,
 		isCancelling: { value: boolean }
+	) => Promise<void>;
+	handleRenew: (
+		isAuthenticated: boolean,
+		supportPlanPeriod: BillingPeriod,
+		currency: Currency,
+		onShowCreateAccount: () => void,
+		isInitializing: { value: boolean }
 	) => Promise<void>;
 	handleSupportPlanAction: (
 		isSupportPlanCurrent: boolean,
@@ -104,6 +112,46 @@ export async function handleCancel(
 	// On success, keep loading state true until plan changes (handled by $effect in component)
 }
 
+// Handle subscription renewal (for cancelled subscriptions)
+export async function handleRenew(
+	isAuthenticated: boolean,
+	supportPlanPeriod: BillingPeriod,
+	currency: Currency,
+	onShowCreateAccount: () => void,
+	isInitializing: { value: boolean }
+): Promise<void> {
+	if (!isAuthenticated) {
+		onShowCreateAccount();
+		return;
+	}
+
+	if (isInitializing.value) return;
+
+	isInitializing.value = true;
+
+	try {
+		const callbackUrl = browser
+			? `${window.location.origin}/subscription?payment=success`
+			: '/subscription?payment=success';
+
+		const paymentData = await renewSubscription(supportPlanPeriod, currency, callbackUrl);
+
+		if (paymentData?.authorizationUrl) {
+			// Redirect to payment gateway
+			if (browser) {
+				window.location.href = paymentData.authorizationUrl;
+			}
+		}
+	} catch (error) {
+		console.error('Error during subscription renewal:', error);
+		toast.error(
+			(error as unknown as AxiosError<{ message: string }>)?.response?.data?.message ||
+				'Error during subscription renewal'
+		);
+		isInitializing.value = false;
+	}
+}
+
 // Handle support plan action (upgrade, cancel, or renew)
 export async function handleSupportPlanAction(
 	isSupportPlanCurrent: boolean,
@@ -115,9 +163,9 @@ export async function handleSupportPlanAction(
 	isCancelling: { value: boolean },
 	isCancelled?: boolean
 ): Promise<void> {
-	// If subscription is cancelled, renew it (initialize new subscription)
+	// If subscription is cancelled, renew it
 	if (isSupportPlanCurrent && isCancelled) {
-		await handleUpgrade(
+		await handleRenew(
 			isAuthenticated,
 			supportPlanPeriod,
 			currency,

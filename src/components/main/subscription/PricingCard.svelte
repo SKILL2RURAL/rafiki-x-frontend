@@ -17,6 +17,7 @@
 	export let isCurrentPlan = false;
 	export let highlighted = false;
 	export let isLoading = false;
+	export let showManagePlan = false;
 
 	const dispatch = createEventDispatcher();
 
@@ -27,6 +28,10 @@
 	function handleClick() {
 		// Allow click even if current plan (for renew functionality)
 		dispatch('upgrade');
+	}
+
+	function handleManagePlan() {
+		dispatch('manage');
 	}
 </script>
 
@@ -70,6 +75,17 @@
 		>
 			{isLoading ? 'Processing...' : buttonText}
 		</Button>
+
+		<!-- Manage Plan Button -->
+		{#if showManagePlan && isCurrentPlan}
+			<button
+				onclick={handleManagePlan}
+				class="mb-6 w-full text-sm text-[#51A3DA] hover:text-[#3d8bb8] transition-colors"
+				disabled={isLoading}
+			>
+				Manage Plan
+			</button>
+		{/if}
 
 		<!-- Features List -->
 		<ul class="space-y-3">
