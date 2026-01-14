@@ -119,10 +119,10 @@
 			Drag and drop files or
 			<label class="text-[#60269E] underline cursor-pointer">
 				Browse
-				<input type="file" class="hidden" onchange={handleFileChange} accept=".pdf,.doc,.docx" />
+				<input type="file" class="hidden" onchange={handleFileChange} accept=".pdf" />
 			</label>
 		</p>
-		<p class="mt-2 text-[11.3px] text-[#676767] leading-4">Supported formats: PDF, DOC, DOCX</p>
+		<p class="mt-2 text-[11.3px] text-[#676767] leading-4">Supported format: PDF</p>
 	</div>
 
 	<div class="flex items-center gap-1 mt-6">
