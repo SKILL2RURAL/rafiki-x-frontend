@@ -38,12 +38,28 @@
 	);
 
 	const passwordRequirements = [
-		'One Special Character',
-		'One Number',
-		'One Uppercase character',
-		'8 Character Min',
-		'One Lowercase character'
+		{ text: 'One Special Character', check: (pwd: string) => /[!@#$%^&*(),.?":{}|<>]/.test(pwd) },
+		{ text: 'One Number', check: (pwd: string) => /\d/.test(pwd) },
+		{ text: 'One Uppercase character', check: (pwd: string) => /[A-Z]/.test(pwd) },
+		{ text: '8 Character Min', check: (pwd: string) => pwd.length >= 8 },
+		{ text: 'One Lowercase character', check: (pwd: string) => /[a-z]/.test(pwd) }
 	];
+
+	// Reactive check for each requirement
+	$: requirementStatus = passwordRequirements.map((req) => ({
+		text: req.text,
+		met: req.check(formData.password)
+	}));
+
+	// Helper function to capitalize names (first letter uppercase, rest lowercase)
+	function capitalizeName(name: string): string {
+		if (!name) return name;
+		return name
+			.trim()
+			.split(/\s+/)
+			.map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+			.join(' ');
+	}
 
 	async function handleSubmit() {
 		if (!formData.firstName) {
@@ -89,7 +105,13 @@
 		}
 
 		try {
-			await register(formData);
+			// Capitalize names before sending to backend
+			const payloadToSend: RegisterPayload = {
+				...formData,
+				firstName: capitalizeName(formData.firstName),
+				lastName: capitalizeName(formData.lastName)
+			};
+			await register(payloadToSend);
 			goto('/verify-email');
 		} catch (error: any) {
 			if (error instanceof AxiosError) {
@@ -239,9 +261,13 @@
 			</button>
 		</div>
 		<div class="flex gap-2 flex-wrap items-center mt-3">
-			{#each passwordRequirements as requirement}
-				<div class="border border-white rounded-[4px] px-2 py-1 text-[10px]">
-					<p>{requirement}</p>
+			{#each requirementStatus as requirement}
+				<div
+					class="border rounded-[4px] px-2 py-1 text-[10px] transition-colors {requirement.met
+						? 'border-green-500 text-green-500'
+						: 'border-white text-white'}"
+				>
+					<p>{requirement.text}</p>
 				</div>
 			{/each}
 		</div>

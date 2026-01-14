@@ -6,8 +6,16 @@ import { toast } from 'svelte-sonner';
 
 // Persistent Stores
 function createPersisted<T>(key: string, start: T): Writable<T> {
-	const initial =
+	let initial =
 		browser && localStorage.getItem(key) ? JSON.parse(localStorage.getItem(key)!) : start;
+
+	// If we have a refreshToken in localStorage but not in the parsed state, add it
+	if (browser && key === 'auth' && initial && !initial.refreshToken) {
+		const storedRefreshToken = localStorage.getItem('refreshToken');
+		if (storedRefreshToken) {
+			initial = { ...initial, refreshToken: storedRefreshToken };
+		}
+	}
 
 	const { subscribe, set, update } = writable(initial);
 
@@ -41,6 +49,7 @@ export interface AuthState {
 	email: string | null;
 	firstName: string | null;
 	accessToken: string | null;
+	refreshToken: string | null;
 	isLoading: boolean;
 	countries: { code: string; name: string }[] | null;
 	isInitialAuthCheckComplete: boolean;
@@ -52,6 +61,7 @@ const initial: AuthState = {
 	firstName: null,
 	isLoading: false,
 	accessToken: null,
+	refreshToken: null,
 	countries: null,
 	isInitialAuthCheckComplete: false
 };
@@ -76,10 +86,14 @@ export async function login(payload: LoginPayload) {
 			...state,
 			email: data.data.email,
 			firstName: data.data.firstName,
-			accessToken: data.data.token
+			accessToken: data.data.token,
+			refreshToken: data.data.refreshToken || null
 		}));
 		if (browser) {
 			localStorage.setItem('accessToken', data.data.token);
+			if (data.data.refreshToken) {
+				localStorage.setItem('refreshToken', data.data.refreshToken);
+			}
 		}
 	} catch (err) {
 		console.log(err);
@@ -123,10 +137,14 @@ export async function verifyEmail({ email, code }: { email: string; code: string
 			...state,
 			email: data.data.email,
 			accessToken: data.data.token,
-			firstName: data.data.firstName
+			firstName: data.data.firstName,
+			refreshToken: data.data.refreshToken || null
 		}));
 		if (browser) {
 			localStorage.setItem('accessToken', data.data.token);
+			if (data.data.refreshToken) {
+				localStorage.setItem('refreshToken', data.data.refreshToken);
+			}
 		}
 	} catch (error) {
 		console.log(error);
@@ -204,9 +222,10 @@ export async function resetPassword(token: string, newPassword: string) {
 }
 
 export function logout() {
-	// Clear both auth state and accessToken from localStorage
+	// Clear both auth state and tokens from localStorage
 	if (browser) {
 		localStorage.removeItem('accessToken');
+		localStorage.removeItem('refreshToken');
 		// The auth store will sync automatically via createPersisted, but we ensure it's cleared
 		auth.set({
 			...initial,
@@ -228,6 +247,45 @@ export async function logOut() {
 	});
 	if (browser) {
 		localStorage.removeItem('accessToken');
+		localStorage.removeItem('refreshToken');
+	}
+}
+
+// Refresh access token using refresh token
+export async function refreshAccessToken(): Promise<boolean> {
+	const currentAuth = get(auth);
+	const refreshToken = currentAuth.refreshToken;
+
+	if (!refreshToken) {
+		return false;
+	}
+
+	try {
+		const { data } = await api.post('/auth/refresh', { refreshToken });
+
+		if (data.success && data.data) {
+			auth.update((state) => ({
+				...state,
+				accessToken: data.data.token,
+				refreshToken: data.data.refreshToken || state.refreshToken,
+				email: data.data.email || state.email,
+				firstName: data.data.firstName || state.firstName
+			}));
+
+			if (browser) {
+				localStorage.setItem('accessToken', data.data.token);
+				if (data.data.refreshToken) {
+					localStorage.setItem('refreshToken', data.data.refreshToken);
+				}
+			}
+
+			return true;
+		}
+
+		return false;
+	} catch (error) {
+		console.error('Error refreshing token:', error);
+		return false;
 	}
 }
 

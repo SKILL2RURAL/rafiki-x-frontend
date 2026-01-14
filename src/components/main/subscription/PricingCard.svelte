@@ -26,9 +26,8 @@
 	$: billingText = billingPeriod === 'monthly' ? 'billed monthly' : 'billed annually';
 
 	function handleClick() {
-		if (!isCurrentPlan) {
-			dispatch('upgrade');
-		}
+		// Allow click even if current plan (for renew functionality)
+		dispatch('upgrade');
 	}
 
 	function handleManagePlan() {
@@ -71,7 +70,7 @@
 			class="mb-3 w-full h-[50px] rounded-[8px] {highlighted
 				? 'bg-white text-[#51A3DA] hover:bg-gray-50'
 				: 'border border-[#C4C4C4]'}"
-			disabled={isCurrentPlan || isLoading}
+			disabled={isLoading || isCurrentPlan}
 			onclick={handleClick}
 		>
 			{isLoading ? 'Processing...' : buttonText}

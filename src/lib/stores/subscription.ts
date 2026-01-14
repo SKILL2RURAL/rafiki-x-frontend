@@ -384,6 +384,50 @@ export async function initializeSubscription(
 	}
 }
 
+// Renew subscription (for cancelled subscriptions)
+export async function renewSubscription(
+	billingCycle: 'monthly' | 'yearly',
+	currency: 'naira' | 'dollars',
+	callbackUrl: string
+): Promise<InitializeSubscriptionResponse | null> {
+	try {
+		// Convert to API format
+		const apiBillingCycle = billingCycle === 'monthly' ? 'MONTHLY' : 'YEARLY';
+		const apiCurrency = currency === 'naira' ? 'NGN' : 'USD';
+
+		const payload: InitializeSubscriptionPayload = {
+			billingCycle: apiBillingCycle,
+			currency: apiCurrency,
+			callbackUrl
+		};
+
+		const { data } = await api.post('/subscription/renew', payload);
+
+		if (data.success && data.data) {
+			const paymentData: PaymentData = data.data;
+
+			// Return the payment data
+			return {
+				success: paymentData.success,
+				authorizationUrl: paymentData.authorizationUrl,
+				accessCode: paymentData.accessCode,
+				reference: paymentData.reference,
+				amount: paymentData.amount,
+				currency: paymentData.currency
+			};
+		} else {
+			// Handle error response
+			const errorMessage = data.message || 'Failed to renew subscription';
+			toast.error(errorMessage);
+			return null;
+		}
+	} catch (error) {
+		console.error('Error renewing subscription:', error);
+		// Don't show toast here as the API interceptor will handle it
+		return null;
+	}
+}
+
 // Cancel subscription
 export async function cancelSubscription(): Promise<boolean> {
 	try {

@@ -3,10 +3,12 @@ import { toast } from 'svelte-sonner';
 import type { BillingPeriod, Currency } from './types';
 import {
 	initializeSubscription,
+	renewSubscription,
 	cancelSubscription,
 	fetchSubscriptionStatus,
 	fetchSubscriptionPlans
 } from '$lib/stores/subscription';
+import type { AxiosError } from 'axios';
 
 export interface SubscriptionHandlers {
 	handleUpgrade: (
@@ -21,6 +23,13 @@ export interface SubscriptionHandlers {
 		onShowCreateAccount: () => void,
 		isCancelling: { value: boolean }
 	) => Promise<void>;
+	handleRenew: (
+		isAuthenticated: boolean,
+		supportPlanPeriod: BillingPeriod,
+		currency: Currency,
+		onShowCreateAccount: () => void,
+		isInitializing: { value: boolean }
+	) => Promise<void>;
 	handleSupportPlanAction: (
 		isSupportPlanCurrent: boolean,
 		isAuthenticated: boolean,
@@ -28,7 +37,8 @@ export interface SubscriptionHandlers {
 		currency: Currency,
 		onShowCreateAccount: () => void,
 		isInitializing: { value: boolean },
-		isCancelling: { value: boolean }
+		isCancelling: { value: boolean },
+		isCancelled?: boolean
 	) => Promise<void>;
 	handleRetry: () => void;
 	handlePaymentCallback: () => void;
@@ -66,6 +76,11 @@ export async function handleUpgrade(
 		}
 	} catch (error) {
 		console.error('Error during subscription initialization:', error);
+		toast.error(
+			(error as unknown as AxiosError<{ message: string }>)?.response?.data?.message ||
+				'Error during subscription initialization'
+		);
+		isInitializing.value = false;
 	}
 }
 
@@ -86,6 +101,7 @@ export async function handleCancel(
 
 	try {
 		await cancelSubscription();
+		isCancelling.value = false;
 		// Note: cancelSubscription already calls fetchSubscriptionStatus()
 		// The loading state will be reset when the plan changes (handled in component)
 	} catch (error) {
@@ -96,7 +112,47 @@ export async function handleCancel(
 	// On success, keep loading state true until plan changes (handled by $effect in component)
 }
 
-// Handle support plan action (upgrade or cancel)
+// Handle subscription renewal (for cancelled subscriptions)
+export async function handleRenew(
+	isAuthenticated: boolean,
+	supportPlanPeriod: BillingPeriod,
+	currency: Currency,
+	onShowCreateAccount: () => void,
+	isInitializing: { value: boolean }
+): Promise<void> {
+	if (!isAuthenticated) {
+		onShowCreateAccount();
+		return;
+	}
+
+	if (isInitializing.value) return;
+
+	isInitializing.value = true;
+
+	try {
+		const callbackUrl = browser
+			? `${window.location.origin}/subscription?payment=success`
+			: '/subscription?payment=success';
+
+		const paymentData = await renewSubscription(supportPlanPeriod, currency, callbackUrl);
+
+		if (paymentData?.authorizationUrl) {
+			// Redirect to payment gateway
+			if (browser) {
+				window.location.href = paymentData.authorizationUrl;
+			}
+		}
+	} catch (error) {
+		console.error('Error during subscription renewal:', error);
+		toast.error(
+			(error as unknown as AxiosError<{ message: string }>)?.response?.data?.message ||
+				'Error during subscription renewal'
+		);
+		isInitializing.value = false;
+	}
+}
+
+// Handle support plan action (upgrade, cancel, or renew)
 export async function handleSupportPlanAction(
 	isSupportPlanCurrent: boolean,
 	isAuthenticated: boolean,
@@ -104,11 +160,23 @@ export async function handleSupportPlanAction(
 	currency: Currency,
 	onShowCreateAccount: () => void,
 	isInitializing: { value: boolean },
-	isCancelling: { value: boolean }
+	isCancelling: { value: boolean },
+	isCancelled?: boolean
 ): Promise<void> {
-	if (isSupportPlanCurrent) {
+	// If subscription is cancelled, renew it
+	if (isSupportPlanCurrent && isCancelled) {
+		await handleRenew(
+			isAuthenticated,
+			supportPlanPeriod,
+			currency,
+			onShowCreateAccount,
+			isInitializing
+		);
+	} else if (isSupportPlanCurrent) {
+		// If subscription is active, cancel it
 		await handleCancel(isAuthenticated, onShowCreateAccount, isCancelling);
 	} else {
+		// If no subscription, upgrade
 		await handleUpgrade(
 			isAuthenticated,
 			supportPlanPeriod,
@@ -125,13 +193,17 @@ export function handleRetry(): void {
 }
 
 // Handle payment success callback
-export function handlePaymentCallback(): void {
+export function handlePaymentCallback(isInitializing?: { value: boolean }): void {
 	if (browser) {
 		const urlParams = new URLSearchParams(window.location.search);
 		const paymentStatus = urlParams.get('payment');
 
 		if (paymentStatus === 'success') {
 			toast.success('Payment successful! Your subscription is being activated.');
+			// Reset loading state immediately
+			if (isInitializing) {
+				isInitializing.value = false;
+			}
 			// Refresh subscription status
 			fetchSubscriptionStatus();
 			// Clean up URL

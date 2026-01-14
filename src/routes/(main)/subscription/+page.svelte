@@ -11,7 +11,8 @@
 		handlePaymentCallback,
 		handleRetry,
 		handleSupportPlanAction,
-		handleCancel
+		handleCancel,
+		handleRenew
 	} from '../../../components/main/subscription/subscriptionUtils';
 	import type { BillingPeriod, Currency } from '../../../components/main/subscription/types';
 	import { auth } from '../../../lib/stores/authStore';
@@ -21,7 +22,9 @@
 		fetchSubscriptionStatus,
 		generateFeatures,
 		getSupportPlanPrice,
-		subscriptionPlans
+		isSubscriptionCancelled,
+		subscriptionPlans,
+		subscriptionStatus
 	} from '../../../lib/stores/subscription';
 
 	let currency = $state<Currency>('naira');
@@ -53,6 +56,25 @@
 	// Determine which plan is current
 	const isFreePlanCurrent = $derived(userCurrentPlan === 'FREE');
 	const isSupportPlanCurrent = $derived(userCurrentPlan === 'SUPPORT');
+	const isCancelled = $derived($isSubscriptionCancelled);
+	const subscription = $derived($subscriptionStatus.status);
+
+	// Check if subscription is cancelled and hasn't passed end date
+	const canRenew = $derived.by(() => {
+		if (!isCancelled || !subscription?.endDate) return false;
+		const endDate = new Date(subscription.endDate);
+		const now = new Date();
+		return endDate > now; // Can renew if end date is in the future
+	});
+
+	const endDateFormatted = $derived.by(() => {
+		if (!subscription?.endDate) return null;
+		return new Date(subscription.endDate).toLocaleDateString('en-US', {
+			year: 'numeric',
+			month: 'long',
+			day: 'numeric'
+		});
+	});
 
 	// Track previous plan to detect changes
 	let previousPlan = $state<string | undefined>(undefined);
@@ -76,7 +98,8 @@
 			currency,
 			() => (isCreateAccountOpen = true),
 			isInitializing,
-			isCancelling
+			isCancelling,
+			isCancelled
 		);
 	}
 
@@ -85,6 +108,16 @@
 			// If on support plan, cancel it when selecting free plan
 			await handleCancel(isAuthenticated, () => (isCreateAccountOpen = true), isCancelling);
 		}
+	}
+
+	async function onRenewPlan() {
+		await handleRenew(
+			isAuthenticated,
+			supportPlanPeriod,
+			currency,
+			() => (isCreateAccountOpen = true),
+			isInitializing
+		);
 	}
 
 	function onManagePlan() {
@@ -100,7 +133,7 @@
 	onMount(() => {
 		fetchSubscriptionPlans();
 		fetchSubscriptionStatus();
-		handlePaymentCallback();
+		handlePaymentCallback(isInitializing);
 	});
 </script>
 
@@ -157,7 +190,7 @@
 				buttonVariant="outline"
 				isCurrentPlan={isFreePlanCurrent}
 				isLoading={isCancelling.value}
-				on:upgrade={onManagePlan}
+				on:upgrade={onFreePlanAction}
 			/>
 
 			<PricingCard
@@ -167,11 +200,15 @@
 				bind:billingPeriod={supportPlanPeriod}
 				description={plans.support.description}
 				features={supportPlanFeatures}
-				buttonText={isSupportPlanCurrent ? 'Current Plan' : 'Upgrade to Plan'}
+				buttonText={isCancelled && isSupportPlanCurrent
+					? 'Renew Plan'
+					: isSupportPlanCurrent
+						? 'Current Plan'
+						: 'Upgrade to Plan'}
 				buttonVariant={isSupportPlanCurrent ? 'outline' : 'default'}
 				highlighted={true}
-				isCurrentPlan={isSupportPlanCurrent}
-				showManagePlan={isSupportPlanCurrent}
+				isCurrentPlan={isSupportPlanCurrent && !isCancelled}
+				showManagePlan={isSupportPlanCurrent && !isCancelled}
 				isLoading={isInitializing.value || isCancelling.value}
 				on:upgrade={onSupportPlanAction}
 				on:manage={onManagePlan}
