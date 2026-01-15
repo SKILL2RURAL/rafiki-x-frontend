@@ -46,7 +46,8 @@
 				fileUrl: `${(files[0].size / 1024).toFixed(1)} KB`,
 				fileSize: files[0].size,
 				status: 'pending',
-				uploadedAt: new Date().toISOString()
+				uploadedAt: new Date().toISOString(),
+				isDefault: false
 			};
 
 			resumeFiles = [newFile, ...resumeFiles];
@@ -99,6 +100,25 @@
 			});
 		} catch (error) {
 			toast.error('Failed to delete resume');
+		}
+	}
+
+	// FUNCTION TO SET DEFAULT RESUME
+	async function setDefaultResume(file: Resume) {
+		if (!$auth.accessToken) {
+			onRequireAuth?.();
+			return;
+		}
+		try {
+			await chatStore.setDefaultResume(file.id).then((res) => {
+				if (res) {
+					toast.success('Resume set as default successfully');
+					// Refresh resumes to get updated default status
+					chatStore.getAllResumes();
+				}
+			});
+		} catch (error) {
+			toast.error('Failed to set resume as default');
 		}
 	}
 
@@ -178,6 +198,14 @@
 						<!-- ACTIONS  -->
 						{#if file.status === 'COMPLETED'}
 							<div class="flex gap-2.5 items-center">
+								{#if file.isDefault}
+									<button
+										onclick={() => setDefaultResume(file)}
+										class="bg-linear-to-r from-[#51A3DA] to-[#60269E] text-white px-4 rounded-[100px] text-[12px] font-satoshi-regular font-medium"
+									>
+										<p>Default</p>
+									</button>
+								{/if}
 								<!-- DOWNLOAD BUTTON  -->
 								<button onclick={() => downloadFile(file)} class="size-[20px]">
 									<img src={downloadIcon} alt="download icon" width="24" height="24" />
@@ -191,9 +219,12 @@
 									<DropdownMenu.Content>
 										<DropdownMenu.Group>
 											<DropdownMenu.Item>
-												<button class="block w-full text-left px-2 py-1 hover:bg-gray-100"
-													>Make default</button
+												<button
+													class="block w-full text-left px-2 py-1 hover:bg-gray-100"
+													onclick={() => setDefaultResume(file)}
 												>
+													Make default
+												</button>
 											</DropdownMenu.Item>
 											<DropdownMenu.Item onclick={() => window.open(file.fileUrl, '_blank')}>
 												<button class="block w-full text-left px-2 py-1 hover:bg-gray-100"

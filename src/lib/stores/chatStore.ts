@@ -276,6 +276,27 @@ function createChatStore() {
 			}
 		},
 
+		setDefaultResume: async (id: number) => {
+			try {
+				const { data } = await api.patch(`/resume/${id}/set-default`);
+				if (data.success) {
+					// Refresh the resumes list to get updated default status
+					const resumeData = await api.get('/resume/list');
+					if (resumeData.data?.data) {
+						update((s) => ({
+							...s,
+							allResumes: resumeData.data.data || []
+						}));
+					}
+					return true;
+				}
+				return false;
+			} catch (error) {
+				console.error(error);
+				throw error;
+			}
+		},
+
 		// FUNCTION TO DELETE A SINGLE CONVERSATION
 		deleteSingleConversation: async (conversationId: number) => {
 			try {

@@ -50,6 +50,7 @@ export interface Resume {
 	fileSize: number;
 	status: string;
 	uploadedAt: string;
+	isDefault: boolean;
 }
 
 export interface MessagePayload {
