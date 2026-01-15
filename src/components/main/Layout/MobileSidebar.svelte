@@ -15,6 +15,8 @@
 	import { auth, logout as authLogout } from '$lib/stores/authStore';
 	import ChatHistorySkeleton from './ChatHistorySkeleton.svelte';
 	import LogoutConfirmationModal from './LogoutConfirmationModal.svelte';
+	import type { Conversation } from '$lib/types/chat';
+	import greaterArrow from '$lib/assets/icons/greaterArrow.png';
 
 	let {
 		isOpen,
@@ -38,20 +40,62 @@
 			}
 		});
 	}
+
+	function groupChats(chatsList: Conversation[]) {
+		const today = new Date();
+		const yesterday = new Date();
+		yesterday.setDate(today.getDate() - 1);
+
+		const isSameDay = (d1: Date, d2: Date) =>
+			d1.getFullYear() === d2.getFullYear() &&
+			d1.getMonth() === d2.getMonth() &&
+			d1.getDate() === d2.getDate();
+
+		const groups: { today: Conversation[]; yesterday: Conversation[]; recent: Conversation[] } = {
+			today: [],
+			yesterday: [],
+			recent: []
+		};
+
+		for (const chat of chatsList) {
+			const date = new Date(chat.updatedAt);
+			if (isSameDay(date, today)) {
+				groups.today.push(chat);
+			} else if (isSameDay(date, yesterday)) {
+				groups.yesterday.push(chat);
+			} else {
+				groups.recent.push(chat);
+			}
+		}
+
+		return groups;
+	}
+
+	const grouped = $derived(groupChats($chats));
 </script>
 
 <Drawer.Root open={isOpen} onOpenChange={onClose} direction="left">
 	<Drawer.Content class="data-[vaul-drawer-direction=left]:w-screen">
 		<aside class="p-5 py-10 flex flex-col justify-between h-screen">
-			<div class="flex justify-between items-end">
-				<div class="flex items-end gap-3 leading-none">
-					<img src={logo} alt="Rafiki X" width="40" height="40" />
-					<p
-						class="text-[24px] font-semibold bg-linear-to-r from-[#51A3DA] to-[#60269E] text-transparent bg-clip-text"
-					>
-						RafikiX
-					</p>
-				</div>
+			<!-- Logo  -->
+			<div class="flex justify-between items-end mb-5">
+				<button
+					onclick={() => {
+						goto('/').then(() => {
+							onClose(false);
+						});
+					}}
+				>
+					<div class="flex items-end gap-3 leading-none">
+						<img src={logo} alt="Rafiki X" width="40" height="40" />
+						<p
+							class="text-[24px] font-semibold bg-linear-to-r from-[#51A3DA] to-[#60269E] text-transparent bg-clip-text"
+						>
+							RafikiX
+						</p>
+					</div>
+				</button>
+
 				<button class="bg-[#1E1E1E33] p-2 rounded-[8px]" onclick={() => onClose(false)}>
 					<img src={X} alt="" width="20" height="20" />
 				</button>
@@ -70,21 +114,51 @@
 				</div>
 			</div> -->
 
+			<!-- Chat History  -->
 			{#if $auth.accessToken}
 				<div>
 					{#if $isLoadingChats}
 						<ChatHistorySkeleton />
 					{:else if chats && $chats.length > 0}
-						<div class="space-y-3 overflow-y-auto no-scrollbar h-[50vh]">
-							{#each $chats as chat}
-								<button
-									class={`flex justify-between items-center cursor-pointer w-full gap-5`}
-									onclick={() => routeToChat(chat.id)}
-								>
-									<p class="text-[#253B4B] text-[16px] text-left line-clamp-1">{chat.title}</p>
-									<ChevronRight color="#80899A" />
-								</button>
-							{/each}
+						<div class="space-y-3 overflow-y-auto no-scrollbar h-[50vh] pb-5">
+							{#if grouped.today.length > 0}
+								<p class="mb-4 font-medium text-[12px] text-[#909090] uppercase">Today</p>
+								{#each grouped.today as chat}
+									<button
+										class={`flex justify-between items-center cursor-pointer w-full gap-5`}
+										onclick={() => routeToChat(chat.id)}
+									>
+										<p class="text-[#253B4B] text-[16px] text-left line-clamp-1">{chat.title}</p>
+										<img src={greaterArrow} alt="direction icon" width="7" height="13" />
+									</button>
+								{/each}
+							{/if}
+
+							{#if grouped.yesterday.length > 0}
+								<p class="mb-4 font-medium text-[12px] text-[#909090] uppercase">Yesterday</p>
+								{#each grouped.yesterday as chat}
+									<button
+										class={`flex justify-between items-center cursor-pointer w-full gap-5`}
+										onclick={() => routeToChat(chat.id)}
+									>
+										<p class="text-[#253B4B] text-[16px] text-left line-clamp-1">{chat.title}</p>
+										<img src={greaterArrow} alt="direction icon" width="7" height="13" />
+									</button>
+								{/each}
+							{/if}
+
+							{#if grouped.recent.length > 0}
+								<p class="mb-4 font-medium text-[12px] text-[#909090] uppercase">Recent</p>
+								{#each grouped.recent as chat}
+									<button
+										class={`flex justify-between items-center cursor-pointer w-full gap-5`}
+										onclick={() => routeToChat(chat.id)}
+									>
+										<p class="text-[#253B4B] text-[16px] text-left line-clamp-1">{chat.title}</p>
+										<img src={greaterArrow} alt="direction icon" width="7" height="13" />
+									</button>
+								{/each}
+							{/if}
 						</div>
 					{:else}
 						<div class="flex flex-col items-center">
@@ -111,9 +185,9 @@
 					</div>
 				</button>
 
-				<h5 class="text-[#253B4B] text-[12px] mb-5 font-medium">Settings</h5>
+				<h5 class="text-[#253B4B] text-[12px] mb-3 md:mb-5 font-medium">Settings</h5>
 
-				<div class="space-y-7 font-semibold text-[#80899A] text-sm">
+				<div class="space-y-5 md:space-y-7 font-semibold text-[#80899A] text-sm">
 					<button
 						class="flex items-center gap-3"
 						onclick={() => {

@@ -56,7 +56,7 @@
 	}
 </script>
 
-<div>
+<section>
 	<h2 class="text-[#253B4B] text-[20px] font-semibold mb-5">Billings</h2>
 
 	<!-- Billing Table -->
@@ -101,12 +101,12 @@
 							<tr
 								class="border-b border-[#E8E8E8] text-[#101828] font-normal text-[14px] hover:bg-[#F9FAFB] transition-colors"
 							>
-								<td class="py-4 px-6 text-[14px]">{record.id}</td>
-								<td class="py-4 px-6 text-[14px]">{record.reference}</td>
-								<td class="py-4 px-6 text-[14px]"
+								<td class="py-4 px-6 text-[12px] md:text-[14px]">{record.id}</td>
+								<td class="py-4 px-6 text-[12px] md:text-[14px]">{record.reference}</td>
+								<td class="py-4 px-6 text-[12px] md:text-[14px]"
 									>{formatDate(record.paidAt || record.createdAt)}</td
 								>
-								<td class="py-4 px-6 text-[14px]">
+								<td class="py-4 px-6 text-[12px] md:text-[14px]">
 									<span
 										class="px-2 py-1 rounded text-[12px] {record.status === 'SUCCESS'
 											? 'bg-green-100 text-green-700'
@@ -117,7 +117,8 @@
 										{record.status}
 									</span>
 								</td>
-								<td class="py-4 px-6 text-[14px]">{formatAmount(record.amount, record.currency)}</td
+								<td class="py-4 px-6 text-[12px] md:text-[14px]"
+									>{formatAmount(record.amount, record.currency)}</td
 								>
 								<td class="py-4 px-6">
 									<button
@@ -126,7 +127,7 @@
 										disabled={record.status !== 'SUCCESS'}
 									>
 										<span
-											class="text-[14px] bg-linear-to-r from-[#51A3DA] to-[#60269E] bg-clip-text text-transparent {record.status !==
+											class="text-[12px] md:text-[14px] bg-linear-to-r from-[#51A3DA] to-[#60269E] bg-clip-text text-transparent {record.status !==
 											'SUCCESS'
 												? 'opacity-50 cursor-not-allowed'
 												: ''}"
@@ -172,4 +173,4 @@
 			</div>
 		{/if}
 	</div>
-</div>
+</section>

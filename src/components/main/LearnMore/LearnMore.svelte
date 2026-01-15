@@ -4,7 +4,7 @@
 </script>
 
 <div
-	class="p-12 mx-auto font-mulish w-[370px] md:w-[756px] lg:w-[856px] min-h-full rounded-[20px] bg-linear-to-b from-[#5449AC] from-0.5% to-[#FFFFFF00] to-30% relative"
+	class="p-5 md:p-12 mx-auto font-mulish w-[370px] md:w-[756px] lg:w-[856px] min-h-full rounded-[20px] bg-linear-to-b from-[#5449AC] from-0.5% to-[#FFFFFF00] to-30% relative"
 >
 	<div class="flex justify-center gap-3 mb-7">
 		<h2
@@ -22,7 +22,7 @@
 			<X />
 		</button>
 	</div>
-	<div class="flex flex-col text-[14px] md:text-[18px] gap-8">
+	<div class="flex flex-col text-[14px] md:text-[18px] gap-5 md:gap-8">
 		<p class="font-medium text-white">Last updated: February 20th, 2024</p>
 		<p>
 			Lorem ipsum dolor sit, amet consectetur adipisicing elit. Ab, nihil molestias! Nisi, rerum

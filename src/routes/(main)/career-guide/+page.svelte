@@ -34,7 +34,7 @@
 
 <Layout>
 	<div
-		class="w-full min-h-full flex flex-col items-center justify-center mb-0 px-4 sm:px-6 lg:px-10"
+		class="w-full min-h-full flex flex-col items-center justify-center mb-0 px-4 sm:px-6 lg:px-10 py-10 lg:py-0"
 	>
 		<img src={logo} alt="Rafki-X logo" width={38} height={38} />
 

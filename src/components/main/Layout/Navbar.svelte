@@ -44,7 +44,9 @@
 					>
 				{/each}
 			</div>
-			<img src={logo} alt="logo" class="h-[20px] w-[50px]" />
+			<button onclick={() => goto('/')}>
+				<img src={logo} alt="logo" class="h-[20px] w-[50px]" />
+			</button>
 		{/if}
 	</div>
 	{#if !$auth.accessToken}

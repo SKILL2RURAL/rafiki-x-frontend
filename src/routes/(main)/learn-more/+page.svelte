@@ -4,7 +4,7 @@
 </script>
 
 <Layout>
-	<div class="px-4 sm:px-6 lg:px-10 w-full max-w-6xl mx-auto">
+	<div class="px-4 sm:px-6 lg:px-10 w-full max-w-6xl mx-auto py-10 lg:py-0">
 		<LearnMore />
 	</div>
 </Layout>
