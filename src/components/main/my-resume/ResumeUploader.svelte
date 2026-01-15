@@ -218,14 +218,16 @@
 									</DropdownMenu.Trigger>
 									<DropdownMenu.Content>
 										<DropdownMenu.Group>
-											<DropdownMenu.Item>
-												<button
-													class="block w-full text-left px-2 py-1 hover:bg-gray-100"
-													onclick={() => setDefaultResume(file)}
-												>
-													Make default
-												</button>
-											</DropdownMenu.Item>
+											{#if !file.isDefault}
+												<DropdownMenu.Item>
+													<button
+														class="block w-full text-left px-2 py-1 hover:bg-gray-100"
+														onclick={() => setDefaultResume(file)}
+													>
+														Make default
+													</button>
+												</DropdownMenu.Item>
+											{/if}
 											<DropdownMenu.Item onclick={() => window.open(file.fileUrl, '_blank')}>
 												<button class="block w-full text-left px-2 py-1 hover:bg-gray-100"
 													>View</button
