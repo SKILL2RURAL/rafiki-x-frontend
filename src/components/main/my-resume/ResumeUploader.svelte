@@ -172,17 +172,27 @@
 			<li>
 				<div
 					class={cn(
-						`md:w-[611px] h-[60px] flex justify-between rounded-[8px] bg-[#F7FBFD] p-3 font-satoshi-regular`,
+						`md:w-[611px] min-w-[300px] h-[60px] flex justify-between rounded-[8px] bg-[#F7FBFD] p-3 font-satoshi-regular`,
 						file.status === 'pending' ? 'opacity-30' : ''
 					)}
 				>
 					<div class="flex gap-2 items-center">
 						<!-- <img src={file.icon} alt="File Icon" class="" width="32" height="32" /> -->
 						<div>
-							<p class="text-[12px] lg:text-[14px] leading-5 font-plus-jakarta-sans-semibold">
+							<p
+								class={cn(
+									`text-[12px] lg:text-[14px] leading-5 font-plus-jakarta-sans-semibold max-w-[170px] truncate md:max-w-[400px]`,
+									file.isDefault && `max-w-[150px] md:max-w-[300px]  truncate`
+								)}
+							>
 								{file.fileName}
 							</p>
-							<p class="text-[10px] lg:text-[12px] text-[#4D5154] leading-4">
+							<p
+								class={cn(
+									'text-[10px] lg:text-[12px] text-[#4D5154] leading-4',
+									file.isDefault && `max-w-[150px] md:max-w-[300px] truncate`
+								)}
+							>
 								{formatDate(file.uploadedAt)}
 							</p>
 						</div>
@@ -201,7 +211,10 @@
 								{#if file.isDefault}
 									<button
 										onclick={() => setDefaultResume(file)}
-										class="bg-linear-to-r from-[#51A3DA] to-[#60269E] text-white px-4 rounded-[100px] text-[12px] font-satoshi-regular font-medium"
+										class={cn(
+											'bg-linear-to-r from-[#51A3DA] to-[#60269E] text-white rounded-[100px]  font-satoshi-regular font-medium',
+											file.isDefault && `text-[9px] lg:text-[12px] md:px-4 px-2`
+										)}
 									>
 										<p>Default</p>
 									</button>

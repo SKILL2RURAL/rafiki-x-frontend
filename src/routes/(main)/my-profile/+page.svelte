@@ -32,7 +32,7 @@
 			>
 		</div>
 	{:else if $profile.data}
-		<div class="px-5 lg:px-10">
+		<div class="px-5 lg:px-10 my-5 lg:my-0">
 			<!-- Header with Title and Avatar -->
 			<div class="flex items-center justify-between mb-5">
 				<h1
@@ -66,7 +66,7 @@
 				<button
 					onclick={() => (activeTab = 'billings')}
 					class={cn(
-						'px-4 py-2 text-[16px] font-medium rounded-xl transition-colors relative',
+						'px-4 py-2 text-[14px] md:text-[16px] font-medium rounded-xl transition-colors relative',
 						activeTab === 'billings' ? 'bg-[#F2F8FC]' : 'text-[#808990] hover:text-[#253B4B]'
 					)}
 					style={activeTab === 'billings'

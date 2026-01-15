@@ -79,8 +79,8 @@
 </script>
 
 <!-- ✅ Profile picture section -->
-<div>
-	<p class="text-[#253B4B] text-[18px] font-light mb-3">Profile picture</p>
+<section>
+	<h2 class="text-[#253B4B] text-[20px] font-semibold mb-5">Profile picture</h2>
 	<div class={cn('flex items-center gap-4 mb-5', { 'opacity-50': isUploading })}>
 		<!-- PROFILE IMAGE  -->
 		<div class={cn('w-20 h-20 rounded-full', { 'opacity-50': isUploading })}>
@@ -110,7 +110,7 @@
 			</label>
 		</div>
 	</div>
-</div>
+</section>
 
 <!-- Basic Information Section -->
 <div class="shadow-md rounded-[20px] p-10">
@@ -209,12 +209,8 @@
 	isOpen={isChangePasswordModalOpen}
 	onClose={() => (isChangePasswordModalOpen = false)}
 />
-<ChangeNameModal
-	isOpen={isChangeNameModalOpen}
-	onClose={() => (isChangeNameModalOpen = false)}
-/>
+<ChangeNameModal isOpen={isChangeNameModalOpen} onClose={() => (isChangeNameModalOpen = false)} />
 <ChangeEmailModal
 	isOpen={isChangeEmailModalOpen}
 	onClose={() => (isChangeEmailModalOpen = false)}
 />
-

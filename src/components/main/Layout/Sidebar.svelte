@@ -117,16 +117,18 @@
 		<!-- Settings -->
 		<div class="min-h-0 overflow-auto no-scrollbar">
 			<!-- Logo  -->
-			<div class="flex gap-2 items-end">
-				<img src={logo} alt="Rafiki X" width="45" height="45" />
-				{#if isSidebarOpen}
-					<p
-						class="font-mulish font-bold text-[24px] bg-linear-to-br from-[#51A3DA] to-[#60269E] text-transparent bg-clip-text"
-					>
-						RafikiX
-					</p>
-				{/if}
-			</div>
+			<button onclick={() => goto('/')}>
+				<div class="flex gap-2 items-end">
+					<img src={logo} alt="Rafiki X" width="45" height="45" />
+					{#if isSidebarOpen}
+						<p
+							class="font-mulish font-bold text-[24px] bg-linear-to-br from-[#51A3DA] to-[#60269E] text-transparent bg-clip-text"
+						>
+							RafikiX
+						</p>
+					{/if}
+				</div>
+			</button>
 
 			<!-- Links  -->
 			<div class="my-5 space-y-3 mt-10">
