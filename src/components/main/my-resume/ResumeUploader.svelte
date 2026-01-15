@@ -46,7 +46,8 @@
 				fileUrl: `${(files[0].size / 1024).toFixed(1)} KB`,
 				fileSize: files[0].size,
 				status: 'pending',
-				uploadedAt: new Date().toISOString()
+				uploadedAt: new Date().toISOString(),
+				isDefault: false
 			};
 
 			resumeFiles = [newFile, ...resumeFiles];
@@ -102,6 +103,25 @@
 		}
 	}
 
+	// FUNCTION TO SET DEFAULT RESUME
+	async function setDefaultResume(file: Resume) {
+		if (!$auth.accessToken) {
+			onRequireAuth?.();
+			return;
+		}
+		try {
+			await chatStore.setDefaultResume(file.id).then((res) => {
+				if (res) {
+					toast.success('Resume set as default successfully');
+					// Refresh resumes to get updated default status
+					chatStore.getAllResumes();
+				}
+			});
+		} catch (error) {
+			toast.error('Failed to set resume as default');
+		}
+	}
+
 	// FUNCTION TO FORMAT DATE
 	function formatDate(date: string) {
 		return new Date(date).toLocaleString('en-GB');
@@ -119,10 +139,10 @@
 			Drag and drop files or
 			<label class="text-[#60269E] underline cursor-pointer">
 				Browse
-				<input type="file" class="hidden" onchange={handleFileChange} accept=".pdf,.doc,.docx" />
+				<input type="file" class="hidden" onchange={handleFileChange} accept=".pdf" />
 			</label>
 		</p>
-		<p class="mt-2 text-[11.3px] text-[#676767] leading-4">Supported formats: PDF, DOC, DOCX</p>
+		<p class="mt-2 text-[11.3px] text-[#676767] leading-4">Supported format: PDF</p>
 	</div>
 
 	<div class="flex items-center gap-1 mt-6">
@@ -178,6 +198,14 @@
 						<!-- ACTIONS  -->
 						{#if file.status === 'COMPLETED'}
 							<div class="flex gap-2.5 items-center">
+								{#if file.isDefault}
+									<button
+										onclick={() => setDefaultResume(file)}
+										class="bg-linear-to-r from-[#51A3DA] to-[#60269E] text-white px-4 rounded-[100px] text-[12px] font-satoshi-regular font-medium"
+									>
+										<p>Default</p>
+									</button>
+								{/if}
 								<!-- DOWNLOAD BUTTON  -->
 								<button onclick={() => downloadFile(file)} class="size-[20px]">
 									<img src={downloadIcon} alt="download icon" width="24" height="24" />
@@ -191,9 +219,12 @@
 									<DropdownMenu.Content>
 										<DropdownMenu.Group>
 											<DropdownMenu.Item>
-												<button class="block w-full text-left px-2 py-1 hover:bg-gray-100"
-													>Make default</button
+												<button
+													class="block w-full text-left px-2 py-1 hover:bg-gray-100"
+													onclick={() => setDefaultResume(file)}
 												>
+													Make default
+												</button>
 											</DropdownMenu.Item>
 											<DropdownMenu.Item onclick={() => window.open(file.fileUrl, '_blank')}>
 												<button class="block w-full text-left px-2 py-1 hover:bg-gray-100"
