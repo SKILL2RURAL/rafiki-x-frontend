@@ -11,7 +11,7 @@
 
 <Layout>
 	<div
-		class="min-h-full flex flex-col items-center gap-2 justify-center px-4 sm:px-6 lg:px-10 py-10 lg:py-0"
+		class="min-h-full flex flex-col items-center gap-2 justify-center px-4 sm:px-6 lg:px-10 py-10 lg:py-0 mb-10 lg:mb-0"
 	>
 		<img src={logo} alt="Rafki-X logo" width={38} height={38} />
 
