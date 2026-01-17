@@ -3,7 +3,7 @@ import { toast } from 'svelte-sonner';
 import type { BillingPeriod, Currency } from './types';
 import {
 	initializeSubscription,
-	renewSubscription,
+	reactivateSubscription,
 	cancelSubscription,
 	fetchSubscriptionStatus,
 	fetchSubscriptionPlans
@@ -112,7 +112,7 @@ export async function handleCancel(
 	// On success, keep loading state true until plan changes (handled by $effect in component)
 }
 
-// Handle subscription renewal (for cancelled subscriptions)
+// Handle subscription reactivation (for cancelled subscriptions)
 export async function handleRenew(
 	isAuthenticated: boolean,
 	supportPlanPeriod: BillingPeriod,
@@ -130,23 +130,21 @@ export async function handleRenew(
 	isInitializing.value = true;
 
 	try {
-		const callbackUrl = browser
-			? `${window.location.origin}/subscription?payment=success`
-			: '/subscription?payment=success';
+		const result = await reactivateSubscription();
 
-		const paymentData = await renewSubscription(supportPlanPeriod, currency, callbackUrl);
-
-		if (paymentData?.authorizationUrl) {
-			// Redirect to payment gateway
-			if (browser) {
-				window.location.href = paymentData.authorizationUrl;
-			}
+		if (result) {
+			// Subscription reactivated successfully
+			// fetchSubscriptionStatus is already called in reactivateSubscription
+			// Reset loading state when subscription status updates
+			isInitializing.value = false;
+		} else {
+			isInitializing.value = false;
 		}
 	} catch (error) {
-		console.error('Error during subscription renewal:', error);
+		console.error('Error during subscription reactivation:', error);
 		toast.error(
 			(error as unknown as AxiosError<{ message: string }>)?.response?.data?.message ||
-				'Error during subscription renewal'
+				'Error during subscription reactivation'
 		);
 		isInitializing.value = false;
 	}

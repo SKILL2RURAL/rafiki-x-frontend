@@ -64,6 +64,14 @@ export interface SupportPlan {
 	description: string;
 	name: string;
 	limits: PlanLimits;
+	paystackPricing: {
+		monthly: {
+			ngn: number;
+		};
+		yearly: {
+			ngn: number;
+		};
+	};
 	pricing: {
 		monthly: SupportPlanPricing;
 		yearly: SupportPlanPricing;
@@ -384,45 +392,31 @@ export async function initializeSubscription(
 	}
 }
 
-// Renew subscription (for cancelled subscriptions)
-export async function renewSubscription(
-	billingCycle: 'monthly' | 'yearly',
-	currency: 'naira' | 'dollars',
-	callbackUrl: string
-): Promise<InitializeSubscriptionResponse | null> {
+// Reactivate subscription (for cancelled subscriptions)
+export interface ReactivateSubscriptionResponse {
+	nextBillingDate: string;
+	message: string;
+	subscriptionId: number;
+	reactivated: boolean;
+}
+
+export async function reactivateSubscription(): Promise<ReactivateSubscriptionResponse | null> {
 	try {
-		// Convert to API format
-		const apiBillingCycle = billingCycle === 'monthly' ? 'MONTHLY' : 'YEARLY';
-		const apiCurrency = currency === 'naira' ? 'NGN' : 'USD';
-
-		const payload: InitializeSubscriptionPayload = {
-			billingCycle: apiBillingCycle,
-			currency: apiCurrency,
-			callbackUrl
-		};
-
-		const { data } = await api.post('/subscription/renew', payload);
+		const { data } = await api.post('/subscription/reactivate');
 
 		if (data.success && data.data) {
-			const paymentData: PaymentData = data.data;
-
-			// Return the payment data
-			return {
-				success: paymentData.success,
-				authorizationUrl: paymentData.authorizationUrl,
-				accessCode: paymentData.accessCode,
-				reference: paymentData.reference,
-				amount: paymentData.amount,
-				currency: paymentData.currency
-			};
+			toast.success(data.message || 'Subscription reactivated successfully');
+			// Refresh subscription status after reactivation
+			await fetchSubscriptionStatus();
+			return data.data;
 		} else {
 			// Handle error response
-			const errorMessage = data.message || 'Failed to renew subscription';
+			const errorMessage = data.message || 'Failed to reactivate subscription';
 			toast.error(errorMessage);
 			return null;
 		}
 	} catch (error) {
-		console.error('Error renewing subscription:', error);
+		console.error('Error reactivating subscription:', error);
 		// Don't show toast here as the API interceptor will handle it
 		return null;
 	}

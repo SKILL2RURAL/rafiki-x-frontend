@@ -43,8 +43,8 @@
 	const isAuthenticated = $derived(!!$auth.accessToken);
 
 	// Get price for support plan based on currency and billing period
-	const supportPrice = $derived(getSupportPlanPrice(plans, supportPlanPeriod, currency));
-
+	// const supportPrice = $derived(getSupportPlanPrice(plans, supportPlanPeriod, currency));
+	const supportPrice = $derived(plans?.support?.paystackPricing[supportPlanPeriod]?.ngn || 0);
 	// Get free plan features
 	const freePlanFeatures = $derived(plans?.free ? generateFeatures(plans.free.limits) : []);
 
@@ -142,7 +142,7 @@
 	<div class="relative p-5 md:p-10" style="font-family: 'Impact', sans-serif;">
 		<div class="text-center">
 			<h1 class="text-2xl md:text-3xl mb-5 font-black text-[#253B4B]">Upgrade Your RafikiX Plan</h1>
-			<div class="flex justify-center"><CurrencyToggle bind:selected={currency} /></div>
+			<!-- <div class="flex justify-center"><CurrencyToggle bind:selected={currency} /></div> -->
 		</div>
 
 		<!-- Close Button -->
@@ -188,7 +188,7 @@
 				features={freePlanFeatures}
 				buttonText={isFreePlanCurrent ? 'Current Plan' : 'Select Plan'}
 				buttonVariant="outline"
-				isCurrentPlan={isFreePlanCurrent}
+				isCurrentPlan={isFreePlanCurrent || isSupportPlanCurrent}
 				isLoading={isCancelling.value}
 				on:upgrade={onFreePlanAction}
 			/>
