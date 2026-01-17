@@ -7,7 +7,7 @@
 	console.log($transactions);
 
 	$effect(() => {
-		if ($transactions.transactions.length === 0 && !$transactions.isLoading) {
+		if ($transactions.transactions === null && !$transactions.isLoading) {
 			fetchTransactions(0);
 		}
 	});
@@ -90,7 +90,7 @@
 								>
 							</td>
 						</tr>
-					{:else if $transactions.transactions.length === 0}
+					{:else if $transactions.transactions === null || $transactions.transactions.length === 0}
 						<tr>
 							<td colspan="6" class="py-8 px-6 text-center text-[#808990] text-[14px]">
 								No transactions found
@@ -149,7 +149,7 @@
 		</div>
 
 		<!-- Pagination -->
-		{#if $transactions.transactions.length > 0}
+		{#if $transactions.transactions && $transactions.transactions.length > 0}
 			<div class="flex items-center justify-between px-6 py-4 border-t border-[#E8E8E8]">
 				<p class="text-[#344054] text-[14px]">
 					Page {$transactions.page + 1} of {$transactions.totalPages || 1}
