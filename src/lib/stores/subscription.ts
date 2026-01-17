@@ -158,7 +158,7 @@ export const subscriptionPlans = writable<PlansState>(initialPlansState);
 
 // Transactions Store
 interface TransactionsState {
-	transactions: Transaction[];
+	transactions: null | Transaction[];
 	isLoading: boolean;
 	error: string | null;
 	totalPages: number;
@@ -170,7 +170,7 @@ interface TransactionsState {
 }
 
 const initialTransactionsState: TransactionsState = {
-	transactions: [],
+	transactions: null,
 	isLoading: false,
 	error: null,
 	totalPages: 0,
