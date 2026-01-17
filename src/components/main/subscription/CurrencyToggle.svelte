@@ -20,12 +20,12 @@
 	>
 		Naira
 	</button>
-	<button
+	<!-- <button
 		on:click={() => toggle('dollars')}
 		class="rounded-full px-8 py-2 text-sm font-medium transition-all {selected === 'dollars'
 			? 'bg-white text-[#253B4B] font'
 			: 'text-[#808990]'}"
 	>
 		Dollars
-	</button>
+	</button> -->
 </div>
