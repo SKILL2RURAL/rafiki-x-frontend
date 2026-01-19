@@ -9,8 +9,8 @@
 	import noProfile from '$lib/assets/icons/no-profile.png';
 	import briefcaseGrey from '$lib/assets/icons/briefcase-grey.png';
 	import briefcaseLight from '$lib/assets/icons/briefcase-light.png';
-	import pdfGrey from '$lib/assets/icons/pdf-grey.png';
-	import pdfLight from '$lib/assets/icons/pdf-white.svg';
+	import fileLight from '$lib/assets/icons/file-white.png';
+	import file from '$lib/assets/icons/file.png';
 	import logout from '$lib/assets/icons/door-open.png';
 	import { ChevronRight, MessageCircle } from 'lucide-svelte';
 	import noChat from '$lib/assets/icons/empty-state.png';
@@ -145,10 +145,10 @@
 					href="/my-resume"
 					class={` text-[14px] font-normal p-2 rounded-xl cursor-pointer flex items-center gap-2 ${pathname.includes('my-resume') ? 'bg-gradient text-white' : 'text-[#808990]'} w-full`}
 				>
-					{#if pathname.includes('my-resume')}
-						<img src={pdfLight} alt="" width="20" height="20" />
+					{#if !pathname.includes('my-resume')}
+						<img src={file} alt="file" width="20" height="20" />
 					{:else}
-						<img src={pdfGrey} alt="" width="20" height="20" />
+						<img src={fileLight} alt="file" width="20" height="20" />
 					{/if}
 					{#if isSidebarOpen}
 						<p>My Resume</p>

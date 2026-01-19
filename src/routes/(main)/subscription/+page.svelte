@@ -3,6 +3,7 @@
 	import { onMount } from 'svelte';
 	import CreateAccountModal from '../../../components/main/Layout/CreateAccountModal.svelte';
 	import ManagePlanModal from '../../../components/main/subscription/ManagePlanModal.svelte';
+	import RenewPlanModal from '../../../components/main/subscription/RenewPlanModal.svelte';
 	import Layout from '../../../components/main/Layout/Layout.svelte';
 	import CurrencyToggle from '../../../components/main/subscription/CurrencyToggle.svelte';
 	import PricingCard from '../../../components/main/subscription/PricingCard.svelte';
@@ -32,6 +33,7 @@
 	let supportPlanPeriod = $state<BillingPeriod>('yearly');
 	let isCreateAccountOpen = $state(false);
 	let isManagePlanOpen = $state(false);
+	let isRenewPlanOpen = $state(false);
 	let isInitializing = $state({ value: false });
 	let isCancelling = $state({ value: false });
 
@@ -91,6 +93,12 @@
 	});
 
 	async function onSupportPlanAction() {
+		// If subscription is cancelled, show renew modal instead
+		if (isSupportPlanCurrent && isCancelled) {
+			onRenewPlan();
+			return;
+		}
+
 		await handleSupportPlanAction(
 			isSupportPlanCurrent,
 			isAuthenticated,
@@ -110,7 +118,13 @@
 		}
 	}
 
-	async function onRenewPlan() {
+	function onRenewPlan() {
+		// Open renew plan modal
+		isRenewPlanOpen = true;
+	}
+
+	async function onConfirmRenewPlan() {
+		// Handle renew plan action from modal
 		await handleRenew(
 			isAuthenticated,
 			supportPlanPeriod,
@@ -228,4 +242,12 @@
 	isOpen={isManagePlanOpen}
 	onClose={() => (isManagePlanOpen = false)}
 	{onCancelPlan}
+/>
+
+<RenewPlanModal
+	isOpen={isRenewPlanOpen}
+	onClose={() => (isRenewPlanOpen = false)}
+	onRenewPlan={onConfirmRenewPlan}
+	billingPeriod={supportPlanPeriod}
+	{currency}
 />
