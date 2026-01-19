@@ -48,7 +48,7 @@
 				<button
 					onclick={() => (activeTab = 'profile')}
 					class={cn(
-						'px-4 py-2 text-[16px] font-medium rounded-xl transition-colors relative',
+						'px-4 py-2 text-[16px] font-medium rounded-[4px] transition-colors relative',
 						activeTab === 'profile' ? 'bg-[#F2F8FC]' : 'text-[#808990] hover:text-[#253B4B]'
 					)}
 					style={activeTab === 'profile'
@@ -66,7 +66,7 @@
 				<button
 					onclick={() => (activeTab = 'billings')}
 					class={cn(
-						'px-4 py-2 text-[14px] md:text-[16px] font-medium rounded-xl transition-colors relative',
+						'px-4 py-2 text-[14px] md:text-[16px] font-medium rounded-[4px] transition-colors relative',
 						activeTab === 'billings' ? 'bg-[#F2F8FC]' : 'text-[#808990] hover:text-[#253B4B]'
 					)}
 					style={activeTab === 'billings'
