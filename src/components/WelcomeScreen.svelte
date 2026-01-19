@@ -105,7 +105,7 @@
 			class="mt-3 lg:mt-5 grid grid-cols-1 sm:grid-cols-2 lg:flex justify-center items-center gap-3 sm:gap-4 lg:gap-5 w-full"
 		>
 			<button
-				class="shadow-none lg:shadow-md rounded-[100px] flex items-center justify-center gap-2 px-4 sm:px-6 lg:px-4 py-3 w-full lg:w-fit bg-white"
+				class="shadow-none lg:shadow-md rounded-[100px] flex items-center justify-center gap-2 px-4 sm:px-6 lg:px-4 py-3 w-full bg-white"
 				onclick={() =>
 					handleSend(
 						"I want to write a story, but I'm not sure where to start. Can you ask me some questions to help me get started and then help me write it?"
@@ -116,7 +116,7 @@
 				<p class="text-[13px] sm:text-[14px] lg:font-normal text-[#1E1E1E]">Write a Story</p>
 			</button>
 			<button
-				class="shadow-none lg:shadow-md rounded-[100px] flex items-center justify-center gap-2 px-4 sm:px-6 lg:px-4 py-3 w-full lg:w-fit bg-white"
+				class="shadow-none lg:shadow-md rounded-[100px] flex items-center justify-center gap-2 px-4 sm:px-6 lg:px-4 py-3 w-full bg-white"
 				onclick={() =>
 					handleSend(
 						"I'd like to have a chat about my career. I'm at a crossroads and could use some help exploring my options. Can you ask me some questions to understand my situation better?"
@@ -127,7 +127,7 @@
 				<p class="text-[13px] sm:text-[14px] lg:font-normal text-[#1E1E1E]">Career Chat</p>
 			</button>
 			<button
-				class="shadow-none lg:shadow-md rounded-[100px] flex items-center justify-center gap-2 px-4 sm:px-6 lg:px-4 py-3 w-full lg:w-fit bg-white"
+				class="shadow-none lg:shadow-md rounded-[100px] flex items-center justify-center gap-2 px-4 sm:px-6 lg:px-4 py-3 w-full bg-white"
 				onclick={() =>
 					handleSend(
 						"I have an interview coming up and I'm feeling nervous. Can you help me prepare by running through some common interview questions and giving me feedback?"
