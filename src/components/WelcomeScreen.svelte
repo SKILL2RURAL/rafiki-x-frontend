@@ -113,7 +113,7 @@
 				disabled={$sendingMessage}
 			>
 				<img src={book} alt="book" width="20" height="20" />
-				<p class="text-[13px] sm:text-[14px] lg:font-normal text-[#1E1E1E]">Write a Story</p>
+				<p class="text-[13px] sm:text-[14px] lg:font-normal text-[#667085]">Write a Story</p>
 			</button>
 			<button
 				class="shadow-none lg:shadow-md rounded-[100px] flex items-center justify-center gap-2 px-4 sm:px-6 lg:px-4 py-3 w-full bg-white"
@@ -124,7 +124,7 @@
 				disabled={$sendingMessage}
 			>
 				<img src={chat} alt="chat" width="20" height="20" />
-				<p class="text-[13px] sm:text-[14px] lg:font-normal text-[#1E1E1E]">Career Chat</p>
+				<p class="text-[13px] sm:text-[14px] lg:font-normal text-[#667085]">Career Chat</p>
 			</button>
 			<button
 				class="shadow-none lg:shadow-md rounded-[100px] flex items-center justify-center gap-2 px-4 sm:px-6 lg:px-4 py-3 w-full bg-white"
@@ -135,7 +135,7 @@
 				disabled={$sendingMessage}
 			>
 				<img src={album} alt="album" width="20" height="20" />
-				<p class="text-[13px] sm:text-[14px] lg:font-normal text-[#1E1E1E]">Interview Prep</p>
+				<p class="text-[13px] sm:text-[14px] lg:font-normal text-[#667085]">Interview Prep</p>
 			</button>
 		</div>
 	</div>
