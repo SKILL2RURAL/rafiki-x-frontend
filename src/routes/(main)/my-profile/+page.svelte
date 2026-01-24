@@ -32,7 +32,7 @@
 			>
 		</div>
 	{:else if $profile.data}
-		<div class="px-5 lg:px-10 my-5 lg:my-0 mb-20 lg:mb-0">
+		<div class="px-5 lg:px-10 my-5 lg:my-0 mb-30 lg:mb-0">
 			<!-- Header with Title and Avatar -->
 			<div class="flex items-center justify-between mb-5">
 				<h1

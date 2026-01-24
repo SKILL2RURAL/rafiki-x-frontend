@@ -120,7 +120,7 @@
 								<td class="py-4 px-6 text-[12px] md:text-[14px]"
 									>{formatAmount(record.amount, record.currency)}</td
 								>
-								<td class="py-4 px-6">
+								<!-- <td class="py-4 px-6">
 									<button
 										onclick={() => handleDownloadInvoice(record.reference)}
 										class="flex items-center gap-2 transition-opacity hover:opacity-80"
@@ -140,7 +140,7 @@
 											class="w-4 h-4 {record.status !== 'SUCCESS' ? 'opacity-50' : ''}"
 										/>
 									</button>
-								</td>
+								</td> -->
 							</tr>
 						{/each}
 					{/if}

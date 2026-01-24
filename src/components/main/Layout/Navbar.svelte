@@ -2,11 +2,15 @@
 	// import Button from '$lib/components/ui/button/button.svelte';
 	import { Menu } from 'lucide-svelte';
 	import logo from '$lib/assets/logo.svg';
+	import premium from '$lib/assets/icons/premium.png';
+	import noProfile from '$lib/assets/icons/no-profile.png';
 	import { getStores } from '$app/stores';
 	import MobileSidebar from './MobileSidebar.svelte';
 	import { Button } from '$lib/components/ui/button';
 	import { goto } from '$app/navigation';
 	import { auth } from '$lib/stores/authStore';
+	import { profile } from '$lib/stores/profile';
+	import * as Avatar from '$lib/components/ui/avatar/index.js';
 	const { page } = getStores();
 	let { onOpenCreateAccount }: { onOpenCreateAccount?: () => void } = $props();
 	const pathname = $derived($page.url.pathname);
@@ -53,6 +57,17 @@
 		<Button class="hidden lg:block bg-gradient h-[40px] w-[100px]" onclick={() => goto('/login')}
 			>Sign up</Button
 		>
+	{:else}
+		<!-- Go Premium Button and Avatar for authenticated users -->
+		<div class="hidden lg:flex items-center gap-3">
+			<button
+				onclick={() => goto('/subscription')}
+				class="flex items-center gap-2 px-4 py-2 rounded-[4px] bg-gradient text-white font-medium hover:opacity-90 transition-opacity cursor-pointer"
+			>
+				<img src={premium} alt="Premium" width="20" height="20" />
+				<span>Go Premium</span>
+			</button>
+		</div>
 	{/if}
 </nav>
 <MobileSidebar

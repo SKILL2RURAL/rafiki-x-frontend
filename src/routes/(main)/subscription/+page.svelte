@@ -157,6 +157,10 @@
 		<div class="text-center">
 			<h1 class="text-2xl md:text-3xl mb-5 font-black text-[#253B4B]">Upgrade Your RafikiX Plan</h1>
 			<!-- <div class="flex justify-center"><CurrencyToggle bind:selected={currency} /></div> -->
+			<p class="font-mulish text-[18px] text-[#808990] max-w-[500px] mx-auto">
+				When you subscribe, you help remove barriers so a young person from an underserved or
+				displaced background can access Rafiki AI career counselling for free.
+			</p>
 		</div>
 
 		<!-- Close Button -->
@@ -231,8 +235,12 @@
 	{/if}
 
 	<!-- Footer -->
-	<p class="mt-8 px-4 text-center text-sm text-gray-600">
-		By messaging RafikiX, you agree to our Terms and Conditions
+	<p class="mt-8 px-4 text-center text-sm text-gray-600 mb-20 lg:mb-0">
+		By messaging RafikiX, you agree to our <a
+			href="/terms-and-conditions"
+			class="bg-gradient from-[#51A3DA] to-[#60269E] text-transparent bg-clip-text hover:underline cursor-pointer"
+			>Terms and Conditions</a
+		>
 	</p>
 </Layout>
 

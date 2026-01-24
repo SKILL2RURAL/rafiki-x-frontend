@@ -4,7 +4,7 @@
 </script>
 
 <div
-	class="p-5 md:p-12 mx-auto font-mulish w-[370px] md:w-[756px] lg:w-[856px] min-h-full rounded-[20px] bg-linear-to-b from-[#5449AC] from-0.5% to-[#FFFFFF00] to-30% relative"
+	class="p-5 md:p-12 mx-auto font-mulish w-[370px] md:w-[756px] lg:w-[856px] min-h-full rounded-[20px] bg-linear-to-b from-[#5449AC] from-0.5% to-[#FFFFFF00] to-10% relative"
 >
 	<div class="flex justify-center gap-3 mb-7">
 		<h2
@@ -23,37 +23,162 @@
 		</button>
 	</div>
 	<div class="flex flex-col text-[14px] md:text-[18px] gap-5 md:gap-8">
-		<p class="font-medium text-white">Last updated: February 20th, 2024</p>
-		<p>
-			Lorem ipsum dolor sit, amet consectetur adipisicing elit. Ab, nihil molestias! Nisi, rerum
-			dolorum eius aliquid repellat harum. Animi excepturi eligendi omnis quisquam voluptatem ut
-			explicabo possimus ducimus nobis sint. Dolore perferendis fugiat labore placeat aut, quo
-			quibusdam accusamus reprehenderit, asperiores qui illum in itaque nostrum quidem totam cum
-			ipsum consectetur eveniet saepe odio? Non dolorem adipisci deserunt nihil suscipit! In itaque
-			modi animi quos expedita nam explicabo ea qui ipsa hic quibusdam minima magni beatae
-			doloremque, sed quidem amet similique id repellendus corrupti sapiente! Recusandae rem minima
-			sunt dolore. Sunt sapiente quia praesentium et aut minus fugit fugiat? Exercitationem saepe
-			nostrum ex quas, minus voluptate officiis sapiente excepturi suscipit, qui sequi ratione
-			accusantium vel pariatur, earum vero assumenda impedit? Voluptatem, ipsa quam, aliquid libero
-			minima mollitia ullam facilis et iure aspernatur vel vitae maiores placeat, fuga quibusdam
-			voluptatibus labore quo? Dolor dicta doloremque dolore laborum adipisci accusantium,
-			temporibus earum. Perspiciatis magni nulla sequi nemo dolor, possimus facere fuga laudantium.
-			Repellendus omnis corrupti optio doloremque dolor modi unde minima, dolores eaque commodi
-			suscipit architecto quae iure voluptate odit porro itaque. Ipsa nemo assumenda at! Suscipit
-			placeat libero beatae. Similique eligendi natus veniam corporis reprehenderit pariatur eius
-			delectus accusantium nobis molestiae esse vero, obcaecati quidem provident ducimus, est optio
-			enim ipsam? Nobis qui, repellendus nihil, corporis sint ab ipsam reiciendis tenetur esse
-			cupiditate dolore, minima doloribus ullam eum repudiandae aspernatur a earum modi. Aliquid
-			asperiores rerum enim veniam, vero alias magni. Doloremque fugit cumque accusamus, possimus ut
-			ea quidem soluta error tempore, voluptates non similique facere delectus minus voluptas
-			suscipit necessitatibus nemo quod, iure hic? Ea ipsam corrupti facere porro molestias. Laborum
-			aperiam itaque temporibus cumque. Aut pariatur provident voluptatum delectus? Vero amet eum
-			sed ea reprehenderit saepe id excepturi unde libero ut debitis perspiciatis, non quos
-			soluta,vel reprehenderit, veritatis exercitationem ducimus. Deleniti mollitia, libero quia
-			possimus et natus architecto odit explicabo incidunt tenetur culpa magni laboriosam cum, quae
-			nemo voluptatum? Nam, quas dolorem. Ut ipsa vitae, deserunt optio ullam eos minus! Ammodi
-			nobis vitae rerum necessitatibus ut est, vel vero placeat, veritatis tenetur sed natus eum
-			officiis perferendis ea odio ducimus labore. Explicabo eveniet maiores dicta.
-		</p>
+		<p class="text-white font-extrabold">Last updated: April 9th, 2025</p>
+
+		<div class="space-y-6 font-mullish font-medium">
+			<div>
+				<h3 class="font-bold text-lg mb-3">1. Introduction</h3>
+				<p class="mb-3">
+					Skill2Rural is a nonprofit organization dedicated to empowering rural communities through
+					education and skill-building programs, with a particular focus on children's development.
+					We are committed to protecting the privacy of all our users, especially children, and
+					operate in compliance with the Nigeria Data Protection Act (2023) and other applicable
+					data protection laws.
+				</p>
+				<p class="mb-3">
+					This Privacy Notice explains what personal information we collect, how we use and protect
+					this information, your rights regarding your personal data, and special protections for
+					children's data.
+				</p>
+				<p>
+					We collect only the information necessary to provide our services and implement robust
+					safeguards to protect all personal data in our care. For children under 13, we require
+					verifiable parental consent before collecting any personal information.
+				</p>
+			</div>
+
+			<div>
+				<h3 class="font-bold text-lg mb-3">2. Who Does This Statement Apply To?</h3>
+				<ul class="list-disc list-inside space-y-2 ml-4">
+					<li>
+						Children participating in our programs (with special protections for those under 13)
+					</li>
+					<li>Parents/Legal Guardians of participating children</li>
+					<li>
+						General Users of our website (www.skill2rural.org), mobile applications, online
+						services, and in-person programs
+					</li>
+					<li>Donors and Partners who interact with our organization</li>
+				</ul>
+			</div>
+
+			<div>
+				<h3 class="font-bold text-lg mb-3">3. What Personal Information Do We Collect?</h3>
+				<p class="mb-3">
+					We collect only necessary data to provide our services. For children under 16, we obtain
+					verifiable parental consent before collection.
+				</p>
+				<p class="mb-3">
+					We collect contact information (name, email, phone, postal address), demographic data
+					(age, gender, school/community details), sensitive data (health/disability info if
+					relevant), technical data (IP address, cookies, device info), and transaction data
+					(donation/payment details).
+				</p>
+				<p>
+					Information sources include: directly from you, automatically through website
+					interactions, and from third parties such as professional bodies, government agencies, or
+					publicly available sources.
+				</p>
+			</div>
+
+			<div>
+				<h3 class="font-bold text-lg mb-3">4. How Do We Use Your Information?</h3>
+				<p class="mb-3">
+					We use your personal data for program registration, service delivery, communication
+					(program updates, emergency alerts, parental notifications), safety and security
+					monitoring, legal compliance, donor transaction processing, program improvement through
+					anonymized data analysis, and parental controls.
+				</p>
+			</div>
+
+			<div>
+				<h3 class="font-bold text-lg mb-3">5. Legal Basis for Processing</h3>
+				<p class="mb-3">
+					We process your personal data based on consent (explicit parental consent for minors),
+					legal obligations, legitimate interests (to run programs effectively while ensuring child
+					safety), and vital interests (to protect a participant's well-being in emergencies).
+				</p>
+			</div>
+
+			<div>
+				<h3 class="font-bold text-lg mb-3">6. How Do We Share Your Information?</h3>
+				<p class="mb-3">
+					We only share personal information when necessary. We share with parents/guardians, school
+					and community partners, service providers (contractually bound to protect data), for legal
+					and safety reasons, in case of organizational changes, and for research and impact
+					reporting (anonymized data only).
+				</p>
+				<p class="mb-3 font-semibold">We Do Not:</p>
+				<ul class="list-disc list-inside space-y-2 ml-4">
+					<li>Sell or rent personal information to third parties</li>
+					<li>Share children's data for marketing or advertising purposes</li>
+					<li>Disclose information beyond what is necessary for the intended purpose</li>
+				</ul>
+			</div>
+
+			<div>
+				<h3 class="font-bold text-lg mb-3">7. Will Your Data Be Processed Internationally?</h3>
+				<p>
+					If data must be transferred outside Nigeria, we ensure appropriate safeguards are in place
+					to meet legal requirements, including obtaining parental consent when children's data is
+					involved.
+				</p>
+			</div>
+
+			<div>
+				<h3 class="font-bold text-lg mb-3">8. Data Security</h3>
+				<p>
+					We implement technical and organizational measures to protect your personal data from
+					unauthorized access, disclosure, alteration, or destruction. These measures include
+					encryption, access controls, and regular security assessments.
+				</p>
+			</div>
+
+			<div>
+				<h3 class="font-bold text-lg mb-3">9. Data Retention</h3>
+				<p>
+					We retain personal information only for as long as necessary to fulfill the purposes
+					outlined in this privacy notice, unless a longer retention period is required or permitted
+					by law (such as for tax, legal, or child protection reasons). When no longer needed, we
+					securely delete or anonymize your data.
+				</p>
+			</div>
+
+			<div>
+				<h3 class="font-bold text-lg mb-3">10. Your Data Rights</h3>
+				<p class="mb-3">You have the right to:</p>
+				<ul class="list-disc list-inside space-y-2 ml-4">
+					<li><strong>Access:</strong> Request a copy of the personal data we hold about you</li>
+					<li><strong>Correction:</strong> Request correction of inaccurate or incomplete data</li>
+					<li>
+						<strong>Deletion:</strong> Request data deletion when there is no legitimate reason for us
+						to keep it
+					</li>
+					<li><strong>Restriction:</strong> Limit how we process your data</li>
+					<li><strong>Objection:</strong> Object to processing based on legitimate interests</li>
+					<li>
+						<strong>Data Portability:</strong> Request transfer of your data to another provider where
+						applicable
+					</li>
+					<li>
+						<strong>Withdraw Consent:</strong> Where we process data based on consent, you can withdraw
+						consent at any time
+					</li>
+				</ul>
+				<p class="mt-3">
+					To exercise these rights, please contact us at Info@skill2rural.org. We may require
+					verification of your identity before processing your request.
+				</p>
+			</div>
+
+			<div>
+				<h3 class="font-bold text-lg mb-3">11. Changes to This Policy</h3>
+				<p>
+					We may update this Privacy Statement from time to time. Any changes will be posted on our
+					intranet or communicated to you directly, along with the updated effective date. We
+					encourage you to review this policy periodically.
+				</p>
+			</div>
+		</div>
 	</div>
 </div>

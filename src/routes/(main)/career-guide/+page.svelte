@@ -68,8 +68,10 @@
 			</div>
 			<p class="text-[13px] sm:text-[14px] font-normal text-[#686868] mt-6 lg:mt-10">
 				By messaging RafikiX, you agree to our
-				<span class="bg-gradient from-[#51A3DA] to-[#60269E] text-transparent bg-clip-text"
-					>Terms and Conditions</span
+				<a
+					href="/terms-and-conditions"
+					class="bg-gradient from-[#51A3DA] to-[#60269E] text-transparent bg-clip-text hover:underline cursor-pointer"
+					>Terms and Conditions</a
 				>
 			</p>
 		</div>
