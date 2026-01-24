@@ -16,7 +16,8 @@
 		'/my-resume',
 		'/carerr-guide',
 		'/[chatId]',
-		'/learn-more'
+		'/learn-more',
+		'/terms-and-conditions'
 	];
 
 	onMount(() => {

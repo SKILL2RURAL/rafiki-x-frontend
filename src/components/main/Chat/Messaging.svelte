@@ -78,7 +78,11 @@
 	<div class="sticky bottom-0 lg:-bottom-5 bg-white w-full lg:w-[71vw] px-5">
 		<InputArea onOpenCreateAccount={() => (isCreateAccountOpen = true)} />
 		<p class="text-[#686868] text-center text-[14px] font-normal py-3">
-			By messaging RafikiX, you agree to our Terms and Conditions
+			By messaging RafikiX, you agree to our <a
+				href="/terms-and-conditions"
+				class="bg-gradient from-[#51A3DA] to-[#60269E] text-transparent bg-clip-text hover:underline cursor-pointer"
+				>Terms and Conditions</a
+			>
 		</p>
 	</div>
 

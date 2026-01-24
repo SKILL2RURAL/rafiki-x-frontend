@@ -70,7 +70,7 @@
 	</p>
 
 	<div
-		class="bg-white px-5 lg:p-10 py-10 lg:py-15 shadow-md rounded-[20px] my-5 lg:my-10 sm:max-w-full lg:max-w-full mx-3 lg:mx-15"
+		class="bg-white px-5 lg:p-10 py-10 lg:py-15 shadow-md rounded-[20px] my-5 lg:my-10 sm:max-w-full lg:max-w-full mx-0 lg:mx-15"
 	>
 		<div class="flex items-center gap-3">
 			<div class="border border-[#E8E8E8] rounded-[100px] flex px-4 py-2 w-full">
@@ -142,8 +142,10 @@
 
 	<p class="text-[14px] font-normal text-[#686868]">
 		By messaging RafikiX, you agree to our
-		<span class="bg-gradient from-[#51A3DA] to-[#60269E] text-transparent bg-clip-text"
-			>Terms and Conditions</span
+		<a
+			href="/terms-and-conditions"
+			class="bg-gradient from-[#51A3DA] to-[#60269E] text-transparent bg-clip-text hover:underline cursor-pointer"
+			>Terms and Conditions</a
 		>
 	</p>
 </div>

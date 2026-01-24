@@ -37,8 +37,10 @@
 			<ResumeUploader onRequireAuth={() => (isCreateAccountOpen = true)} />
 
 			<div class="text-[13px] sm:text-[14px] font-mulish text-[#686868] leading-4 text-center px-2">
-				By messaging RafikiX, you agree to our <span class="text-[#60269E]"
-					>Terms and Conditions</span
+				By messaging RafikiX, you agree to our <a
+					href="/terms-and-conditions"
+					class="bg-gradient from-[#51A3DA] to-[#60269E] text-transparent bg-clip-text hover:underline cursor-pointer"
+					>Terms and Conditions</a
 				>
 			</div>
 		</div>

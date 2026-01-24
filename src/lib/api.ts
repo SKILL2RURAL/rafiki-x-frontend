@@ -1,4 +1,4 @@
-import axios, { type AxiosError, type InternalAxiosRequestConfig } from 'axios';
+import axios, { type InternalAxiosRequestConfig } from 'axios';
 import { get } from 'svelte/store';
 import { auth, logout, refreshAccessToken } from './stores/authStore';
 import { toast } from 'svelte-sonner';
@@ -89,8 +89,8 @@ let isLoggingOut = false;
 let isRefreshing = false;
 // Queue to store failed requests while token is being refreshed
 let failedQueue: Array<{
-	resolve: (value?: any) => void;
-	reject: (error?: any) => void;
+	resolve: (value?: unknown) => void;
+	reject: (error?: unknown) => void;
 	config: InternalAxiosRequestConfig;
 }> = [];
 
@@ -105,19 +105,28 @@ api.interceptors.request.use(
 		if (!isPublic && token) {
 			// Check if token is expired before making the request
 			const expired = isTokenExpired(token);
+			const currentAuth = get(auth);
+			const hasRefreshToken = !!currentAuth.refreshToken;
 
 			if (expired === true) {
-				// Token is expired, handle gracefully
-				if (!isLoggingOut) {
-					isLoggingOut = true;
-					handleTokenExpiration(isPublic);
-					// Reset flag after a short delay
-					setTimeout(() => {
-						isLoggingOut = false;
-					}, 1000);
+				// Token is expired
+				// If we have a refresh token, allow the request to proceed
+				// The 401 response interceptor will handle refreshing and retrying
+				if (!hasRefreshToken) {
+					// No refresh token available, handle gracefully
+					if (!isLoggingOut) {
+						isLoggingOut = true;
+						handleTokenExpiration(isPublic);
+						// Reset flag after a short delay
+						setTimeout(() => {
+							isLoggingOut = false;
+						}, 1000);
+					}
+					// Reject the request to prevent it from going through with expired token
+					return Promise.reject(new Error('Token expired'));
 				}
-				// Reject the request to prevent it from going through with expired token
-				return Promise.reject(new Error('Token expired'));
+				// If we have a refresh token, let the request proceed
+				// The 401 handler will catch it and refresh the token
 			}
 
 			config.headers.Authorization = `Bearer ${token}`;
@@ -144,6 +153,8 @@ api.interceptors.response.use(
 		// 401 - Unauthorized (Token expired or invalid)
 		if (err.response?.status === 401 && !isPublic) {
 			const originalRequest = err.config as InternalAxiosRequestConfig & { _retry?: boolean };
+			const currentAuth = get(auth);
+			const hasRefreshToken = !!currentAuth.refreshToken;
 
 			// If this is already a retry after refresh, or refresh endpoint, don't try again
 			if (originalRequest._retry || originalRequest.url?.includes('/auth/refresh')) {
@@ -171,8 +182,8 @@ api.interceptors.response.use(
 				return Promise.reject(err);
 			}
 
-			// Try to refresh token
-			if (!isRefreshing) {
+			// Only try to refresh token if we have a refresh token available
+			if (hasRefreshToken && !isRefreshing) {
 				isRefreshing = true;
 				originalRequest._retry = true;
 
@@ -251,7 +262,7 @@ api.interceptors.response.use(
 					}
 					return Promise.reject(refreshError);
 				}
-			} else {
+			} else if (hasRefreshToken && isRefreshing) {
 				// Token refresh is already in progress, queue this request
 				return new Promise((resolve, reject) => {
 					failedQueue.push({
@@ -260,6 +271,29 @@ api.interceptors.response.use(
 						config: originalRequest
 					});
 				});
+			} else {
+				// No refresh token available, logout user
+				if (!isLoggingOut) {
+					isLoggingOut = true;
+					logout();
+
+					if (browser) {
+						const currentPath = window.location.pathname;
+						const isOnPublicRoute = publicEndpoints.some((endpoint) =>
+							currentPath.includes(endpoint.replace('/api', ''))
+						);
+
+						if (!isOnPublicRoute) {
+							toast.error('Your session has expired. Please login again.');
+							goto(resolve('/login'));
+						}
+					}
+
+					setTimeout(() => {
+						isLoggingOut = false;
+					}, 1000);
+				}
+				return Promise.reject(err);
 			}
 		}
 
