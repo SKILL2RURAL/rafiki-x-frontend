@@ -13,7 +13,12 @@
 	import Drawer from '../../Common/ReuseableDrawer.svelte';
 	import TextEditor from './TextEditor.svelte';
 	import { auth } from '$lib/stores/authStore';
-	let { onRequireAuth }: { onRequireAuth?: () => void } = $props();
+	let {
+		onRequireAuth,
+		onUpload,
+		openEditor
+	}: { onRequireAuth?: () => void; onUpload?: (files: FileList) => void; openEditor?: boolean } =
+		$props();
 
 	// GET ALL RESUMES ON MOUNT
 	onMount(async () => {
@@ -26,6 +31,10 @@
 	let isUploading = $state<boolean>(false);
 	let isDrawerOpen = $state<boolean>(false);
 	let resumeFiles = $state<Resume[]>($resumes || []);
+
+	$effect(() => {
+		if (openEditor) isDrawerOpen = true;
+	});
 
 	// UPDATE THE RESUMEFILES LOCAL STATE
 	$effect(() => {
@@ -40,6 +49,7 @@
 				onRequireAuth?.();
 				return;
 			}
+			onUpload?.(files);
 			const newFile: Resume = {
 				id: Date.now(),
 				fileName: files[0].name,

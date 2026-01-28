@@ -5,45 +5,16 @@
 	import Ellipsis from '@lucide/svelte/icons/ellipsis';
 	import noChat from '$lib/assets/icons/empty-state.png';
 	import { chats, chatStore, isLoadingChats } from '$lib/stores/chatStore';
-	import type { Conversation } from '$lib/types/chat';
 	import ReuseableDrawer from '../../Common/ReuseableDrawer.svelte';
 	import * as AlertDialog from '$lib/components/ui/alert-dialog/index';
 	import ChatHistorySkeleton from './ChatHistorySkeleton.svelte';
+	import { groupChats } from '$lib/chatGrouping';
+	import { deleteSingleConversation, openDeleteConfirm } from './chatHistoryDrawer.utils';
 
 	let {
 		isOpen = $bindable(false),
 		onClose = (value: boolean) => ({})
 	}: { isOpen: boolean; onClose: (value: boolean) => {} } = $props();
-
-	function groupChats(chatsList: Conversation[]) {
-		const today = new Date();
-		const yesterday = new Date();
-		yesterday.setDate(today.getDate() - 1);
-
-		const isSameDay = (d1: Date, d2: Date) =>
-			d1.getFullYear() === d2.getFullYear() &&
-			d1.getMonth() === d2.getMonth() &&
-			d1.getDate() === d2.getDate();
-
-		const groups: { today: Conversation[]; yesterday: Conversation[]; recent: Conversation[] } = {
-			today: [],
-			yesterday: [],
-			recent: []
-		};
-
-		for (const chat of chatsList) {
-			const date = new Date(chat.updatedAt);
-			if (isSameDay(date, today)) {
-				groups.today.push(chat);
-			} else if (isSameDay(date, yesterday)) {
-				groups.yesterday.push(chat);
-			} else {
-				groups.recent.push(chat);
-			}
-		}
-
-		return groups;
-	}
 
 	const grouped = $derived(groupChats($chats));
 
@@ -51,16 +22,6 @@
 	let deletingId = $state<number | null>(null);
 	let openMenuId = $state<number | null>(null);
 	let isClearAllOpen = $state(false);
-
-	function openDeleteConfirm(id: number) {
-		deletingId = id;
-		isAlertOpen = true;
-		openMenuId = null;
-	}
-
-	async function handleDeleteSingleConversation(conversationId: number) {
-		await chatStore.deleteSingleConversation(conversationId);
-	}
 </script>
 
 <ReuseableDrawer bind:isOpen {onClose}>
@@ -74,44 +35,54 @@
 				<X color="#5F5F5F" />
 			</button>
 		</div>
-		<div class="px-5 py-5 h-[90vh] overflow-auto">
+		<div class="px-5 py-5 h-[90vh] flex flex-col min-h-0">
 			{#if $isLoadingChats}
 				<ChatHistorySkeleton />
 			{:else if $chats.length > 0}
-				<div class="space-y-4">
+				<div class="flex flex-col gap-4 min-h-0">
 					{#if grouped.today.length > 0}
-						<p class="text-[16px] font-medium text-[#808990]">Today</p>
-						{#each grouped.today as chat}
-							<div
-								class="flex items-center justify-between w-full text-[#253B4B] text-[16px] font-medium"
-							>
-								<a
-									href={`/${chat.id}`}
-									class="flex items-center justify-between w-full text-[#253B4B] text-[16px] font-medium"
-									onclick={() => (isOpen = false)}
-								>
-									<p>{chat.title}</p>
-								</a>
+						<div class="flex flex-col gap-3 min-h-0 flex-1">
+							<p class="text-[16px] font-medium text-[#808990]">Today</p>
+							<div class="space-y-4 overflow-auto no-scrollbar min-h-0 pr-1">
+								{#each grouped.today as chat}
+									<div
+										class="flex items-center justify-between w-full text-[#253B4B] text-[16px] font-medium"
+									>
+										<a
+											href={`/${chat.id}`}
+											class="flex items-center justify-between w-full text-[#253B4B] text-[16px] font-medium"
+											onclick={() => (isOpen = false)}
+										>
+											<p>{chat.title}</p>
+										</a>
 
-								<DropdownMenu.Root
-									open={openMenuId === chat.id}
-									onOpenChange={(v) => (openMenuId = v ? chat.id : null)}
-								>
-									<DropdownMenu.Trigger>
-										<Ellipsis class="rotate-90" size={18} color="black" />
-									</DropdownMenu.Trigger>
-									<DropdownMenu.Content>
-										<DropdownMenu.Group>
-											<DropdownMenu.Label
-												class="text-red-500"
-												onclick={() => openDeleteConfirm(chat.id)}
-												>Delete
-											</DropdownMenu.Label>
-										</DropdownMenu.Group>
-									</DropdownMenu.Content>
-								</DropdownMenu.Root>
+										<DropdownMenu.Root
+											open={openMenuId === chat.id}
+											onOpenChange={(v) => (openMenuId = v ? chat.id : null)}
+										>
+											<DropdownMenu.Trigger>
+												<Ellipsis class="rotate-90" size={18} color="black" />
+											</DropdownMenu.Trigger>
+											<DropdownMenu.Content>
+												<DropdownMenu.Group>
+													<DropdownMenu.Label
+														class="text-red-500"
+														onclick={() =>
+															openDeleteConfirm(
+																chat.id,
+																(v) => (deletingId = v),
+																(v) => (isAlertOpen = v),
+																(v) => (openMenuId = v)
+															)}
+														>Delete
+													</DropdownMenu.Label>
+												</DropdownMenu.Group>
+											</DropdownMenu.Content>
+										</DropdownMenu.Root>
+									</div>
+								{/each}
 							</div>
-						{/each}
+						</div>
 					{/if}
 
 					{#if grouped.yesterday.length > 0}
@@ -139,7 +110,13 @@
 										<DropdownMenu.Group>
 											<DropdownMenu.Label
 												class="text-red-500"
-												onclick={() => openDeleteConfirm(chat.id)}>Delete</DropdownMenu.Label
+												onclick={() =>
+													openDeleteConfirm(
+														chat.id,
+														(v) => (deletingId = v),
+														(v) => (isAlertOpen = v),
+														(v) => (openMenuId = v)
+													)}>Delete</DropdownMenu.Label
 											>
 										</DropdownMenu.Group>
 									</DropdownMenu.Content>
@@ -168,7 +145,13 @@
 										<DropdownMenu.Group>
 											<DropdownMenu.Label
 												class="text-red-500 cursor-pointer"
-												onclick={() => openDeleteConfirm(chat.id)}>Delete</DropdownMenu.Label
+												onclick={() =>
+													openDeleteConfirm(
+														chat.id,
+														(v) => (deletingId = v),
+														(v) => (isAlertOpen = v),
+														(v) => (openMenuId = v)
+													)}>Delete</DropdownMenu.Label
 											>
 										</DropdownMenu.Group>
 									</DropdownMenu.Content>
@@ -227,7 +210,7 @@
 				class="bg-red-500 hover:bg-red-500/70"
 				onclick={async () => {
 					if (deletingId !== null) {
-						await handleDeleteSingleConversation(deletingId);
+						await deleteSingleConversation(chatStore, deletingId);
 					}
 					isAlertOpen = false;
 					deletingId = null;

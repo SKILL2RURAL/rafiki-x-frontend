@@ -6,7 +6,7 @@
 
 <Layout>
 	<div
-		class="w-full min-h-full flex flex-col items-center justify-center px-4 sm:px-6 lg:px-10 py-10 lg:py-0"
+		class="w-full min-h-full flex flex-col items-center justify-center px-4 sm:px-6 lg:px-10 my-10 lg:my-0"
 	>
 		<img src={logo} alt="Rafiki X" width="38" height="38" class="mb-4 md:mb-6" />
 		<div class="w-full max-w-6xl">
