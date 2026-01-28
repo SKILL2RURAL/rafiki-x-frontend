@@ -251,6 +251,22 @@ function createChatStore() {
 			}
 		},
 
+		uploadTextResume: async (content: string, title: string) => {
+			try {
+				const { data } = await api.post('/resume/text', { content, title });
+				if (data.data) {
+					update((s) => ({
+						...s,
+						allResumes: [data.data, ...(s.allResumes ?? [])]
+					}));
+					return data.data;
+				}
+			} catch (error) {
+				console.error(error);
+				throw error;
+			}
+		},
+
 		getAllResumes: async () => {
 			try {
 				const { data } = await api.get('/resume/list');

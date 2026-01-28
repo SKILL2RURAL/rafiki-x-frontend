@@ -13,6 +13,8 @@
 	import Drawer from '../../Common/ReuseableDrawer.svelte';
 	import TextEditor from './TextEditor.svelte';
 	import { auth } from '$lib/stores/authStore';
+	import Spinner from '$lib/components/ui/spinner/spinner.svelte';
+	import { generateTextResumeTitle } from '$lib/resumeText';
 	let {
 		onRequireAuth,
 		onUpload,
@@ -31,6 +33,8 @@
 	let isUploading = $state<boolean>(false);
 	let isDrawerOpen = $state<boolean>(false);
 	let resumeFiles = $state<Resume[]>($resumes || []);
+	let textContent = $state('');
+	let isSavingText = $state(false);
 
 	$effect(() => {
 		if (openEditor) isDrawerOpen = true;
@@ -135,6 +139,38 @@
 	// FUNCTION TO FORMAT DATE
 	function formatDate(date: string) {
 		return new Date(date).toLocaleString('en-GB');
+	}
+
+	async function handleSaveTextResume() {
+		if (!$auth.accessToken) {
+			onRequireAuth?.();
+			return;
+		}
+
+		const content = textContent.trim();
+		if (!content) {
+			toast.error('Please enter your resume text');
+			return;
+		}
+
+		if (isSavingText) return;
+		isSavingText = true;
+
+		try {
+			const title = generateTextResumeTitle(content);
+			const res = await chatStore.uploadTextResume(content, title);
+			if (res) {
+				toast.success('Text resume uploaded successfully');
+				// Ensure list is in sync with server ordering/default flags
+				await chatStore.getAllResumes();
+				textContent = '';
+				isDrawerOpen = false;
+			}
+		} catch (e) {
+			toast.error('Failed to upload text resume');
+		} finally {
+			isSavingText = false;
+		}
 	}
 </script>
 
@@ -251,11 +287,14 @@
 													</button>
 												</DropdownMenu.Item>
 											{/if}
-											<DropdownMenu.Item onclick={() => window.open(file.fileUrl, '_blank')}>
-												<button class="block w-full text-left px-2 py-1 hover:bg-gray-100"
-													>View</button
-												>
-											</DropdownMenu.Item>
+
+											{#if file.fileUrl}
+												<DropdownMenu.Item onclick={() => window.open(file.fileUrl, '_blank')}>
+													<button class="block w-full text-left px-2 py-1 hover:bg-gray-100"
+														>View</button
+													>
+												</DropdownMenu.Item>
+											{/if}
 											<DropdownMenu.Item>
 												<button
 													class="block w-full text-left px-2 py-1 text-red-500 hover:bg-gray-100"
@@ -292,7 +331,7 @@
 					X
 				</button>
 			</div>
-			<TextEditor />
+			<TextEditor bind:value={textContent} />
 			<div class="border-t border-[#33333380] p-5 flex justify-end gap-5">
 				<button
 					onclick={() => (isDrawerOpen = false)}
@@ -310,8 +349,15 @@
 				</button>
 				<Button
 					class="bg-linear-to-t from-[#51A3DA] to-[#60269E] h-[42px] w-[120px] md:h-[55px] md:w-[185px] font-mulish font-semibold rounded-[8px]"
-					>Save</Button
+					disabled={isSavingText || !textContent.trim()}
+					onclick={handleSaveTextResume}
 				>
+					{#if isSavingText}
+						Saving...
+					{:else}
+						Save
+					{/if}
+				</Button>
 			</div>
 		</div>
 	</Drawer>
