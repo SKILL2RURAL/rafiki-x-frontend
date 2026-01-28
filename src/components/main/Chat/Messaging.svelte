@@ -13,9 +13,9 @@
 	// import check from '$lib/assets/icons/check.png';
 	// import pdf from '$lib/assets/icons/pdf.png';
 	// import image from '$lib/assets/icons/image.png';
-	import { X } from 'lucide-svelte';
+	// import { X } from 'lucide-svelte';
 	// import { cn } from '$lib/utils';
-	import { guestRemainingMessages } from '$lib/stores/chatStore';
+	// import { guestRemainingMessages } from '$lib/stores/chatStore';
 	import CreateAccountModal from '../Layout/CreateAccountModal.svelte';
 	// import GuestToast from './GuestToast.svelte';
 	// import { auth } from '$lib/stores/authStore';
@@ -77,7 +77,7 @@
 	<!-- Input Area -->
 	<div class="sticky bottom-0 lg:-bottom-5 bg-white w-full lg:w-[71vw] px-5">
 		<InputArea onOpenCreateAccount={() => (isCreateAccountOpen = true)} />
-		<p class="text-[#686868] text-center text-[14px] font-normal py-3">
+		<p class="text-[#686868] text-center text-[11px] md:text-[14px] font-normal pb-5 md:pb-3 py-3">
 			By messaging RafikiX, you agree to our <a
 				href="/terms-and-conditions"
 				class="bg-gradient from-[#51A3DA] to-[#60269E] text-transparent bg-clip-text hover:underline cursor-pointer"

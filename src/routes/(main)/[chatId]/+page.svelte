@@ -7,42 +7,23 @@
 	import { page } from '$app/state';
 	import Layout from '../../../components/main/Layout/Layout.svelte';
 	import { auth } from '$lib/stores/authStore';
+	import { loadConversationOrRedirect, setupChatPageEffect } from './chatPage.logic';
 
 	$effect(() => {
-		const authUnsub = auth.subscribe(($auth) => {
-			if (browser && !$auth.accessToken) {
-				goto('/guest');
-			}
+		return setupChatPageEffect({
+			auth,
+			initialMessage,
+			browser,
+			goto,
+			chatStore,
+			chatId: Number(page.params.chatId)
 		});
-
-		const unsubscribe = initialMessage.subscribe((message) => {
-			if (message) {
-				const id = Number(page.params.chatId);
-				chatStore.sendMessage({
-					message,
-					conversationId: id
-				});
-				chatStore.setInitialMessage(null);
-			}
-		});
-
-		return () => {
-			unsubscribe();
-			authUnsub();
-		};
 	});
 
 	onMount(() => {
 		const id = Number(page.params.chatId);
 
-		(async () => {
-			try {
-				const ok = await chatStore.getSingleConversation(id);
-				if (!ok) goto('/');
-			} catch (e) {
-				goto('/');
-			}
-		})();
+		void loadConversationOrRedirect({ chatId: id, chatStore, goto });
 
 		return () => {
 			chatStore.setMessages([]);

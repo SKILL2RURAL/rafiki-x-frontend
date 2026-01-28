@@ -21,9 +21,13 @@
 	import image from '$lib/assets/icons/image.png';
 	import check from '$lib/assets/icons/check.png';
 	import { X } from 'lucide-svelte';
-	import type { Message } from '$lib/types/chat';
 	import GuestToast from './GuestToast.svelte';
-	import { Axios, AxiosError } from 'axios';
+	import { getDots, formatFileSize } from './inputArea.utils';
+	import {
+		sendChatInputMessage,
+		startDotCountAnimation,
+		uploadChatFileFromInputChange
+	} from './inputArea.actions';
 
 	let { onOpenCreateAccount }: { onOpenCreateAccount?: () => void } = $props();
 
@@ -37,179 +41,11 @@
 
 	$effect(() => {
 		if ($isRecording || $isTranscribing) {
-			const dotSequence = [1, 2, 3, 4, 5, 6, 0];
-			let sequenceIndex = 0;
-			dotCount = dotSequence[sequenceIndex];
-
-			const interval = setInterval(() => {
-				sequenceIndex = (sequenceIndex + 1) % dotSequence.length;
-				dotCount = dotSequence[sequenceIndex];
-			}, 300); // Change dot count every 300ms
-
-			return () => {
-				clearInterval(interval);
-				dotCount = 0;
-			};
+			return startDotCountAnimation((n) => (dotCount = n));
 		} else {
 			dotCount = 0; // Reset when not recording/transcribing
 		}
 	});
-
-	function getDots(count: number): string {
-		return '.'.repeat(count);
-	}
-
-	function triggerFileUpload() {
-		fileInput?.click();
-	}
-
-	function formatFileSize(bytes: number): string {
-		if (bytes === 0) return '0 B';
-		const sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
-		const i = Math.floor(Math.log(bytes) / Math.log(1024));
-		const value = (bytes / Math.pow(1024, i)).toFixed(2);
-		return `${value} ${sizes[i]}`;
-	}
-
-	async function handleFileChange(event: Event) {
-		uploadingFile = true;
-		const target = event.target as HTMLInputElement;
-		if (target.files && target.files.length > 0) {
-			const file = target.files[0];
-
-			// Check file size
-			if (file.size > 5 * 1024 * 1024) {
-				toast.error('File size limit is 5MB');
-				uploadingFile = false;
-				// Reset file input
-				if (target) {
-					target.value = '';
-				}
-				return;
-			}
-
-			// Check if user is logged in (file uploads require authentication)
-			const token =
-				typeof localStorage !== 'undefined' ? localStorage.getItem('accessToken') : null;
-			if (!token) {
-				toast.error('Please log in to upload files');
-				uploadingFile = false;
-				if (target) {
-					target.value = '';
-				}
-				return;
-			}
-
-			try {
-				selectedFile = file;
-				const fileUploadResponse = await chatStore.uploadFileForChat(file);
-				if (fileUploadResponse?.fileKey) {
-					fileKeys.push(fileUploadResponse.fileKey);
-					toast.success('File uploaded successfully');
-				} else {
-					throw new Error('Invalid response from server');
-				}
-			} catch (error) {
-				console.error('Error uploading file:', error);
-				toast.error('Failed to upload file. Please try again.');
-				selectedFile = null;
-				fileKeys = [];
-			} finally {
-				uploadingFile = false;
-				// Reset file input to allow selecting the same file again
-				if (target) {
-					target.value = '';
-				}
-			}
-		}
-	}
-
-	async function handleSend() {
-		if ($sendingMessage) return;
-
-		if ($guestRemainingMessages !== null && $guestRemainingMessages === 0 && onOpenCreateAccount) {
-			onOpenCreateAccount();
-			return;
-		}
-
-		if (!$newMessage.trim()) {
-			toast.error('Please enter a message');
-			return;
-		}
-
-		const token = typeof localStorage !== 'undefined' ? localStorage.getItem('accessToken') : null;
-
-		// Check if file is selected but upload failed (no fileKey)
-		if (selectedFile && fileKeys.length === 0 && token) {
-			toast.error('File upload failed. Please remove the file and try again.');
-			return;
-		}
-
-		// Prevent sending files with guest messages
-		if (selectedFile && !token) {
-			toast.error('Please log in to send files');
-			return;
-		}
-
-		const updatedMessage: Message[] = [...$messages];
-		const newUserMsg: Message = {
-			id: new Date().getTime(),
-			role: 'USER',
-			content: $newMessage.trim(),
-			createdAt: new Date().toISOString()
-		};
-		if (selectedFile) {
-			newUserMsg.attachments = [
-				{
-					originalFileName: selectedFile.name,
-					fileSize: selectedFile.size,
-					fileType: selectedFile.type
-				}
-			];
-		}
-		updatedMessage.push(newUserMsg);
-		chatStore.setMessages(updatedMessage);
-
-		if (!token) {
-			await chatStore.sendGuestMessage($newMessage.trim());
-			showGuestToast = true;
-		} else {
-			try {
-				await chatStore.sendMessage({
-					message: $newMessage.trim(),
-					createNewConversation: false,
-					conversationId: Number(page.params.chatId),
-					fileKeys
-				});
-			} catch (error) {
-				console.error('Error sending message:', error);
-
-				if (error instanceof AxiosError) {
-					console.error('Error sending message:', error);
-
-					const storedMessages = $messages;
-					if (storedMessages && storedMessages.length) {
-						const messagesWithoutLast = storedMessages.slice(0, -1);
-						chatStore.setMessages(messagesWithoutLast);
-					}
-
-					toast.error(
-						error.response?.data.message ||
-							'Daily chat limit reached (5/5). Upgrade to the Support tier for unlimited access.'
-					);
-				}
-			}
-		}
-		chatStore.setNewMessage('');
-		selectedFile = null;
-		fileKeys = [];
-
-		const isLoggedIn =
-			typeof localStorage !== 'undefined' ? !!localStorage.getItem('accessToken') : false;
-		if (isLoggedIn) {
-			chatStore.getConversations({});
-		}
-	}
 </script>
 
 <div class="flex flex-col gap-4">
@@ -241,7 +77,29 @@
 							chatStore.setNewMessage(target.value);
 						}}
 						class=" px-2 text-sm bg-transparent outline-none w-full"
-						onkeydown={(e) => e.key === 'Enter' && handleSend()}
+						onkeydown={(e) =>
+							e.key === 'Enter' &&
+							sendChatInputMessage({
+								toast,
+								getIsSending: () => $sendingMessage,
+								getGuestRemainingMessages: () => $guestRemainingMessages,
+								onOpenCreateAccount,
+								getMessageText: () => $newMessage,
+								getMessages: () => $messages,
+								setMessages: (msgs) => chatStore.setMessages(msgs),
+								sendGuestMessage: (m) => chatStore.sendGuestMessage(m),
+								sendMessage: (payload) => chatStore.sendMessage(payload),
+								chatId: Number(page.params.chatId),
+								getSelectedFile: () => selectedFile,
+								getFileKeys: () => fileKeys,
+								resetAfterSend: () => {
+									chatStore.setNewMessage('');
+									selectedFile = null;
+									fileKeys = [];
+								},
+								setShowGuestToast: (v) => (showGuestToast = v),
+								refreshConversations: () => chatStore.getConversations({})
+							})}
 					/>
 				{/if}
 			</div>
@@ -280,7 +138,7 @@
 						</div>
 					{:else}
 						<button
-							onclick={triggerFileUpload}
+							onclick={() => fileInput?.click()}
 							class="p-2 size-10 md:size-12 border rounded-full hover:bg-gray-100"
 						>
 							<img src={paperclip} class="mx-auto w-4 h-4 md:w-5 md:h-5" alt="file picker" />
@@ -290,7 +148,15 @@
 							class={'hidden'}
 							accept=".pdf,.doc,.docx"
 							bind:this={fileInput}
-							onchange={handleFileChange}
+							onchange={(event) =>
+								uploadChatFileFromInputChange({
+									event,
+									toast,
+									setUploading: (v) => (uploadingFile = v),
+									setSelectedFile: (f) => (selectedFile = f),
+									setFileKeys: (keys) => (fileKeys = keys),
+									uploadFileForChat: (file) => chatStore.uploadFileForChat(file)
+								})}
 						/>
 					{/if}
 				</div>
@@ -321,7 +187,28 @@
 						<button
 							disabled={$sendingMessage || $newMessage.length === 0 || uploadingFile}
 							class="p-2 size-10 md:size-12 border rounded-full hover:bg-gray-100 flex items-center justify-center disabled:opacity-30"
-							onclick={handleSend}
+							onclick={() =>
+								sendChatInputMessage({
+									toast,
+									getIsSending: () => $sendingMessage,
+									getGuestRemainingMessages: () => $guestRemainingMessages,
+									onOpenCreateAccount,
+									getMessageText: () => $newMessage,
+									getMessages: () => $messages,
+									setMessages: (msgs) => chatStore.setMessages(msgs),
+									sendGuestMessage: (m) => chatStore.sendGuestMessage(m),
+									sendMessage: (payload) => chatStore.sendMessage(payload),
+									chatId: Number(page.params.chatId),
+									getSelectedFile: () => selectedFile,
+									getFileKeys: () => fileKeys,
+									resetAfterSend: () => {
+										chatStore.setNewMessage('');
+										selectedFile = null;
+										fileKeys = [];
+									},
+									setShowGuestToast: (v) => (showGuestToast = v),
+									refreshConversations: () => chatStore.getConversations({})
+								})}
 						>
 							{#if $sendingMessage}
 								<Spinner color="black" size="lg" />

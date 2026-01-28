@@ -5,25 +5,10 @@
 	import * as Tooltip from '$lib/components/ui/tooltip/index.js';
 	import { toast } from 'svelte-sonner';
 	import type { Message } from '$lib/types/chat';
+	import { copyWithToast } from '$lib/clipboard';
+	import { formatFileSize } from './inputArea.utils';
 
 	let { msg }: { msg: Message } = $props();
-
-	function formatFileSize(bytes: number): string {
-		if (bytes === 0) return '0 B';
-		const sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
-		const i = Math.floor(Math.log(bytes) / Math.log(1024));
-		const value = (bytes / Math.pow(1024, i)).toFixed(2);
-		return `${value} ${sizes[i]}`;
-	}
-
-	async function copyText(text: string) {
-		try {
-			await navigator.clipboard.writeText(text);
-			toast.success('Copied to clipboard');
-		} catch {
-			toast.error('Failed to copy');
-		}
-	}
 </script>
 
 <div>
@@ -62,7 +47,7 @@
 					<Tooltip.Trigger
 						class="hover:bg-gray-100 rounded-full p-2"
 						aria-label="Copy"
-						onclick={() => copyText(msg.content)}
+						onclick={() => copyWithToast(msg.content, toast)}
 					>
 						<img
 							src={copyIcon}

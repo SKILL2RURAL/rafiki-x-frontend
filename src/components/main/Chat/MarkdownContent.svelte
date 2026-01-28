@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { marked } from 'marked';
 	import { onMount, afterUpdate } from 'svelte';
+	import { enhanceMarkdownContainer } from './markdownContent.utils';
 
 	/** Props */
 	export let raw: string = '';
@@ -14,43 +15,13 @@
 		html = marked.parse(raw) as string;
 	}
 
-	function wrapTables() {
-		if (!container) return;
-
-		// Find all tables that are not already wrapped
-		const tables = container.querySelectorAll('table:not(.table-wrapped)');
-		tables.forEach((table) => {
-			// Check if table is already wrapped
-			if (table.parentElement?.classList.contains('table-wrapper')) {
-				table.classList.add('table-wrapped');
-				return;
-			}
-
-			const wrapper = document.createElement('div');
-			wrapper.className = 'table-wrapper overflow-x-auto w-full';
-			table.parentNode?.insertBefore(wrapper, table);
-			wrapper.appendChild(table);
-			table.classList.add('table-wrapped');
-		});
-
-		// Add smooth scrolling for anchor links (only add listener if not already added)
-		container.querySelectorAll('a[href^="#"]:not([data-smooth-scroll])').forEach((anchor) => {
-			anchor.setAttribute('data-smooth-scroll', 'true');
-			anchor.addEventListener('click', (e) => {
-				e.preventDefault();
-				const target = document.querySelector(anchor.getAttribute('href')!);
-				target?.scrollIntoView({ behavior: 'smooth' });
-			});
-		});
-	}
-
 	afterUpdate(() => {
 		// Wrap tables after DOM updates (including during typing)
-		wrapTables();
+		enhanceMarkdownContainer(container);
 	});
 
 	onMount(() => {
-		wrapTables();
+		enhanceMarkdownContainer(container);
 	});
 </script>
 

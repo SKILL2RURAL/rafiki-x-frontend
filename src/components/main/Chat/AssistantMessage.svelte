@@ -9,17 +9,9 @@
 	import type { Message } from '$lib/types/chat';
 	import { auth } from '$lib/stores/authStore';
 	import { chatStore } from '$lib/stores/chatStore';
+	import { copyWithToast } from '$lib/clipboard';
 
 	let { msg }: { msg: Message } = $props();
-
-	async function copyText(text: string) {
-		try {
-			await navigator.clipboard.writeText(text);
-			toast.success('Copied to clipboard');
-		} catch {
-			toast.error('Failed to copy');
-		}
-	}
 </script>
 
 <div class="flex gap-3 items-start">
@@ -43,7 +35,7 @@
 						<Tooltip.Trigger
 							class="hover:bg-gray-100 rounded-full p-2"
 							aria-label="Copy"
-							onclick={() => copyText(msg.content)}
+							onclick={() => copyWithToast(msg.content, toast)}
 						>
 							<img
 								src={copyIcon}

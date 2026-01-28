@@ -5,6 +5,7 @@
 	import thumbDownActive from '$lib/assets/icons/thumbDownActive.png';
 	import * as Tooltip from '$lib/components/ui/tooltip/index.js';
 	import { chatStore } from '$lib/stores/chatStore';
+	import { submitDefaultFeedback } from './messageFeedback.actions';
 	let {
 		messageId,
 		isTyping,
@@ -13,18 +14,6 @@
 
 	const isLiked = $derived(feedback === 'LIKE');
 	const isDisliked = $derived(feedback === 'DISLIKE');
-
-	async function handleFeedback(type: 'LIKE' | 'DISLIKE') {
-		if (!messageId) return;
-		if (feedback === type) return;
-		const defaultText =
-			type === 'LIKE' ? 'Very helpful response!' : 'The response was not relevant to my question';
-
-		await chatStore.submitMessageFeedback(messageId, {
-			feedbackType: type,
-			feedbackText: defaultText
-		});
-	}
 </script>
 
 {#if !isTyping}
@@ -34,7 +23,14 @@
 				<Tooltip.Trigger
 					class={`rounded-full p-2 ${isLiked ? 'opacity-50 cursor-not-allowed hover:bg-[#F7FBFD]' : 'hover:bg-gray-100'}`}
 					aria-label="Like"
-					onclick={() => !isLiked && handleFeedback('LIKE')}
+					onclick={() =>
+						!isLiked &&
+						submitDefaultFeedback({
+							messageId,
+							currentFeedback: feedback,
+							type: 'LIKE',
+							submit: (id, payload) => chatStore.submitMessageFeedback(id, payload)
+						})}
 				>
 					<img
 						src={isLiked ? likeActive : like}
@@ -55,7 +51,14 @@
 				<Tooltip.Trigger
 					class={`rounded-full p-2 ${isDisliked ? 'opacity-50 cursor-not-allowed hover:bg-[#F7FBFD]' : 'hover:bg-gray-100'}`}
 					aria-label="Dislike"
-					onclick={() => !isDisliked && handleFeedback('DISLIKE')}
+					onclick={() =>
+						!isDisliked &&
+						submitDefaultFeedback({
+							messageId,
+							currentFeedback: feedback,
+							type: 'DISLIKE',
+							submit: (id, payload) => chatStore.submitMessageFeedback(id, payload)
+						})}
 				>
 					<img
 						src={isDisliked ? thumbDownActive : thumDown}
