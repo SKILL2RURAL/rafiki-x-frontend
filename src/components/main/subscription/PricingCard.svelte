@@ -40,15 +40,17 @@
 		? 'bg-[#B2E0FF]'
 		: 'bg-gray-50'}"
 >
+	<!-- Ash Background  -->
 	{#if highlighted}
 		<img
 			src={AshBackground}
 			alt=""
 			width="40"
 			height="50"
-			class="absolute inset-0 w-full h-full object-cover z-0 opacity-30"
+			class="absolute inset-0 w-full h-full object-cover z-0 opacity-70"
 		/>
 	{/if}
+
 	<div class="relative z-10 p-8 pb-20 flex-1">
 		<!-- Card Header -->
 		<div class="mb-6">

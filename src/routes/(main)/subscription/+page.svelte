@@ -32,7 +32,7 @@
 
 	let currency = $state<Currency>('naira');
 	let freePlanPeriod = $state<BillingPeriod>('monthly');
-	let supportPlanPeriod = $state<BillingPeriod>('yearly');
+	let supportPlanPeriod = $state<BillingPeriod>('monthly');
 	let isCreateAccountOpen = $state(false);
 	let isManagePlanOpen = $state(false);
 	let isRenewPlanOpen = $state(false);
@@ -86,7 +86,7 @@
 
 <Layout>
 	<!-- Header -->
-	<div class="relative p-5 md:p-10 my-10 md:my-0" style="font-family: 'Impact', sans-serif;">
+	<div class="relative p-5 md:p-10" style="font-family: 'Impact', sans-serif;">
 		<div class="text-center">
 			<h1 class="text-2xl md:text-3xl mb-5 font-black text-[#253B4B]">Upgrade Your RafikiX Plan</h1>
 			<!-- <div class="flex justify-center"><CurrencyToggle bind:selected={currency} /></div> -->
