@@ -15,8 +15,9 @@
 	import { auth, logout as authLogout } from '$lib/stores/authStore';
 	import ChatHistorySkeleton from './ChatHistorySkeleton.svelte';
 	import LogoutConfirmationModal from './LogoutConfirmationModal.svelte';
-	import type { Conversation } from '$lib/types/chat';
 	import greaterArrow from '$lib/assets/icons/greaterArrow.png';
+	import { groupChats } from '$lib/chatGrouping';
+	import { routeToChatAndClose } from './mobileSidebar.utils';
 
 	let {
 		isOpen,
@@ -31,45 +32,6 @@
 	onMount(() => {
 		chatStore.getConversations({});
 	});
-
-	function routeToChat(chatId: number) {
-		goto(`/${chatId}`);
-		chatStore.getSingleConversation(chatId).then((success) => {
-			if (success) {
-				onClose(false);
-			}
-		});
-	}
-
-	function groupChats(chatsList: Conversation[]) {
-		const today = new Date();
-		const yesterday = new Date();
-		yesterday.setDate(today.getDate() - 1);
-
-		const isSameDay = (d1: Date, d2: Date) =>
-			d1.getFullYear() === d2.getFullYear() &&
-			d1.getMonth() === d2.getMonth() &&
-			d1.getDate() === d2.getDate();
-
-		const groups: { today: Conversation[]; yesterday: Conversation[]; recent: Conversation[] } = {
-			today: [],
-			yesterday: [],
-			recent: []
-		};
-
-		for (const chat of chatsList) {
-			const date = new Date(chat.updatedAt);
-			if (isSameDay(date, today)) {
-				groups.today.push(chat);
-			} else if (isSameDay(date, yesterday)) {
-				groups.yesterday.push(chat);
-			} else {
-				groups.recent.push(chat);
-			}
-		}
-
-		return groups;
-	}
 
 	const grouped = $derived(groupChats($chats));
 </script>
@@ -120,18 +82,21 @@
 					{#if $isLoadingChats}
 						<ChatHistorySkeleton />
 					{:else if chats && $chats.length > 0}
-						<div class="space-y-3 overflow-y-auto no-scrollbar h-[50vh] pb-5">
+						<div class="h-[50vh] pb-5 flex flex-col min-h-0">
 							{#if grouped.today.length > 0}
 								<p class="mb-4 font-medium text-[12px] text-[#909090] uppercase">Today</p>
-								{#each grouped.today as chat}
-									<button
-										class={`flex justify-between items-center cursor-pointer w-full gap-5`}
-										onclick={() => routeToChat(chat.id)}
-									>
-										<p class="text-[#253B4B] text-[16px] text-left line-clamp-1">{chat.title}</p>
-										<img src={greaterArrow} alt="direction icon" width="7" height="13" />
-									</button>
-								{/each}
+								<div class="space-y-3 overflow-y-auto no-scrollbar min-h-0 flex-1 pr-1">
+									{#each grouped.today as chat}
+										<button
+											class={`flex justify-between items-center cursor-pointer w-full gap-5`}
+											onclick={() =>
+												routeToChatAndClose({ chatId: chat.id, goto, chatStore, onClose })}
+										>
+											<p class="text-[#253B4B] text-[16px] text-left line-clamp-1">{chat.title}</p>
+											<img src={greaterArrow} alt="direction icon" width="7" height="13" />
+										</button>
+									{/each}
+								</div>
 							{/if}
 
 							{#if grouped.yesterday.length > 0}
@@ -139,7 +104,8 @@
 								{#each grouped.yesterday as chat}
 									<button
 										class={`flex justify-between items-center cursor-pointer w-full gap-5`}
-										onclick={() => routeToChat(chat.id)}
+										onclick={() =>
+											routeToChatAndClose({ chatId: chat.id, goto, chatStore, onClose })}
 									>
 										<p class="text-[#253B4B] text-[16px] text-left line-clamp-1">{chat.title}</p>
 										<img src={greaterArrow} alt="direction icon" width="7" height="13" />
@@ -152,7 +118,8 @@
 								{#each grouped.recent as chat}
 									<button
 										class={`flex justify-between items-center cursor-pointer w-full gap-5`}
-										onclick={() => routeToChat(chat.id)}
+										onclick={() =>
+											routeToChatAndClose({ chatId: chat.id, goto, chatStore, onClose })}
 									>
 										<p class="text-[#253B4B] text-[16px] text-left line-clamp-1">{chat.title}</p>
 										<img src={greaterArrow} alt="direction icon" width="7" height="13" />

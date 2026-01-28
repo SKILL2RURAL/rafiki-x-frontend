@@ -2,18 +2,14 @@
 	import { X } from 'lucide-svelte';
 	import { onMount } from 'svelte';
 	import CreateAccountModal from '../../../components/main/Layout/CreateAccountModal.svelte';
-	import ManagePlanModal from '../../../components/main/subscription/ManagePlanModal.svelte';
-	import RenewPlanModal from '../../../components/main/subscription/RenewPlanModal.svelte';
 	import Layout from '../../../components/main/Layout/Layout.svelte';
-	import CurrencyToggle from '../../../components/main/subscription/CurrencyToggle.svelte';
+	import ManagePlanModal from '../../../components/main/subscription/ManagePlanModal.svelte';
 	import PricingCard from '../../../components/main/subscription/PricingCard.svelte';
 	import PricingCardSkeleton from '../../../components/main/subscription/PricingCardSkeleton.svelte';
+	import RenewPlanModal from '../../../components/main/subscription/RenewPlanModal.svelte';
 	import {
 		handlePaymentCallback,
-		handleRetry,
-		handleSupportPlanAction,
-		handleCancel,
-		handleRenew
+		handleRetry
 	} from '../../../components/main/subscription/subscriptionUtils';
 	import type { BillingPeriod, Currency } from '../../../components/main/subscription/types';
 	import { auth } from '../../../lib/stores/authStore';
@@ -22,11 +18,17 @@
 		fetchSubscriptionPlans,
 		fetchSubscriptionStatus,
 		generateFeatures,
-		getSupportPlanPrice,
 		isSubscriptionCancelled,
 		subscriptionPlans,
 		subscriptionStatus
 	} from '../../../lib/stores/subscription';
+	import {
+		onCancelPlan as onCancelPlanAction,
+		onConfirmRenewPlan as onConfirmRenewPlanAction,
+		onFreePlanAction,
+		onManagePlan,
+		onSupportPlanAction
+	} from './subscriptionPageActions';
 
 	let currency = $state<Currency>('naira');
 	let freePlanPeriod = $state<BillingPeriod>('monthly');
@@ -61,23 +63,6 @@
 	const isCancelled = $derived($isSubscriptionCancelled);
 	const subscription = $derived($subscriptionStatus.status);
 
-	// Check if subscription is cancelled and hasn't passed end date
-	const canRenew = $derived.by(() => {
-		if (!isCancelled || !subscription?.endDate) return false;
-		const endDate = new Date(subscription.endDate);
-		const now = new Date();
-		return endDate > now; // Can renew if end date is in the future
-	});
-
-	const endDateFormatted = $derived.by(() => {
-		if (!subscription?.endDate) return null;
-		return new Date(subscription.endDate).toLocaleDateString('en-US', {
-			year: 'numeric',
-			month: 'long',
-			day: 'numeric'
-		});
-	});
-
 	// Track previous plan to detect changes
 	let previousPlan = $state<string | undefined>(undefined);
 
@@ -92,58 +77,6 @@
 		previousPlan = currentPlan;
 	});
 
-	async function onSupportPlanAction() {
-		// If subscription is cancelled, show renew modal instead
-		if (isSupportPlanCurrent && isCancelled) {
-			onRenewPlan();
-			return;
-		}
-
-		await handleSupportPlanAction(
-			isSupportPlanCurrent,
-			isAuthenticated,
-			supportPlanPeriod,
-			currency,
-			() => (isCreateAccountOpen = true),
-			isInitializing,
-			isCancelling,
-			isCancelled
-		);
-	}
-
-	async function onFreePlanAction() {
-		if (isSupportPlanCurrent) {
-			// If on support plan, cancel it when selecting free plan
-			await handleCancel(isAuthenticated, () => (isCreateAccountOpen = true), isCancelling);
-		}
-	}
-
-	function onRenewPlan() {
-		// Open renew plan modal
-		isRenewPlanOpen = true;
-	}
-
-	async function onConfirmRenewPlan() {
-		// Handle renew plan action from modal
-		await handleRenew(
-			isAuthenticated,
-			supportPlanPeriod,
-			currency,
-			() => (isCreateAccountOpen = true),
-			isInitializing
-		);
-	}
-
-	function onManagePlan() {
-		// Open manage plan modal
-		isManagePlanOpen = true;
-	}
-
-	async function onCancelPlan() {
-		// Handle cancel plan action from modal
-		await handleCancel(isAuthenticated, () => (isCreateAccountOpen = true), isCancelling);
-	}
-
 	onMount(() => {
 		fetchSubscriptionPlans();
 		fetchSubscriptionStatus();
@@ -153,7 +86,7 @@
 
 <Layout>
 	<!-- Header -->
-	<div class="relative p-5 md:p-10" style="font-family: 'Impact', sans-serif;">
+	<div class="relative p-5 md:p-10 my-10 md:my-0" style="font-family: 'Impact', sans-serif;">
 		<div class="text-center">
 			<h1 class="text-2xl md:text-3xl mb-5 font-black text-[#253B4B]">Upgrade Your RafikiX Plan</h1>
 			<!-- <div class="flex justify-center"><CurrencyToggle bind:selected={currency} /></div> -->
@@ -195,7 +128,7 @@
 		</div>
 	{:else if plans}
 		<div
-			class="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 md:gap-12 px-4 sm:px-8 md:px-20 max-w-6xl mx-auto"
+			class="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 md:gap-12 px-4 sm:px-8 md:px-10 xl:px-20 max-w-6xl mx-auto"
 		>
 			<PricingCard
 				title={plans.free.name}
@@ -208,7 +141,13 @@
 				buttonVariant="outline"
 				isCurrentPlan={isFreePlanCurrent || isSupportPlanCurrent}
 				isLoading={isCancelling.value}
-				on:upgrade={onFreePlanAction}
+				on:upgrade={() =>
+					onFreePlanAction({
+						isSupportPlanCurrent,
+						isAuthenticated,
+						onShowCreateAccount: () => (isCreateAccountOpen = true),
+						isCancelling
+					})}
 			/>
 
 			<PricingCard
@@ -228,8 +167,19 @@
 				isCurrentPlan={isSupportPlanCurrent && !isCancelled}
 				showManagePlan={isSupportPlanCurrent && !isCancelled}
 				isLoading={isInitializing.value || isCancelling.value}
-				on:upgrade={onSupportPlanAction}
-				on:manage={onManagePlan}
+				on:upgrade={() =>
+					onSupportPlanAction({
+						isSupportPlanCurrent,
+						isCancelled,
+						isAuthenticated,
+						supportPlanPeriod,
+						currency,
+						onShowCreateAccount: () => (isCreateAccountOpen = true),
+						onOpenRenewModal: () => (isRenewPlanOpen = true),
+						isInitializing,
+						isCancelling
+					})}
+				on:manage={() => onManagePlan(() => (isManagePlanOpen = true))}
 			/>
 		</div>
 	{/if}
@@ -249,13 +199,25 @@
 <ManagePlanModal
 	isOpen={isManagePlanOpen}
 	onClose={() => (isManagePlanOpen = false)}
-	{onCancelPlan}
+	onCancelPlan={() =>
+		onCancelPlanAction({
+			isAuthenticated,
+			onShowCreateAccount: () => (isCreateAccountOpen = true),
+			isCancelling
+		})}
 />
 
 <RenewPlanModal
 	isOpen={isRenewPlanOpen}
 	onClose={() => (isRenewPlanOpen = false)}
-	onRenewPlan={onConfirmRenewPlan}
+	onRenewPlan={() =>
+		onConfirmRenewPlanAction({
+			isAuthenticated,
+			supportPlanPeriod,
+			currency,
+			onShowCreateAccount: () => (isCreateAccountOpen = true),
+			isInitializing
+		})}
 	billingPeriod={supportPlanPeriod}
 	{currency}
 />

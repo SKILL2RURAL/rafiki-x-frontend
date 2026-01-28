@@ -14,9 +14,7 @@
 	import logout from '$lib/assets/icons/door-open.png';
 	import { ChevronRight, MessageCircle } from 'lucide-svelte';
 	import noChat from '$lib/assets/icons/empty-state.png';
-	import { history } from '$lib';
 	import greaterArrow from '$lib/assets/icons/greaterArrow.png';
-	import { browser } from '$app/environment';
 	import { onMount } from 'svelte';
 	import { chats, chatStore, isLoadingChats } from '$lib/stores/chatStore';
 	import ChatHistorySkeleton from './ChatHistorySkeleton.svelte';
@@ -24,15 +22,14 @@
 	import * as Avatar from '$lib/components/ui/avatar/index.js';
 	import ChatHistoryDrawer from './ChatHistoryDrawer.svelte';
 	import LogoutConfirmationModal from './LogoutConfirmationModal.svelte';
-	import type { Conversation } from '$lib/types/chat';
 	import { auth, logout as authLogout } from '$lib/stores/authStore';
+	import { groupChatsLimited } from '$lib/chatGrouping';
+	import { getInitialSidebarOpen, toggleSidebarOpen } from './sidebar.utils';
 
 	let { onOpenCreateAccount }: { onOpenCreateAccount?: () => void } = $props();
 
 	// Local state for logout confirmation modal
 	let isLogoutModalOpen = $state(false);
-
-	const todayHistory = history.find((item) => item.day === 'TODAY');
 
 	// LOACAL STATES
 	let isDrawerOpen = $state(false);
@@ -41,64 +38,7 @@
 		chatStore.getConversations({});
 	});
 
-	let isSidebarOpen = $state<boolean>(
-		browser ? localStorage.getItem('isSidebarOpen') === 'true' : false
-	);
-
-	function toogleSidebar() {
-		isSidebarOpen = !isSidebarOpen;
-		if (browser) {
-			localStorage.setItem('isSidebarOpen', JSON.stringify(isSidebarOpen));
-		}
-	}
-
-	function groupChats(chatsList: Conversation[]) {
-		const today = new Date();
-		const yesterday = new Date();
-		yesterday.setDate(today.getDate() - 1);
-
-		const isSameDay = (d1: Date, d2: Date) =>
-			d1.getFullYear() === d2.getFullYear() &&
-			d1.getMonth() === d2.getMonth() &&
-			d1.getDate() === d2.getDate();
-
-		const groups: { today: Conversation[]; yesterday: Conversation[]; recent: Conversation[] } = {
-			today: [],
-			yesterday: [],
-			recent: []
-		};
-
-		for (const chat of chatsList) {
-			const date = new Date(chat.updatedAt);
-			if (isSameDay(date, today)) {
-				groups.today.push(chat);
-			} else if (isSameDay(date, yesterday)) {
-				groups.yesterday.push(chat);
-			} else {
-				groups.recent.push(chat);
-			}
-		}
-
-		return groups;
-	}
-
-	// const grouped = $derived(groupChats($chats));
-
-	function groupChatsLimited(chatsList: Conversation[], limit: number) {
-		const g = groupChats(chatsList);
-		let remaining = limit;
-		const take = (arr: Conversation[]) => {
-			const n = Math.min(arr.length, remaining);
-			const res = arr.slice(0, n);
-			remaining -= n;
-			return res;
-		};
-		return {
-			today: take(g.today),
-			yesterday: remaining > 0 ? take(g.yesterday) : [],
-			recent: remaining > 0 ? take(g.recent) : []
-		};
-	}
+	let isSidebarOpen = $state<boolean>(getInitialSidebarOpen());
 
 	const groupedLimited = $derived(groupChatsLimited($chats, 3));
 </script>
@@ -109,13 +49,13 @@
 	<!-- toogle button  -->
 	<button
 		class="absolute -right-4 top-7 bg-gradient rounded-full cursor-pointer p-1 z-40"
-		onclick={toogleSidebar}
+		onclick={() => (isSidebarOpen = toggleSidebarOpen(isSidebarOpen))}
 	>
 		<ChevronRight color="white" size={25} class={`${!isSidebarOpen ? 'rotate-0' : 'rotate-180'}`} />
 	</button>
 	<div class="h-full flex flex-col">
 		<!-- Settings -->
-		<div class="min-h-0 overflow-auto no-scrollbar">
+		<div class="min-h-0 overflow-hidden">
 			<!-- Logo  -->
 			<button onclick={() => goto('/')}>
 				<div class="flex gap-2 items-end">
@@ -177,21 +117,25 @@
 						{#if $isLoadingChats && $chats.length === 0}
 							<ChatHistorySkeleton />
 						{:else if $chats && $chats.length > 0}
-							<div class="space-y-3 overflow-y-auto no-scrollbar">
+							<div class="space-y-3">
 								{#if groupedLimited.today.length > 0}
 									<p class="mb-4 font-medium text-[12px] text-[#909090] uppercase">Today</p>
-									{#each groupedLimited.today as chat}
-										<button
-											class={`flex justify-between items-center cursor-pointer w-full gap-5`}
-											onclick={() => {
-												goto(`/${chat.id}`);
-												chatStore.getSingleConversation(Number(chat.id));
-											}}
-										>
-											<p class="text-[#253B4B] text-[16px] text-left line-clamp-1">{chat.title}</p>
-											<img src={greaterArrow} alt="direction icon" width="7" height="13" />
-										</button>
-									{/each}
+									<div class="space-y-3 max-h-[220px] overflow-y-auto no-scrollbar pr-1">
+										{#each groupedLimited.today as chat}
+											<button
+												class={`flex justify-between items-center cursor-pointer w-full gap-5`}
+												onclick={() => {
+													goto(`/${chat.id}`);
+													chatStore.getSingleConversation(Number(chat.id));
+												}}
+											>
+												<p class="text-[#253B4B] text-[16px] text-left line-clamp-1">
+													{chat.title}
+												</p>
+												<img src={greaterArrow} alt="direction icon" width="7" height="13" />
+											</button>
+										{/each}
+									</div>
 								{/if}
 
 								{#if groupedLimited.yesterday.length > 0}
