@@ -9,8 +9,7 @@
 	import Spinner from '$lib/components/ui/spinner/spinner.svelte';
 	import { chatStore, sendingMessage } from '$lib/stores/chatStore';
 	import { auth } from '$lib/stores/authStore';
-
-	const { sendMessage } = chatStore;
+	import type { ChatContext } from '$lib/types/chat';
 
 	function handleFocus() {
 		setTimeout(() => {
@@ -24,14 +23,17 @@
 	let text = '';
 
 	// FUNCTION TO START A NEW CONVERSATION
-	async function handleSend(value?: string) {
+	async function handleSend(value?: string, chatContext?: ChatContext) {
 		const content = value ? value : text.trim();
+
+		// Send Message for Guest User if not authenticated
 		if (!$auth.accessToken) {
 			chatStore.setMessages([
 				{
 					id: new Date().getTime(),
 					role: 'USER',
 					content,
+					chatContext: chatContext || null,
 					createdAt: new Date().toISOString(),
 					attachments: []
 				}
@@ -40,12 +42,16 @@
 			goto('/guest');
 			return;
 		}
-		await sendMessage({
-			message: content,
-			createNewConversation: true
-		}).then((res) => {
-			goto(`/${res.conversationId}`);
-		});
+		// For Authenticated Users
+		await chatStore
+			.sendMessage({
+				message: content,
+				createNewConversation: true,
+				chatContext: chatContext || null
+			})
+			.then((res) => {
+				goto(`/${res.conversationId}`);
+			});
 	}
 </script>
 
@@ -108,7 +114,8 @@
 				class="shadow-none lg:shadow-md rounded-[100px] flex items-center justify-center gap-2 px-4 sm:px-6 lg:px-4 py-3 w-full bg-white"
 				onclick={() =>
 					handleSend(
-						"I want to write a story, but I'm not sure where to start. Can you ask me some questions to help me get started and then help me write it?"
+						"I want to write a story, but I'm not sure where to start. Can you ask me some questions to help me get started and then help me write it?",
+						'STORY'
 					)}
 				disabled={$sendingMessage}
 			>
@@ -130,7 +137,8 @@
 				class="shadow-none lg:shadow-md rounded-[100px] flex items-center justify-center gap-2 px-4 sm:px-6 lg:px-4 py-3 w-full bg-white"
 				onclick={() =>
 					handleSend(
-						"I have an interview coming up and I'm feeling nervous. Can you help me prepare by running through some common interview questions and giving me feedback?"
+						"I have an interview coming up and I'm feeling nervous. Can you help me prepare by running through some common interview questions and giving me feedback?",
+						'INTERVIEW_PREP'
 					)}
 				disabled={$sendingMessage}
 			>

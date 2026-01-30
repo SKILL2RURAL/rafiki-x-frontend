@@ -9,17 +9,19 @@
 	import CareerGuideCard from '../../../components/CareerGuideCard.svelte';
 	import Layout from '../../../components/main/Layout/Layout.svelte';
 	import CreateAccountModal from '../../../components/main/Layout/CreateAccountModal.svelte';
+	import type { ChatContext } from '$lib/types/chat';
 
 	let isCreateAccountOpen = $state(false);
 
-	const lists = [
+	const lists: { title: string; image: string; context?: ChatContext | null }[] = [
 		{
 			title: `I'd like to improve my presentation skills.`,
 			image: Image1
 		},
 		{
 			title: 'Help me prepare for a job interview.',
-			image: Image2
+			image: Image2,
+			context: 'INTERVIEW_PREP'
 		},
 		{
 			title: 'Give me advice on how to find a mentor.',
@@ -27,7 +29,8 @@
 		},
 		{
 			title: 'Help me generate a compelling story',
-			image: Image4
+			image: Image4,
+			context: 'STORY'
 		}
 	];
 </script>
@@ -63,6 +66,7 @@
 						title={item.title}
 						image={item.image}
 						onRequireAuth={() => (isCreateAccountOpen = true)}
+						context={item.context || null}
 					/>
 				{/each}
 			</div>

@@ -61,7 +61,8 @@ function createChatStore() {
 			message,
 			createNewConversation = false,
 			conversationId,
-			fileKeys
+			fileKeys,
+			chatContext
 		}: MessagePayload) => {
 			update((state) => ({ ...state, isSending: true }));
 
@@ -69,6 +70,11 @@ function createChatStore() {
 				message,
 				createNewConversation
 			};
+
+			// Check if chatContext is defined
+			if (chatContext) {
+				payload.chatContext = chatContext;
+			}
 
 			// Check if conversationId is defined
 			if (conversationId) {

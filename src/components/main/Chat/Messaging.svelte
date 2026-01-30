@@ -1,49 +1,42 @@
 <script lang="ts">
-	import { tick } from 'svelte';
+	// import { tick } from 'svelte';
 	import { messages, sendingMessage } from '$lib/stores/chatStore';
 	import botLogo from '$lib/assets/icons/logo-gradient.png';
-	// import megaphone from '$lib/assets/icons/megaphone.png';
-	// import mic from '$lib/assets/icons/mic.png';
+
 	import AssistantMessage from './AssistantMessage.svelte';
 	import UserMessage from './UserMessage.svelte';
 	import InputArea from './InputArea.svelte';
-	import type { Message } from '$lib/types/chat';
-	// import { toast } from 'svelte-sonner';
-	// import Microphone from './Microphone.svelte';
-	// import check from '$lib/assets/icons/check.png';
-	// import pdf from '$lib/assets/icons/pdf.png';
-	// import image from '$lib/assets/icons/image.png';
-	// import { X } from 'lucide-svelte';
-	// import { cn } from '$lib/utils';
-	// import { guestRemainingMessages } from '$lib/stores/chatStore';
 	import CreateAccountModal from '../Layout/CreateAccountModal.svelte';
-	// import GuestToast from './GuestToast.svelte';
-	// import { auth } from '$lib/stores/authStore';
 
-	let scrollAnchor: HTMLDivElement | null = $state(null);
+	// let scrollAnchor: HTMLDivElement | null = $state(null);
+	let chatContainer: HTMLDivElement | null = $state(null);
 	let isCreateAccountOpen = $state(false);
-
-	// $effect(() => {
-	// 	if ($guestRemainingMessages === 0) {
-	// 		isCreateAccountOpen = true;
-	// 	}
-	// });
 
 	// async function scrollToBottom() {
 	// 	await tick();
-	// 	scrollAnchor?.scrollIntoView({ behavior: 'smooth', block: 'end' });
+
+	// 	if (!chatContainer) return;
+	// 	chatContainer?.scrollTo({
+	// 		behavior: 'smooth',
+	// 		top: chatContainer.scrollHeight - chatContainer.clientHeight - 80
+	// 	});
 	// }
 
-	// $: if ($messages) {
+	// $effect(() => {
+	// 	// $messages;
+	// 	console.log('Messages updated:', $messages);
 	// 	scrollToBottom();
-	// }
+	// });
 </script>
 
 <div
-	class="flex flex-col mx-auto justify-between font-mulish font-medium lg:max-w-[70vw] h-full relative"
+	class="flex flex-col mx-auto justify-between font-mulish font-medium lg:max-w-[70vw] h-[70vh] relative"
 >
 	<!--Chat area-->
-	<div class="space-y-4 grow pb-[200px]">
+	<div
+		class="space-y-4 grow pb-[200px] overflow-y-auto overscroll-contain no-scrollbar"
+		bind:this={chatContainer}
+	>
 		{#each $messages as msg, i}
 			<div class="flex {msg.role === 'USER' ? 'justify-end' : 'justify-start'}">
 				<div class="px-4 py-2 w-[70vw] lg:max-w-[50vw]">
@@ -72,10 +65,10 @@
 			</div>
 		{/if}
 	</div>
-	<div bind:this={scrollAnchor}></div>
+	<!-- <div bind:this={scrollAnchor}></div> -->
 
 	<!-- Input Area -->
-	<div class="sticky bottom-0 lg:-bottom-5 bg-white w-full lg:w-[71vw] px-5">
+	<div class="fixed bottom-0 lg:bottom-5 bg-white w-full lg:w-[71vw] px-5">
 		<InputArea onOpenCreateAccount={() => (isCreateAccountOpen = true)} />
 		<p class="text-[#686868] text-center text-[11px] md:text-[14px] font-normal pb-5 md:pb-3 py-3">
 			By messaging RafikiX, you agree to our <a

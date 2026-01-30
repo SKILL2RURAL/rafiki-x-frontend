@@ -3,6 +3,7 @@ export interface Message {
 	role: 'USER' | 'ASSISTANT';
 	content: string;
 	createdAt: string;
+	chatContext?: ChatContext | null;
 	tokenCount?: string | null;
 	isTyping?: boolean;
 	feedback?: 'LIKE' | 'DISLIKE' | null;
@@ -14,6 +15,8 @@ export interface Message {
 		fileType: string | undefined;
 	}[];
 }
+
+export type ChatContext = 'INTERVIEW_PREP' | 'STORY';
 
 export interface Chat {
 	id: string;
@@ -58,6 +61,7 @@ export interface MessagePayload {
 	createNewConversation?: boolean;
 	conversationId?: number;
 	fileKeys?: string[];
+	chatContext?: ChatContext | null;
 }
 
 export interface Conversation {
