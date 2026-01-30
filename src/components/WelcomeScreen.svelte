@@ -38,7 +38,7 @@
 					attachments: []
 				}
 			]);
-			await chatStore.sendGuestMessage(content);
+			await chatStore.sendGuestMessage(content, chatContext || null);
 			goto('/guest');
 			return;
 		}

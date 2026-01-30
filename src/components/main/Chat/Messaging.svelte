@@ -2,7 +2,6 @@
 	// import { tick } from 'svelte';
 	import { messages, sendingMessage } from '$lib/stores/chatStore';
 	import botLogo from '$lib/assets/icons/logo-gradient.png';
-
 	import AssistantMessage from './AssistantMessage.svelte';
 	import UserMessage from './UserMessage.svelte';
 	import InputArea from './InputArea.svelte';

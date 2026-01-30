@@ -1,5 +1,11 @@
 import { api } from '$lib/api';
-import type { ChatState, Conversation, Message, MessagePayload } from '$lib/types/chat';
+import type {
+	ChatContext,
+	ChatState,
+	Conversation,
+	Message,
+	MessagePayload
+} from '$lib/types/chat';
 import { AxiosError } from 'axios';
 import { derived, writable } from 'svelte/store';
 import { browser } from '$app/environment';
@@ -111,28 +117,29 @@ function createChatStore() {
 		},
 
 		// Send Guest Message
-		sendGuestMessage: async (message: string) => {
+		sendGuestMessage: async (message: string, chatContext?: ChatContext | null) => {
 			let sessionId: string | null = null;
 			let hasExistingMessages = false;
 
 			// Get current sessionId from store state and check if this is a new conversation
 			update((state) => {
 				sessionId = state.guestSessionId;
-				// If messages array has more than 1 message, we're continuing an existing conversation
-				// (messages should have at least 1 USER and 1 ASSISTANT message from previous exchanges)
 				hasExistingMessages = state.messages.length > 1;
 				return { ...state, isSending: true };
 			});
 
 			try {
-				// Prepare headers - only send sessionId if continuing an existing conversation
-				// Don't send sessionId on the first message of a new conversation
 				const headers: Record<string, string> = {};
 				if (sessionId && hasExistingMessages) {
 					headers['X-Guest-Session-Id'] = sessionId;
 				}
 
-				const { data } = await api.post('/chat/guest/message', { message }, { headers });
+				const payload: { message: string; chatContext?: ChatContext | null } = { message };
+				if (chatContext) {
+					payload.chatContext = chatContext;
+				}
+
+				const { data } = await api.post('/chat/guest/message', payload, { headers });
 
 				// Save sessionId to localStorage and update state
 				const newSessionId = data.data.sessionId ?? sessionId;
