@@ -84,6 +84,7 @@
 		isUploading = true;
 
 		try {
+			toast.loading('Uploading resume...');
 			await chatStore.uploadResume(file).then((res) => {
 				if (res) {
 					// UPDATE LOCAL STATE TO REFLECT CHANGES
