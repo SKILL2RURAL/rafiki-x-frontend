@@ -19,7 +19,6 @@ const publicEndpoints = [
 	'/auth/verify-email',
 	'/auth/refresh',
 	'/chat/guest/message',
-	'/subscription',
 	'/career-guide',
 	'/my-resume'
 ];
