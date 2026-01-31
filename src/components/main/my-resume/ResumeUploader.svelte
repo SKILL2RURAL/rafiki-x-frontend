@@ -84,16 +84,14 @@
 		isUploading = true;
 
 		try {
-			const res = await toast.promise(chatStore.uploadResume(file), {
-				loading: 'Uploading resume...',
-				success: 'Resume uploaded successfully',
-				error: 'Failed to upload resume'
+			toast.loading('Uploading resume...');
+			await chatStore.uploadResume(file).then((res) => {
+				if (res) {
+					// UPDATE LOCAL STATE TO REFLECT CHANGES
+					toast.success('Resume uploaded successfully');
+					resumeFiles[0] = res;
+				}
 			});
-
-			// Update local state
-			if (res) {
-				resumeFiles[0] = res as any;
-			}
 		} catch (error) {
 			toast.error('Failed to upload resume');
 		} finally {
@@ -351,7 +349,7 @@
 					</div>
 				</button>
 				<Button
-					class="bg-linear-to-t from-[#51A3DA] to-[#60269E] h-[42px] w-[120px] md:h-[55px] md:w-[185px] font-mulish font-semibold rounded-xl"
+					class="bg-linear-to-t from-[#51A3DA] to-[#60269E] h-[42px] w-[120px] md:h-[55px] md:w-[185px] font-mulish font-semibold rounded-[8px]"
 					disabled={isSavingText || !textContent.trim()}
 					onclick={handleSaveTextResume}
 				>
