@@ -18,7 +18,10 @@ const publicEndpoints = [
 	'/auth/reset-password',
 	'/auth/verify-email',
 	'/auth/refresh',
-	'/chat/guest/message'
+	'/chat/guest/message',
+	'/subscription',
+	'/career-guide',
+	'/my-resume'
 ];
 
 /**
