@@ -74,7 +74,7 @@
 	}
 
 	// FUNCTION TO UPLOAD RESUME
-	async function handleResumeUpload(file: File) {
+	async function handleResumeUpload(file: File): Promise<void> {
 		// CHECK IF THERE ARE FILES TO UPLOAD
 		if (!file) {
 			toast.error('No files to upload, please select a file');
@@ -84,14 +84,16 @@
 		isUploading = true;
 
 		try {
-			toast.loading('Uploading resume...');
-			await chatStore.uploadResume(file).then((res) => {
-				if (res) {
-					// UPDATE LOCAL STATE TO REFLECT CHANGES
-					toast.success('Resume uploaded successfully');
-					resumeFiles[0] = res;
-				}
+			const res = await toast.promise(chatStore.uploadResume(file), {
+				loading: 'Uploading resume...',
+				success: 'Resume uploaded successfully',
+				error: 'Failed to upload resume'
 			});
+
+			// Update local state
+			if (res) {
+				resumeFiles[0] = res as any;
+			}
 		} catch (error) {
 			toast.error('Failed to upload resume');
 		} finally {
@@ -199,7 +201,7 @@
 	</div>
 
 	<Button
-		class="w-full h-[48px] rounded-[8px] border p-2.5 bg-[#F7FBFD] text-black mt-4 hover:bg-[#F7FBFD]"
+		class="w-full h-12 rounded-xl border p-2.5 bg-[#F7FBFD] text-black mt-4 hover:bg-[#F7FBFD]"
 		onclick={() => {
 			if (!$auth.accessToken) {
 				onRequireAuth?.();
@@ -219,7 +221,7 @@
 			<li>
 				<div
 					class={cn(
-						`md:w-[611px] min-w-[300px] h-[60px] flex justify-between rounded-[8px] bg-[#F7FBFD] p-3 font-satoshi-regular`,
+						`md:w-[611px] min-w-[300px] h-[60px] flex justify-between rounded-xl bg-[#F7FBFD] p-3 font-satoshi-regular`,
 						file.status === 'pending' ? 'opacity-30' : ''
 					)}
 				>
@@ -267,7 +269,7 @@
 									</button>
 								{/if}
 								<!-- DOWNLOAD BUTTON  -->
-								<button onclick={() => downloadFile(file)} class="size-[20px]">
+								<button onclick={() => downloadFile(file)} class="size-5">
 									<img src={downloadIcon} alt="download icon" width="24" height="24" />
 								</button>
 								<span class="w-px h-[25px] bg-[#D9D9D9]"></span>
@@ -313,7 +315,7 @@
 		{/each}
 	</ul>
 	<Button
-		class="bg-gradient w-full rounded-[8px] mt-5 border border-[#FFFFFF] h-[50px] hover:opacity-80"
+		class="bg-gradient w-full rounded-xl mt-5 border border-[#FFFFFF] h-[50px] hover:opacity-80"
 		onclick={() => goto('/')}
 	>
 		Go to chat
@@ -336,10 +338,10 @@
 			<div class="border-t border-[#33333380] p-5 flex justify-end gap-5">
 				<button
 					onclick={() => (isDrawerOpen = false)}
-					class="border bg-linear-to-r from-[#51A3DA] to-[#60269E] p-px rounded-[8px]"
+					class="border bg-linear-to-r from-[#51A3DA] to-[#60269E] p-px rounded-xl"
 				>
 					<div
-						class="bg-white h-[40px] w-[120px] md:h-[55px] md:w-[185px] flex items-center justify-center rounded-[9px]"
+						class="bg-white h-10 w-[120px] md:h-[55px] md:w-[185px] flex items-center justify-center rounded-[9px]"
 					>
 						<p
 							class="bg-linear-to-r from-[#51A3DA] to-[#60269E] bg-clip-text text-transparent font-mulish font-semibold"
@@ -349,7 +351,7 @@
 					</div>
 				</button>
 				<Button
-					class="bg-linear-to-t from-[#51A3DA] to-[#60269E] h-[42px] w-[120px] md:h-[55px] md:w-[185px] font-mulish font-semibold rounded-[8px]"
+					class="bg-linear-to-t from-[#51A3DA] to-[#60269E] h-[42px] w-[120px] md:h-[55px] md:w-[185px] font-mulish font-semibold rounded-xl"
 					disabled={isSavingText || !textContent.trim()}
 					onclick={handleSaveTextResume}
 				>
