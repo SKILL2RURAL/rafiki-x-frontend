@@ -35,6 +35,7 @@
 	let resumeFiles = $state<Resume[]>($resumes || []);
 	let textContent = $state('');
 	let isSavingText = $state(false);
+	const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB
 
 	$effect(() => {
 		if (openEditor) isDrawerOpen = true;
@@ -48,12 +49,28 @@
 	// HANDLE FILE SELECTION
 	function handleFileChange(event: Event) {
 		const files = (event.target as HTMLInputElement).files;
+
+		if (!files || files.length === 0) return;
+
+		const file = files[0];
+
 		if (files && files.length > 0) {
 			if (!$auth.accessToken) {
 				onRequireAuth?.();
 				return;
 			}
+
+			// file size validation (10 MB limit)
+			if (file.size > MAX_FILE_SIZE) {
+				toast.error('File size must not exceed 10MB');
+				// input.value = '';
+				return;
+			}
+
+			// TRIGGER UPLOAD CALLBACK IF PROVIDED
 			onUpload?.(files);
+
+			// ADD TO LOCAL STATE IMMEDIATELY FOR BETTER UX
 			const newFile: Resume = {
 				id: Date.now(),
 				fileName: files[0].name,
@@ -65,6 +82,8 @@
 			};
 
 			resumeFiles = [newFile, ...resumeFiles];
+
+			// CALL UPLOAD FUNCTION
 			handleResumeUpload(files[0]);
 		}
 	}
