@@ -269,11 +269,11 @@ export async function fetchSubscriptionStatus() {
 		}
 	} catch (error) {
 		console.error('Error fetching subscription status:', error);
-		let errorMessage = 'Failed to load subscription status';
+		const errorMessage = 'Failed to load subscription status';
 
-		if (error instanceof AxiosError) {
-			errorMessage = error.response?.data?.message || errorMessage;
-		}
+		// if (error instanceof AxiosError) {
+		// 	errorMessage = error.response?.data?.message || errorMessage;
+		// }
 
 		subscriptionStatus.set({
 			status: null,
@@ -387,8 +387,7 @@ export async function initializeSubscription(
 		}
 	} catch (error) {
 		console.error('Error initializing subscription:', error);
-		// Don't show toast here as the API interceptor will handle it
-		return null;
+		throw error;
 	}
 }
 

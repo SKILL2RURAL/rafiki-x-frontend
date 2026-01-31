@@ -76,10 +76,7 @@ export async function handleUpgrade(
 		}
 	} catch (error) {
 		console.error('Error during subscription initialization:', error);
-		toast.error(
-			(error as unknown as AxiosError<{ message: string }>)?.response?.data?.message ||
-				'Error during subscription initialization'
-		);
+		toast.error('Error during subscription initialization');
 		isInitializing.value = false;
 	}
 }

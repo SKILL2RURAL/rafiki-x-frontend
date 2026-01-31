@@ -69,7 +69,7 @@
 		<!-- CTA Button -->
 		<Button
 			variant={buttonVariant}
-			class="mb-3 w-full h-[50px] rounded-[8px] {highlighted
+			class="mb-3 w-full h-[50px] rounded-xl {highlighted
 				? 'bg-white text-[#51A3DA] hover:bg-gray-50'
 				: 'border border-[#C4C4C4]'}"
 			disabled={isLoading || isCurrentPlan}
@@ -93,7 +93,7 @@
 		<ul class="space-y-3">
 			{#each features as feature}
 				<li class="flex items-start gap-3">
-					<div class="bg-[#D1FADF] rounded-full size-[24px] flex items-center justify-center">
+					<div class="bg-[#D1FADF] rounded-full size-6 flex items-center justify-center">
 						<img src={Check} alt="" width="13" height="13" />
 					</div>
 					<span class="text-[16px] font-normal text-[#667085]">{feature}</span>
