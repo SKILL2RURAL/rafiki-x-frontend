@@ -7,6 +7,7 @@
 	// import Input from '$lib/components/ui/input/input.svelte';
 	import Spinner from '$lib/components/ui/spinner/spinner.svelte';
 	import { resetPassword } from '$lib/stores/authStore';
+	import { Axios, AxiosError } from 'axios';
 	import { Eye, EyeOff } from 'lucide-svelte';
 	import { toast } from 'svelte-sonner';
 
@@ -42,11 +43,12 @@
 		isLoading = true;
 
 		try {
-			await resetPassword(password, token as string);
+			await resetPassword(token as string, password);
 			goto('/login');
 		} catch (error) {
-			console.log(error);
-			throw error;
+			if (error instanceof AxiosError) {
+				toast.error(error.response?.data.message || 'Failed to reset password. Please try again.');
+			}
 		} finally {
 			isLoading = false;
 		}
@@ -83,7 +85,7 @@
 				<div>
 					<label for="password" class="text-sm">Password</label>
 					<div
-						class="mt-2 border border-[#D0D5DD] h-[40px] rounded-[8px] bg-[#FFFFFF4D] flex gap-2 p-2 px-3 justify-between items-center"
+						class="mt-2 border border-[#D0D5DD] h-10 rounded-xl bg-[#FFFFFF4D] flex gap-2 p-2 px-3 justify-between items-center"
 					>
 						<input
 							name="password"
@@ -113,7 +115,7 @@
 				<div>
 					<label for="confirm password" class="text-sm">Confirm Password</label>
 					<div
-						class="mt-2 border border-[#D0D5DD] h-[40px] rounded-[8px] bg-[#FFFFFF4D] flex gap-2 p-2 px-3 justify-between items-center"
+						class="mt-2 border border-[#D0D5DD] h-10 rounded-xl bg-[#FFFFFF4D] flex gap-2 p-2 px-3 justify-between items-center"
 					>
 						<input
 							name="confirm-password"
@@ -140,7 +142,7 @@
 				</div>
 
 				<Button
-					class="bg-gradient w-full rounded-[8px] mt-8 border border-[#FFFFFF] h-[50px]"
+					class="bg-gradient w-full rounded-xl mt-8 border border-[#FFFFFF] h-[50px]"
 					type="submit"
 				>
 					{#if isLoading}
