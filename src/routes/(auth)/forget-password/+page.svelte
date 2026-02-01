@@ -21,7 +21,6 @@
 			await forgetPassword(emailAddress.trim());
 			isModalOpen = true;
 		} catch (error) {
-			console.log(error);
 			throw error;
 		} finally {
 			isLoading = false;

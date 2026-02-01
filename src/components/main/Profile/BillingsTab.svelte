@@ -1,10 +1,6 @@
 <script lang="ts">
-	import { get } from 'svelte/store';
-	import downloadIcon from '$lib/assets/icons/download-gradient.png';
-	import { transactions, fetchTransactions } from '$lib/stores/subscription';
 	import Button from '$lib/components/ui/button/button.svelte';
-
-	console.log($transactions);
+	import { fetchTransactions, transactions } from '$lib/stores/subscription';
 
 	$effect(() => {
 		if ($transactions.transactions === null && !$transactions.isLoading) {
@@ -33,11 +29,9 @@
 		return `${symbol}${amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 	}
 
-	// Get serial number for display (1-based)
-
-	function handleDownloadInvoice(reference: string) {
-		console.log('Download invoice for:', reference);
-	}
+	// function handleDownloadInvoice(reference: string) {
+	// 	console.log('Download invoice for:', reference);
+	// }
 
 	function handlePrevious() {
 		if (!$transactions.first) {

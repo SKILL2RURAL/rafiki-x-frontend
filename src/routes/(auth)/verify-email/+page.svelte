@@ -27,8 +27,7 @@
 				goto('/');
 			}
 		} catch (error) {
-			console.log(error);
-		} finally {
+			toast.error('Failed to verify email');
 			isLoading = false;
 		}
 	}

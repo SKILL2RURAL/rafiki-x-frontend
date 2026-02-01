@@ -11,7 +11,6 @@
 		contentType = type;
 		title = t;
 		visible = true;
-		console.log('Sidebar shown with content type:', contentType);
 	}
 
 	export function close() {

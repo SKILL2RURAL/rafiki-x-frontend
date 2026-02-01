@@ -117,7 +117,6 @@
 			if (error instanceof AxiosError) {
 				toast.error(error.response?.data.message);
 			}
-			console.log(error);
 		}
 	}
 
@@ -135,7 +134,7 @@
 				type="text"
 				bind:value={formData.firstName}
 				placeholder="Enter your first name"
-				class="mt-2 border border-[#D0D5DD] h-[40px] rounded-[8px] bg-[#FFFFFF4D] placeholder:text-white placeholder:font-satoshi-regular"
+				class="mt-2 border border-[#D0D5DD] h-10 rounded-xl bg-[#FFFFFF4D] placeholder:text-white placeholder:font-satoshi-regular"
 			/>
 		</div>
 		<div>
@@ -144,7 +143,7 @@
 				type="text"
 				bind:value={formData.lastName}
 				placeholder="Enter your last name"
-				class="mt-2 border border-[#D0D5DD] h-[40px] rounded-[8px] bg-[#FFFFFF4D] placeholder:text-white placeholder:font-satoshi-regular"
+				class="mt-2 border border-[#D0D5DD] h-10 rounded-xl bg-[#FFFFFF4D] placeholder:text-white placeholder:font-satoshi-regular"
 			/>
 		</div>
 	</div>
@@ -155,7 +154,7 @@
 			type="email"
 			bind:value={formData.email}
 			placeholder="Enter your email address"
-			class="mt-2 border border-[#D0D5DD] h-[40px] rounded-[8px] bg-[#FFFFFF4D] placeholder:text-white placeholder:font-satoshi-regular"
+			class="mt-2 border border-[#D0D5DD] h-10 rounded-xl bg-[#FFFFFF4D] placeholder:text-white placeholder:font-satoshi-regular"
 		/>
 	</div>
 
@@ -164,7 +163,7 @@
 		<label for="country" class="text-sm">Country</label>
 		<Select.Root type="single" name="country" bind:value={formData.country}>
 			<Select.Trigger
-				class="mt-2 border border-[#D0D5DD] h-[40px] rounded-[8px] bg-[#FFFFFF4D] placeholder:text-white text-white w-full data-[placeholder]:text-white placeholder:font-satoshi-regular placeholder:text-[14px]:"
+				class="mt-2 border border-[#D0D5DD] h-10 rounded-xl bg-[#FFFFFF4D] placeholder:text-white text-white w-full data-placehsolder:text-white placeholder:font-satoshi-regular placeholder:text-[14px]:"
 			>
 				{formData.country ? formData.country : 'Select your country'}
 			</Select.Trigger>
@@ -186,7 +185,7 @@
 					</div>
 
 					<!-- Scrollable country list -->
-					<div class="overflow-y-auto max-h-[160px]">
+					<div class="overflow-y-auto max-h-40">
 						{#each filteredCountries as country}
 							<Select.Item value={country.name} class="p-2 hover:bg-gray-100 cursor-pointer">
 								{country.name}
@@ -207,7 +206,7 @@
 			<label for="gender" class="text-sm">Gender</label>
 			<Select.Root type="single" name="gender" bind:value={formData.gender}>
 				<Select.Trigger
-					class="capitalize mt-2 border border-[#D0D5DD] h-[40px] rounded-[8px] bg-[#FFFFFF4D] placeholder:text-white text-white w-full data-[placeholder]:text-white placeholder:font-satoshi-regular placeholder:text-[14px]:"
+					class="capitalize mt-2 border border-[#D0D5DD] h-10 rounded-xl bg-[#FFFFFF4D] placeholder:text-white text-white w-full data-placeholder:text-white placeholder:font-satoshi-regular placeholder:text-[14px]:"
 				>
 					{formData.gender ? formData.gender : 'Select gender'}
 				</Select.Trigger>
@@ -222,7 +221,7 @@
 			<label for="ageGroup" class="text-sm">Age Group</label>
 			<Select.Root type="single" name="ageGroup" bind:value={formData.ageGroup}>
 				<Select.Trigger
-					class="mt-2 border border-[#D0D5DD] h-[40px] rounded-[8px] bg-[#FFFFFF4D] placeholder:text-white text-white w-full data-[placeholder]:text-white placeholder:font-satoshi-regular placeholder:text-[14px]:"
+					class="mt-2 border border-[#D0D5DD] h-10 rounded-xl bg-[#FFFFFF4D] placeholder:text-white text-white w-full data-placeholder:text-white placeholder:font-satoshi-regular placeholder:text-[14px]:"
 				>
 					{formData.ageGroup ? formData.ageGroup : 'Select age group'}
 				</Select.Trigger>
@@ -240,7 +239,7 @@
 	<div>
 		<label for="password" class="text-sm">Password</label>
 		<div
-			class="mt-2 border border-[#D0D5DD] h-[40px] rounded-[8px] bg-[#FFFFFF4D] flex gap-2 p-2 px-3 justify-between items-center"
+			class="mt-2 border border-[#D0D5DD] h-10 rounded-xl bg-[#FFFFFF4D] flex gap-2 p-2 px-3 justify-between items-center"
 		>
 			<input
 				type={isPasswordVisible ? 'password' : 'text'}
@@ -263,7 +262,7 @@
 		<div class="flex gap-2 flex-wrap items-center mt-3">
 			{#each requirementStatus as requirement}
 				<div
-					class="border rounded-[4px] px-2 py-1 text-[10px] transition-colors {requirement.met
+					class="border rounded-lg px-2 py-1 text-[10px] transition-colors {requirement.met
 						? 'border-green-500 text-green-500'
 						: 'border-white text-white'}"
 				>
@@ -277,10 +276,7 @@
 		<Checkbox bind:checked={formData.agree} />
 		<p>I have read and agree with RafikiX</p>
 	</div>
-	<Button
-		class="bg-gradient w-full rounded-[8px] mt-5 border border-[#FFFFFF] h-[50px]"
-		type="submit"
-	>
+	<Button class="bg-gradient w-full rounded-xl mt-5 border border-[#FFFFFF] h-[50px]" type="submit">
 		{#if $isLoading}
 			<Spinner />
 		{:else}

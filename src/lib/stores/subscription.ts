@@ -453,8 +453,6 @@ export async function fetchTransactions(page: number): Promise<boolean> {
 
 	transactions.update((state) => ({ ...state, isLoading: true, error: null }));
 
-	console.log('Page from fetch transaction =>', page);
-
 	try {
 		const { data } = await api.get<TransactionsResponse>(
 			`/subscription/transactions?page=${page}&size=10`
@@ -462,7 +460,6 @@ export async function fetchTransactions(page: number): Promise<boolean> {
 
 		if (data.success && data.data) {
 			const res = data.data;
-			console.log('Transaction data fetched successfully =>', res);
 
 			transactions.set({
 				transactions: res.content,
