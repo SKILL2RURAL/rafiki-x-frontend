@@ -4,6 +4,8 @@
 	import upload from '$lib/assets/icons/upload.png';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
+	import { generateTextResumeTitle } from '$lib/resumeText';
+	import { auth } from '$lib/stores/authStore';
 	import { chatStore, resumes } from '$lib/stores/chatStore';
 	import type { Resume } from '$lib/types/chat';
 	import { cn } from '$lib/utils';
@@ -12,9 +14,9 @@
 	import { toast } from 'svelte-sonner';
 	import Drawer from '../../Common/ReuseableDrawer.svelte';
 	import TextEditor from './TextEditor.svelte';
-	import { auth } from '$lib/stores/authStore';
-	import Spinner from '$lib/components/ui/spinner/spinner.svelte';
-	import { generateTextResumeTitle } from '$lib/resumeText';
+	import info from '$lib/assets/icons/yellow-info.png';
+	import { AxiosError } from 'axios';
+
 	let {
 		onRequireAuth,
 		onUpload,
@@ -112,7 +114,10 @@
 				}
 			});
 		} catch (error) {
-			toast.error('Failed to upload resume');
+			if (error instanceof AxiosError) {
+				toast.error(error.response?.data?.message || 'Failed to upload resume');
+			}
+			resumeFiles.shift();
 		} finally {
 			isUploading = false;
 		}
@@ -228,12 +233,16 @@
 		}}>Add text Content</Button
 	>
 
-	<!-- <Button
-		class="md:w-[611px] h-[48px] rounded-[8px] border p-2.5 bg-[#F7FBFD] text-black mt-4"
-		onclick={onAddText}>Add text Content</Button
-	> -->
+	{#if resumeFiles?.length > 0}
+		<div
+			class="rounded-xl border border-[#E8A30E] border-dashed p-2.5 bg-[#FDF5E2] text-[#A09D9D] text-[14px] mt-4 flex items-start"
+		>
+			<img src={info} alt="info icon" class="inline-block mr-2" width="24" height="24" />
+			<p>Your uploaded CV may be used to provide more personalized and relevant chat responses</p>
+		</div>
+	{/if}
 
-	<ul class="flex flex-col gap-4 mt-6 max-h-[200px] overflow-y-auto">
+	<ul class="flex flex-col gap-4 mt-6 max-h-[300px] overflow-y-auto">
 		{#each resumeFiles as file}
 			<li>
 				<div
@@ -368,7 +377,7 @@
 					</div>
 				</button>
 				<Button
-					class="bg-linear-to-t from-[#51A3DA] to-[#60269E] h-[42px] w-[120px] md:h-[55px] md:w-[185px] font-mulish font-semibold rounded-[8px]"
+					class="bg-linear-to-t from-[#51A3DA] to-[#60269E] h-[42px] w-[120px] md:h-[55px] md:w-[185px] font-mulish font-semibold rounded-xl"
 					disabled={isSavingText || !textContent.trim()}
 					onclick={handleSaveTextResume}
 				>

@@ -29,11 +29,11 @@
 			<div>
 				<h3 class="font-bold text-lg mb-3">1. Introduction</h3>
 				<p class="mb-3">
-					Skill2Rural is a nonprofit organization dedicated to empowering rural communities through
-					education and skill-building programs, with a particular focus on children's development.
-					We are committed to protecting the privacy of all our users, especially children, and
-					operate in compliance with the Nigeria Data Protection Act (2023) and other applicable
-					data protection laws.
+					Kayode Alabi Leadership and Career Initiative is a nonprofit organization dedicated to
+					empowering rural communities through education and skill-building programs, with a
+					particular focus on children's development. We are committed to protecting the privacy of
+					all our users, especially children, and operate in compliance with the Nigeria Data
+					Protection Act (2023) and other applicable data protection laws.
 				</p>
 				<p class="mb-3">
 					This Privacy Notice explains what personal information we collect, how we use and protect
@@ -55,8 +55,8 @@
 					</li>
 					<li>Parents/Legal Guardians of participating children</li>
 					<li>
-						General Users of our website (www.skill2rural.org), mobile applications, online
-						services, and in-person programs
+						General Users of our website, mobile applications, online services, and in-person
+						programs
 					</li>
 					<li>Donors and Partners who interact with our organization</li>
 				</ul>
