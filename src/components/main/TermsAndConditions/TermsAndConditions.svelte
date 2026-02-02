@@ -24,8 +24,8 @@
 	</div>
 	<div class="flex flex-col text-[14px] md:text-[18px] gap-5 md:gap-8 text-black">
 		<div class="space-y-2">
-			<p class="font-medium text-white">Last updated: 28th January 2026</p>
-			<p class="font-medium text-white/90">Effective as of: 3rd Febuary 2026</p>
+			<p class="font-medium text-white">Last updated: 28th of January 2026</p>
+			<p class="font-medium text-white/90">Effective as of: 3rd of February 2026</p>
 		</div>
 
 		<section>
