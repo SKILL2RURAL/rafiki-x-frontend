@@ -48,7 +48,7 @@
 
 	// Get price for support plan based on currency and billing period
 	// const supportPrice = $derived(getSupportPlanPrice(plans, supportPlanPeriod, currency));
-	const supportPrice = $derived(plans?.support?.pricing[supportPlanPeriod]?.ngn || 0);
+	const supportPrice = $derived(plans?.support?.paystackPricing[supportPlanPeriod]?.ngn || 0);
 	// Get free plan features
 	const freePlanFeatures = $derived(plans?.free ? generateFeatures(plans.free.limits) : []);
 
