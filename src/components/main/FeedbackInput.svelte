@@ -21,7 +21,7 @@
 	}
 </script>
 
-<div class="bg-white px-5 h-[320px] w-[800px] flex flex-col justify-center">
+<div class="bg-white px-5 h-80 w-[800px] flex flex-col justify-center">
 	<p class="font-semibold my-3">Add Feedback<span class="font-normal">(optional)</span></p>
 	<textarea
 		placeholder="Enter text here..."
@@ -36,7 +36,7 @@
 			onclick={closeFeedback}
 			disabled={isSubmitting}
 			class="w-full h-[60px] border border-[#808990] bg-white text-[#808990] rounded-[10px] hover:bg-[#808990]/5 hover:text-[#808990] disabled:opacity-50 disabled:cursor-not-allowed"
-			>No, Thanks</Button
+			>Cancel</Button
 		>
 		<Button
 			onclick={handleSubmit}
