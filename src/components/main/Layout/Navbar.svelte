@@ -37,7 +37,7 @@
 		</button>
 
 		{#if !$auth.accessToken}
-			<Button class="bg-gradient h-[40px] w-[100px]" onclick={() => goto('/login')}>Sign up</Button>
+			<Button class="bg-gradient h-10 w-[100px]" onclick={() => goto('/login')}>Sign In</Button>
 		{:else}
 			<div class="flex justify-center items-center gap-2 overflow-auto text-[16px] w-full">
 				{#each links as link}
@@ -49,20 +49,20 @@
 				{/each}
 			</div>
 			<button onclick={() => goto('/')}>
-				<img src={logo} alt="logo" class="h-[20px] w-[50px]" />
+				<img src={logo} alt="logo" class="h-5 w-[50px]" />
 			</button>
 		{/if}
 	</div>
 	{#if !$auth.accessToken}
-		<Button class="hidden lg:block bg-gradient h-[40px] w-[100px]" onclick={() => goto('/login')}
-			>Sign up</Button
+		<Button class="hidden lg:block bg-gradient h-10 w-[100px]" onclick={() => goto('/login')}
+			>Sign In</Button
 		>
 	{:else}
 		<!-- Go Premium Button and Avatar for authenticated users -->
 		<div class="hidden lg:flex items-center gap-3">
 			<button
 				onclick={() => goto('/subscription')}
-				class="flex items-center gap-2 px-4 py-2 rounded-[4px] bg-gradient text-white font-medium hover:opacity-90 transition-opacity cursor-pointer"
+				class="flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient text-white font-medium hover:opacity-90 transition-opacity cursor-pointer"
 			>
 				<img src={premium} alt="Premium" width="20" height="20" />
 				<span>Go Premium</span>
