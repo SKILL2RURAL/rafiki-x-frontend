@@ -5,7 +5,8 @@
 	import { X } from 'lucide-svelte';
 	import linkedinIcon from '$lib/assets/icons/linkedln-icon.png';
 	import facebookIcon from '$lib/assets/icons/facebook-icon.png';
-	import twitterIcon from '$lib/assets/icons/x-icon.png';
+	import instagramIcon from '$lib/assets/icons/instagram-icon.svg';
+	import { SOCIAL_LINKS } from '$lib/constants';
 
 	export let isOpen: boolean = false;
 	export let onClose: () => void = () => {};
@@ -57,24 +58,39 @@
 				class="flex items-center justify-around mt-8 font-semibold"
 				style="font-family: 'Mullish', sans-serif;"
 			>
-				<div class="flex flex-col items-center gap-2">
+				<a
+					href={SOCIAL_LINKS.linkedin}
+					target="_blank"
+					rel="noopener noreferrer"
+					class="flex flex-col items-center gap-2"
+				>
 					<div class="size-13 rounded-full bg-white shadow-lg flex items-center justify-center">
 						<img src={linkedinIcon} alt="LinkedIn" class="size-[18px] object-contain" />
 					</div>
 					<span class="text-[14px] text-[#253B4B]">LinkedIn</span>
-				</div>
-				<div class="flex flex-col items-center gap-2">
+				</a>
+				<a
+					href={SOCIAL_LINKS.facebook}
+					target="_blank"
+					rel="noopener noreferrer"
+					class="flex flex-col items-center gap-2"
+				>
 					<div class="size-13 rounded-full bg-white shadow-lg flex items-center justify-center">
 						<img src={facebookIcon} alt="Facebook" class="size-[18px] object-contain" />
 					</div>
 					<span class="text-[14px] text-[#253B4B]">Facebook</span>
-				</div>
-				<div class="flex flex-col items-center gap-2">
+				</a>
+				<a
+					href={SOCIAL_LINKS.instagram}
+					target="_blank"
+					rel="noopener noreferrer"
+					class="flex flex-col items-center gap-2"
+				>
 					<div class="size-13 rounded-full bg-white shadow-lg flex items-center justify-center">
-						<img src={twitterIcon} alt="Twitter" class="size-[18px] object-contain" />
+						<img src={instagramIcon} alt="Instagram" class="size-[18px] object-contain" />
 					</div>
-					<span class="text-[14px] text-[#253B4B]">X(Twitter)</span>
-				</div>
+					<span class="text-[14px] text-[#253B4B]">Instagram</span>
+				</a>
 			</div>
 		</div>
 	</Dialog.Content>

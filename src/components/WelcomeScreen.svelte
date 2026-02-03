@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { getContext } from 'svelte';
 	import { goto } from '$app/navigation';
 	import book from '$lib/assets/icons/book.png';
 	import album from '$lib/assets/icons/album.png';
@@ -7,9 +8,24 @@
 	import send from '$lib/assets/icons/send.svg';
 	import { Input } from '$lib/components/ui/input';
 	import Spinner from '$lib/components/ui/spinner/spinner.svelte';
-	import { chatStore, sendingMessage } from '$lib/stores/chatStore';
+	import WelcomeMicrophone from './main/Chat/WelcomeMicrophone.svelte';
+	import { chatStore, sendingMessage, isRecording, isTranscribing } from '$lib/stores/chatStore';
 	import { auth } from '$lib/stores/authStore';
 	import type { ChatContext } from '$lib/types/chat';
+	import { getDots } from './main/Chat/inputArea.utils';
+	import { startDotCountAnimation } from './main/Chat/inputArea.actions';
+	import { Mic } from 'lucide-svelte';
+
+	const onOpenCreateAccount = getContext<(() => void) | undefined>('onOpenCreateAccount');
+
+	let text = $state('');
+	let dotCount = $state(0);
+	$effect(() => {
+		if ($isRecording || $isTranscribing) {
+			return startDotCountAnimation((n: number) => (dotCount = n));
+		}
+		dotCount = 0;
+	});
 
 	function handleFocus() {
 		setTimeout(() => {
@@ -19,8 +35,6 @@
 			});
 		}, 300);
 	}
-
-	let text = '';
 
 	// FUNCTION TO START A NEW CONVERSATION
 	async function handleSend(value?: string, chatContext?: ChatContext) {
@@ -79,18 +93,42 @@
 		class="bg-white px-5 lg:p-10 py-10 lg:py-15 shadow-md rounded-[20px] my-5 lg:my-10 sm:max-w-full lg:max-w-full mx-0 lg:mx-15"
 	>
 		<div class="flex items-center gap-3">
-			<div class="border border-[#E8E8E8] rounded-[100px] flex px-4 py-2 w-full">
-				<img src={searchIcon} alt="Search Icon" width="20" height="20" />
-				<Input
-					type="text"
-					placeholder="Ask a question to explore career options"
-					class="w-full border-none outline-none focus-visible:ring-transparent placeholder:text-[14px] lg:placeholder:font-light placeholder:text-[#80899A] text-black shadow-none"
-					onfocus={handleFocus}
-					bind:value={text}
-				/>
+			<div
+				class="border border-[#E8E8E8] rounded-[100px] flex px-4 py-2 w-full items-center min-h-12"
+			>
+				{#if $isRecording}
+					<p class="text-[#80899A] text-[14px] font-medium animate-pulse">
+						Listening{getDots(dotCount)}
+					</p>
+				{:else if $isTranscribing}
+					<p class="text-[#80899A] text-[14px] font-medium animate-pulse">
+						Analyzing your input{getDots(dotCount)}
+					</p>
+				{:else}
+					<img src={searchIcon} alt="Search Icon" width="20" height="20" />
+					<Input
+						type="text"
+						placeholder="Ask a question to explore career options"
+						class="w-full border-none outline-none focus-visible:ring-transparent placeholder:text-[14px] lg:placeholder:font-light placeholder:text-[#80899A] text-black shadow-none"
+						onfocus={handleFocus}
+						bind:value={text}
+					/>
+				{/if}
 			</div>
-			<div>
-				{#if text.length > 0}
+			<div class="flex items-center gap-2 shrink-0">
+				{#if $auth.accessToken}
+					<WelcomeMicrophone onTranscription={(t: string) => handleSend(t)} />
+				{:else}
+					<button
+						type="button"
+						class="p-2 size-12 border rounded-full flex items-center justify-center hover:bg-gray-100"
+						onclick={() => onOpenCreateAccount?.()}
+						aria-label="Use voice – create an account"
+					>
+						<Mic class="size-5 text-black" />
+					</button>
+				{/if}
+				{#if text.length > 0 && !$isRecording && !$isTranscribing}
 					<button
 						class="p-2 size-12 border rounded-full hover:bg-gray-100 flex items-center justify-center"
 						disabled={$sendingMessage}

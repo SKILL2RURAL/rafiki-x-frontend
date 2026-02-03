@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { setContext } from 'svelte';
 	import { fly } from 'svelte/transition';
 	// import { getStores } from '$app/stores';
 	import { browser } from '$app/environment';
@@ -31,6 +32,8 @@
 
 	let loading = $state(false);
 	let isCreateAccountOpen = $state(false);
+
+	setContext<() => void>('onOpenCreateAccount', () => (isCreateAccountOpen = true));
 
 	// const { page } = getStores();
 	// const pathname = $derived($page.url.pathname);

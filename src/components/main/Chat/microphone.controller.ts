@@ -10,6 +10,10 @@ export function createMicrophoneRecorder(options: {
 	getNewMessage: () => string;
 	getIsRecording: () => boolean;
 	setVolume: (v: number) => void;
+	/** When provided, called with transcription instead of appending to newMessage (e.g. for welcome screen send) */
+	onTranscription?: (transcription: string) => void;
+	/** Alternative: getter for current callback so the latest prop is always used */
+	getOnTranscription?: () => ((transcription: string) => void) | undefined;
 }) {
 	let mediaRecorder: MediaRecorder | null = null;
 	let audioChunks: Blob[] = [];
@@ -92,7 +96,12 @@ export function createMicrophoneRecorder(options: {
 			try {
 				const transcription = await options.chatStore.sendVoiceNote(file);
 				if (transcription) {
-					options.chatStore.setNewMessage(`${options.getNewMessage()} ${transcription}`);
+					const callback = options.getOnTranscription?.() ?? options.onTranscription;
+					if (callback) {
+						callback(transcription);
+					} else {
+						options.chatStore.setNewMessage(`${options.getNewMessage()} ${transcription}`);
+					}
 				}
 			} catch (error) {
 				console.error('Error sending voice note:', error);

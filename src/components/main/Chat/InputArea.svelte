@@ -20,7 +20,7 @@
 	import pdf from '$lib/assets/icons/pdf.png';
 	import image from '$lib/assets/icons/image.png';
 	import check from '$lib/assets/icons/check.png';
-	import { X } from 'lucide-svelte';
+	import { Mic, X } from 'lucide-svelte';
 	import GuestToast from './GuestToast.svelte';
 	import { getDots, formatFileSize } from './inputArea.utils';
 	import {
@@ -164,6 +164,15 @@
 				<div class="flex items-center gap-5">
 					{#if $auth.accessToken}
 						<Microphone bind:this={microphone} conversationId={Number(page.params.chatId)} />
+					{:else}
+						<button
+							type="button"
+							class="p-2 size-10 md:size-12 border rounded-full hover:bg-gray-100 flex items-center justify-center"
+							onclick={() => onOpenCreateAccount?.()}
+							aria-label="Use voice – create an account"
+						>
+							<Mic class="w-4 h-4 md:w-5 md:h-5 text-black" />
+						</button>
 					{/if}
 
 					{#if $auth.accessToken && $isRecording}
