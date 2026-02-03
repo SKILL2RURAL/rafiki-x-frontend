@@ -6,7 +6,6 @@
 	import chat from '$lib/assets/icons/chat.png';
 	import searchIcon from '$lib/assets/icons/search-normal.svg';
 	import send from '$lib/assets/icons/send.svg';
-	import { Input } from '$lib/components/ui/input';
 	import Spinner from '$lib/components/ui/spinner/spinner.svelte';
 	import WelcomeMicrophone from './main/Chat/WelcomeMicrophone.svelte';
 	import { chatStore, sendingMessage, isRecording, isTranscribing } from '$lib/stores/chatStore';
@@ -20,6 +19,19 @@
 
 	let text = $state('');
 	let dotCount = $state(0);
+	let textareaRef: HTMLTextAreaElement | null = $state(null);
+
+	function resizeTextarea(el: HTMLTextAreaElement | null) {
+		if (!el) return;
+		el.style.height = 'auto';
+		el.style.height = `${Math.min(el.scrollHeight, 200)}px`;
+	}
+
+	$effect(() => {
+		text;
+		resizeTextarea(textareaRef);
+	});
+
 	$effect(() => {
 		if ($isRecording || $isTranscribing) {
 			return startDotCountAnimation((n: number) => (dotCount = n));
@@ -94,30 +106,32 @@
 	>
 		<div class="flex items-center gap-3">
 			<div
-				class="border border-[#E8E8E8] rounded-[100px] flex px-4 py-2 w-full items-center min-h-12"
+				class="border border-[#E8E8E8] rounded-[20px] flex px-4 py-3 w-full items-center min-h-12"
 			>
 				{#if $isRecording}
-					<p class="text-[#80899A] text-[14px] font-medium animate-pulse">
+					<p class="text-[#80899A] text-[14px] font-medium animate-pulse py-2">
 						Listening{getDots(dotCount)}
 					</p>
 				{:else if $isTranscribing}
-					<p class="text-[#80899A] text-[14px] font-medium animate-pulse">
+					<p class="text-[#80899A] text-[14px] font-medium animate-pulse py-2">
 						Analyzing your input{getDots(dotCount)}
 					</p>
 				{:else}
-					<img src={searchIcon} alt="Search Icon" width="20" height="20" />
-					<Input
-						type="text"
-						placeholder="Ask a question to explore career options"
-						class="w-full border-none outline-none focus-visible:ring-transparent placeholder:text-[14px] lg:placeholder:font-light placeholder:text-[#80899A] text-black shadow-none"
-						onfocus={handleFocus}
+					<img src={searchIcon} alt="Search Icon" width="20" height="20" class="shrink-0 mr-3" />
+					<textarea
+						bind:this={textareaRef}
 						bind:value={text}
-					/>
+						placeholder="Ask a question to explore career options"
+						rows={1}
+						class="w-full min-h-[24px] max-h-[200px] resize-none border-none outline-none focus:outline-none focus-visible:ring-0 placeholder:text-[14px] lg:placeholder:font-light placeholder:text-[#80899A] text-black bg-transparent py-1 overflow-y-auto"
+						onfocus={handleFocus}
+						oninput={() => resizeTextarea(textareaRef)}
+					></textarea>
 				{/if}
 			</div>
 			<div class="flex items-center gap-2 shrink-0">
 				{#if $auth.accessToken}
-					<WelcomeMicrophone onTranscription={(t: string) => handleSend(t)} />
+					<WelcomeMicrophone onTranscription={(t: string) => (text = t)} />
 				{:else}
 					<button
 						type="button"

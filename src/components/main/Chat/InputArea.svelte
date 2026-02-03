@@ -38,6 +38,18 @@
 	let microphone: Microphone | null = $state(null);
 	let showGuestToast = $state(true);
 	let dotCount = $state(0);
+	let textareaRef: HTMLTextAreaElement | null = $state(null);
+
+	function resizeChatTextarea(el: HTMLTextAreaElement | null) {
+		if (!el) return;
+		el.style.height = 'auto';
+		el.style.height = `${Math.min(el.scrollHeight, 200)}px`;
+	}
+
+	$effect(() => {
+		$newMessage;
+		resizeChatTextarea(textareaRef);
+	});
 
 	$effect(() => {
 		if ($isRecording || $isTranscribing) {
@@ -57,50 +69,55 @@
 	{/if}
 	<div class="border border-[#E8E8E8] rounded-[20px] p-2 lg:p-4 bg-white shadow-md">
 		<div class="flex flex-col px-2 lg:px-3 py-2 gap-4">
-			<div class="flex">
+			<div class="flex items-end">
 				{#if $isRecording}
-					<p class="text-[#80899A] text-[16px] font-medium animate-pulse repeat-infinite">
+					<p class="text-[#80899A] text-[16px] font-medium animate-pulse repeat-infinite py-2">
 						Listening{getDots(dotCount)}
 					</p>
 				{:else if $isTranscribing}
-					<p class="text-[#80899A] text-[16px] font-medium animate-pulse repeat-infinite">
+					<p class="text-[#80899A] text-[16px] font-medium animate-pulse repeat-infinite py-2">
 						Analyzing your input{getDots(dotCount)}
 					</p>
 				{:else}
-					<img src={search} class="ml-2" width="16" height="16" alt="Search Icon" />
-					<input
-						type="text"
+					<img src={search} class="ml-2 shrink-0 mb-2" width="16" height="16" alt="Search Icon" />
+					<textarea
+						bind:this={textareaRef}
 						placeholder="Ask Rafiki..."
+						rows={1}
+						class="min-h-[24px] max-h-[200px] resize-none px-2 py-2 text-sm bg-transparent outline-none w-full overflow-y-auto border-none focus:outline-none focus-visible:ring-0"
 						value={$newMessage}
 						oninput={(e: Event) => {
-							const target = e.target as HTMLInputElement;
+							const target = e.target as HTMLTextAreaElement;
 							chatStore.setNewMessage(target.value);
+							resizeChatTextarea(textareaRef);
 						}}
-						class=" px-2 text-sm bg-transparent outline-none w-full"
-						onkeydown={(e) =>
-							e.key === 'Enter' &&
-							sendChatInputMessage({
-								toast,
-								getIsSending: () => $sendingMessage,
-								getGuestRemainingMessages: () => $guestRemainingMessages,
-								onOpenCreateAccount,
-								getMessageText: () => $newMessage,
-								getMessages: () => $messages,
-								setMessages: (msgs) => chatStore.setMessages(msgs),
-								sendGuestMessage: (m) => chatStore.sendGuestMessage(m),
-								sendMessage: (payload) => chatStore.sendMessage(payload),
-								chatId: Number(page.params.chatId),
-								getSelectedFile: () => selectedFile,
-								getFileKeys: () => fileKeys,
-								resetAfterSend: () => {
-									chatStore.setNewMessage('');
-									selectedFile = null;
-									fileKeys = [];
-								},
-								setShowGuestToast: (v) => (showGuestToast = v),
-								refreshConversations: () => chatStore.getConversations({})
-							})}
-					/>
+						onkeydown={(e) => {
+							if (e.key === 'Enter' && !e.shiftKey) {
+								e.preventDefault();
+								sendChatInputMessage({
+									toast,
+									getIsSending: () => $sendingMessage,
+									getGuestRemainingMessages: () => $guestRemainingMessages,
+									onOpenCreateAccount,
+									getMessageText: () => $newMessage,
+									getMessages: () => $messages,
+									setMessages: (msgs) => chatStore.setMessages(msgs),
+									sendGuestMessage: (m) => chatStore.sendGuestMessage(m),
+									sendMessage: (payload) => chatStore.sendMessage(payload),
+									chatId: Number(page.params.chatId),
+									getSelectedFile: () => selectedFile,
+									getFileKeys: () => fileKeys,
+									resetAfterSend: () => {
+										chatStore.setNewMessage('');
+										selectedFile = null;
+										fileKeys = [];
+									},
+									setShowGuestToast: (v) => (showGuestToast = v),
+									refreshConversations: () => chatStore.getConversations({})
+								});
+							}
+						}}
+					></textarea>
 				{/if}
 			</div>
 
