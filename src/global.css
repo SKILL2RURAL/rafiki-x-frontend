@@ -242,3 +242,16 @@ button:disabled {
 .animate-pulse-opacity {
 	animation: pulse-opacity 1.5s infinite ease-in-out;
 }
+
+
+/* Desktop */
+.responsive-textarea::placeholder {
+	content: attr(data-placeholder-desktop);
+}
+
+/* Mobile */
+@media (max-width: 640px) {
+	.responsive-textarea::placeholder {
+		content: attr(data-placeholder-mobile);
+	}
+}

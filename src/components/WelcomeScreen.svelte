@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { getContext } from 'svelte';
+	import { getContext, onMount } from 'svelte';
 	import { goto } from '$app/navigation';
 	import book from '$lib/assets/icons/book.png';
 	import album from '$lib/assets/icons/album.png';
@@ -37,6 +37,19 @@
 			return startDotCountAnimation((n: number) => (dotCount = n));
 		}
 		dotCount = 0;
+	});
+
+	let placeholder = $state('Ask a question to explore career options');
+
+	function updatePlaceholder() {
+		placeholder =
+			window.innerWidth < 640 ? 'Ask Rafiki' : 'Ask a question to explore career options';
+	}
+
+	onMount(() => {
+		updatePlaceholder();
+		window.addEventListener('resize', updatePlaceholder);
+		return () => window.removeEventListener('resize', updatePlaceholder);
 	});
 
 	function handleFocus() {
@@ -104,54 +117,74 @@
 	<div
 		class="bg-white px-5 lg:p-10 py-10 lg:py-15 shadow-md rounded-[20px] my-5 lg:my-10 sm:max-w-full lg:max-w-full mx-0 lg:mx-15"
 	>
-		<div class="flex items-center gap-3">
+		<div class="flex items-center gap-2 sm:gap-3">
 			<div
-				class="border border-[#E8E8E8] rounded-[20px] flex px-4 py-3 w-full items-center min-h-12"
+				class="border border-[#E8E8E8] rounded-[16px] sm:rounded-[20px] flex px-3 sm:px-4 h-10 min-h-10 sm:h-11 sm:min-h-11 lg:h-12 lg:min-h-12 w-full items-center"
 			>
 				{#if $isRecording}
-					<p class="text-[#80899A] text-[14px] font-medium animate-pulse py-2">
+					<p class="text-[#80899A] text-[13px] sm:text-[14px] font-medium animate-pulse">
 						Listening{getDots(dotCount)}
 					</p>
 				{:else if $isTranscribing}
-					<p class="text-[#80899A] text-[14px] font-medium animate-pulse py-2">
+					<p class="text-[#80899A] text-[13px] sm:text-[14px] font-medium animate-pulse">
 						Analyzing your input{getDots(dotCount)}
 					</p>
 				{:else}
-					<img src={searchIcon} alt="Search Icon" width="20" height="20" class="shrink-0 mr-3" />
-					<textarea
+					<img
+						src={searchIcon}
+						alt="Search Icon"
+						width="20"
+						height="20"
+						class="shrink-0 size-4 sm:size-5 mr-2"
+					/>
+					<!-- <textarea
 						bind:this={textareaRef}
 						bind:value={text}
-						placeholder="Ask a question to explore career options"
+						{placeholder}
 						rows={1}
-						class="w-full min-h-[24px] max-h-[200px] resize-none border-none outline-none focus:outline-none focus-visible:ring-0 placeholder:text-[14px] lg:placeholder:font-light placeholder:text-[#80899A] text-black bg-transparent py-1 overflow-y-auto"
+						class="w-full min-h-6 max-h-[200px] resize-none border-none outline-none focus:outline-none focus-visible:ring-0 placeholder:text-[14px] lg:placeholder:font-light placeholder:text-[#80899A] text-black bg-transparent py-1 overflow-y-auto"
 						onfocus={handleFocus}
 						oninput={() => resizeTextarea(textareaRef)}
-					></textarea>
+					></textarea> -->
+					<input
+						type="text"
+						bind:value={text}
+						{placeholder}
+						class="w-full border-none outline-none focus:outline-none focus-visible:ring-0 placeholder:text-[13px] sm:placeholder:text-[14px] lg:placeholder:font-light placeholder:text-[#80899A] text-black bg-transparent py-1 text-[13px] sm:text-[14px]"
+						onfocus={handleFocus}
+					/>
 				{/if}
 			</div>
-			<div class="flex items-center gap-2 shrink-0">
-				{#if $auth.accessToken}
-					<WelcomeMicrophone onTranscription={(t: string) => (text = t)} />
-				{:else}
-					<button
-						type="button"
-						class="p-2 size-12 border rounded-full flex items-center justify-center hover:bg-gray-100"
-						onclick={() => onOpenCreateAccount?.()}
-						aria-label="Use voice – create an account"
-					>
-						<Mic class="size-5 text-black" />
-					</button>
+
+			<div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
+				{#if text.length <= 0}
+					<div>
+						{#if $auth.accessToken}
+							<WelcomeMicrophone onTranscription={(t: string) => (text = t)} />
+						{:else}
+							<button
+								type="button"
+								class="p-1.5 sm:p-2 size-10 sm:size-11 lg:size-12 border rounded-full flex items-center justify-center hover:bg-gray-100"
+								onclick={() => onOpenCreateAccount?.()}
+								aria-label="Use voice – create an account"
+							>
+								<Mic class="size-4 sm:size-5 text-black" />
+							</button>
+						{/if}
+					</div>
 				{/if}
+
+				<!-- Send button  -->
 				{#if text.length > 0 && !$isRecording && !$isTranscribing}
 					<button
-						class="p-2 size-12 border rounded-full hover:bg-gray-100 flex items-center justify-center"
+						class="p-1.5 sm:p-2 size-10 sm:size-11 lg:size-12 border rounded-full hover:bg-gray-100 flex items-center justify-center"
 						disabled={$sendingMessage}
 						onclick={() => handleSend()}
 					>
 						{#if $sendingMessage}
 							<Spinner color="black" size="md" />
 						{:else}
-							<img src={send} class="mx-auto" width="20" height="20" alt="send icon" />
+							<img src={send} class="size-4 sm:size-5" alt="send icon" />
 						{/if}
 					</button>
 				{/if}

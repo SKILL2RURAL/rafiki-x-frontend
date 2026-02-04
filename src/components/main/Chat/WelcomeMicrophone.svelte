@@ -27,7 +27,7 @@
 	}
 </script>
 
-<div class="flex items-center gap-2">
+<div class="flex items-center gap-1.5 sm:gap-2">
 	<div
 		class={cn(
 			'rounded-full transition-all duration-100 ease-linear',
@@ -37,7 +37,7 @@
 	>
 		<button
 			class={cn(
-				'p-2 size-12 border rounded-full flex items-center justify-center hover:bg-gray-100',
+				'p-1.5 sm:p-2 size-10 sm:size-11 lg:size-12 border rounded-full flex items-center justify-center hover:bg-gray-100',
 				$isRecording && 'bg-gradient'
 			)}
 			onclick={() => recorder.start()}
@@ -46,24 +46,24 @@
 			{#if $isTranscribing}
 				<Spinner color="black" size="md" />
 			{:else}
-				<Mic color={$isRecording ? 'white' : 'black'} class="size-5" />
+				<Mic color={$isRecording ? 'white' : 'black'} class="size-4 sm:size-5" />
 			{/if}
 		</button>
 	</div>
 	{#if $isRecording}
 		<button
-			class="size-10 border border-[#E2E2E2] flex items-center justify-center rounded-full hover:bg-gray-100 text-[#60269E]"
+			class="size-10 sm:size-11 lg:size-12 border border-[#E2E2E2] flex items-center justify-center rounded-full hover:bg-gray-100 text-[#60269E]"
 			onclick={() => cancelRecording()}
 			aria-label="Cancel recording"
 		>
-			<X class="w-4 h-4" />
+			<X class="size-4 sm:size-5" />
 		</button>
 		<button
-			class="size-10 border border-[#E2E2E2] flex items-center justify-center rounded-full hover:bg-gray-100"
+			class="size-10 sm:size-11 lg:size-12 border border-[#E2E2E2] flex items-center justify-center rounded-full hover:bg-gray-100"
 			onclick={() => stopRecording()}
 			aria-label="Stop and send"
 		>
-			<img src={check} alt="" class="w-4 h-4" />
+			<img src={check} alt="" class="size-4 sm:size-5" />
 		</button>
 	{/if}
 </div>

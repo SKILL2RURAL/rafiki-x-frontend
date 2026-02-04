@@ -163,9 +163,9 @@
 		<label for="country" class="text-sm">Country</label>
 		<Select.Root type="single" name="country" bind:value={formData.country}>
 			<Select.Trigger
-				class="mt-2 border border-[#D0D5DD] h-10 rounded-xl bg-[#FFFFFF4D] placeholder:text-white text-white w-full data-placehsolder:text-white placeholder:font-satoshi-regular placeholder:text-[14px]:"
+				class="mt-2 border border-[#D0D5DD] h-10 rounded-xl bg-[#FFFFFF4D] text-white w-full data-placeholder:text-white data-placeholder:opacity-100 font-satoshi-regular text-[14px]"
 			>
-				{formData.country ? formData.country : 'Select your country'}
+				{formData.country ? formData.country : 'Select Your Country'}
 			</Select.Trigger>
 			<Select.Content class="max-h-[500px] overflow-auto">
 				<!-- <Input type="search" placeholder="Search country" class="ring-0 outline-none" />
@@ -206,9 +206,9 @@
 			<label for="gender" class="text-sm">Gender</label>
 			<Select.Root type="single" name="gender" bind:value={formData.gender}>
 				<Select.Trigger
-					class="capitalize mt-2 border border-[#D0D5DD] h-10 rounded-xl bg-[#FFFFFF4D] placeholder:text-white text-white w-full data-placeholder:text-white placeholder:font-satoshi-regular placeholder:text-[14px]:"
+					class="capitalize mt-2 border border-[#D0D5DD] h-10 rounded-xl bg-[#FFFFFF4D] text-white w-full data-placeholder:text-white data-placeholder:opacity-100 font-satoshi-regular text-[14px]"
 				>
-					{formData.gender ? formData.gender : 'Select gender'}
+					{formData.gender ? formData.gender : 'Select Gender'}
 				</Select.Trigger>
 				<Select.Content>
 					<Select.Item value="male">Male</Select.Item>
@@ -221,9 +221,9 @@
 			<label for="ageGroup" class="text-sm">Age Group</label>
 			<Select.Root type="single" name="ageGroup" bind:value={formData.ageGroup}>
 				<Select.Trigger
-					class="mt-2 border border-[#D0D5DD] h-10 rounded-xl bg-[#FFFFFF4D] placeholder:text-white text-white w-full data-placeholder:text-white placeholder:font-satoshi-regular placeholder:text-[14px]:"
+					class="mt-2 border border-[#D0D5DD] h-10 rounded-xl bg-[#FFFFFF4D] text-white w-full data-placeholder:text-white data-placeholder:opacity-100 font-satoshi-regular text-[14px]"
 				>
-					{formData.ageGroup ? formData.ageGroup : 'Select age group'}
+					{formData.ageGroup ? formData.ageGroup : 'Select Age Group'}
 				</Select.Trigger>
 				<Select.Content>
 					<Select.Item value="AGE_12_15">12-15 years</Select.Item>
