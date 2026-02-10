@@ -18,7 +18,7 @@
 	import { onMount } from 'svelte';
 	import { chats, chatStore, isLoadingChats } from '$lib/stores/chatStore';
 	import ChatHistorySkeleton from './ChatHistorySkeleton.svelte';
-	import { profile } from '$lib/stores/profile';
+	import { fetchProfile, profile } from '$lib/stores/profile';
 	import * as Avatar from '$lib/components/ui/avatar/index.js';
 	import ChatHistoryDrawer from './ChatHistoryDrawer.svelte';
 	import LogoutConfirmationModal from './LogoutConfirmationModal.svelte';
@@ -36,6 +36,7 @@
 
 	onMount(() => {
 		chatStore.getConversations({});
+		fetchProfile();
 	});
 
 	let isSidebarOpen = $state<boolean>(getInitialSidebarOpen());

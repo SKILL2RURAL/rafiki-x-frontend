@@ -1,21 +1,26 @@
 <script lang="ts">
 	// import Button from '$lib/components/ui/button/button.svelte';
-	import { Menu } from 'lucide-svelte';
-	import logo from '$lib/assets/logo.svg';
-	import premium from '$lib/assets/icons/premium.png';
-	import noProfile from '$lib/assets/icons/no-profile.png';
-	import { getStores } from '$app/stores';
-	import MobileSidebar from './MobileSidebar.svelte';
-	import { Button } from '$lib/components/ui/button';
 	import { goto } from '$app/navigation';
+	import { getStores } from '$app/stores';
+	import premium from '$lib/assets/icons/premium.png';
+	import logo from '$lib/assets/logo.svg';
+	import { Button } from '$lib/components/ui/button';
 	import { auth } from '$lib/stores/authStore';
-	import { profile } from '$lib/stores/profile';
+	import { Menu } from 'lucide-svelte';
+	import MobileSidebar from './MobileSidebar.svelte';
+	import { fetchProfile, profile } from '$lib/stores/profile';
 	import * as Avatar from '$lib/components/ui/avatar/index.js';
+	import { mount, onMount } from 'svelte';
 	const { page } = getStores();
 	let { onOpenCreateAccount }: { onOpenCreateAccount?: () => void } = $props();
 	const pathname = $derived($page.url.pathname);
+	import noProfile from '$lib/assets/icons/no-profile.png';
 
 	let isSidebarOpen = $state(false);
+
+	onMount(async () => {
+		await fetchProfile();
+	});
 
 	let links = [
 		{ name: 'My Resume', href: '/my-resume' },
@@ -60,6 +65,18 @@
 	{:else}
 		<!-- Go Premium Button and Avatar for authenticated users -->
 		<div class="hidden lg:flex items-center gap-3">
+			<a href="/my-profile" class={` flex items-center gap-3`}>
+				{#if $profile.data?.profilePhoto}
+					<Avatar.Root class="size-5">
+						<Avatar.Image src={$profile.data?.profilePhoto} alt="profile" />
+						<Avatar.Fallback
+							>{$profile.data?.firstName?.[0] + $profile.data?.lastName?.[0]}</Avatar.Fallback
+						>
+					</Avatar.Root>
+				{:else}
+					<img src={noProfile} alt="Rafiki X" class="size-9" />
+				{/if}
+			</a>
 			<button
 				onclick={() => goto('/subscription')}
 				class="flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient text-white font-medium hover:opacity-90 transition-opacity cursor-pointer"
