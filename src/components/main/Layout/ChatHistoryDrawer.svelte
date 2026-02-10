@@ -10,6 +10,7 @@
 	import ChatHistorySkeleton from './ChatHistorySkeleton.svelte';
 	import { groupChats } from '$lib/chatGrouping';
 	import { deleteSingleConversation, openDeleteConfirm } from './chatHistoryDrawer.utils';
+	import { goto } from '$app/navigation';
 
 	let {
 		isOpen = $bindable(false),
@@ -48,13 +49,16 @@
 									<div
 										class="flex items-center justify-between w-full text-[#253B4B] text-[16px] font-medium"
 									>
-										<a
-											href={`/${chat.id}`}
+										<button
 											class="flex items-center justify-between w-full text-[#253B4B] text-[16px] font-medium"
-											onclick={() => (isOpen = false)}
+											onclick={() => {
+												goto(`/${chat.id}`);
+												chatStore.getSingleConversation(Number(chat.id));
+												isOpen = false;
+											}}
 										>
 											<p>{chat.title}</p>
-										</a>
+										</button>
 
 										<DropdownMenu.Root
 											open={openMenuId === chat.id}
@@ -91,13 +95,16 @@
 							<div
 								class="flex items-center justify-between w-full text-[#253B4B] text-[16px] font-medium"
 							>
-								<a
-									href={`/${chat.id}`}
+								<button
 									class="flex items-center justify-between w-full text-[#253B4B] text-[16px] font-medium"
-									onclick={() => (isOpen = false)}
+									onclick={() => {
+										goto(`/${chat.id}`);
+										chatStore.getSingleConversation(Number(chat.id));
+										isOpen = false;
+									}}
 								>
 									<p>{chat.title}</p>
-								</a>
+								</button>
 
 								<DropdownMenu.Root
 									open={openMenuId === chat.id}
@@ -131,9 +138,16 @@
 							<div
 								class="flex items-center justify-between w-full text-[#253B4B] text-[16px] font-medium"
 							>
-								<a href={`/${chat.id}`} onclick={() => (isOpen = false)}>
+								<button
+									class="flex items-center justify-between w-full text-[#253B4B] text-[16px] font-medium"
+									onclick={() => {
+										goto(`/${chat.id}`);
+										chatStore.getSingleConversation(Number(chat.id));
+										isOpen = false;
+									}}
+								>
 									<p>{chat.title}</p>
-								</a>
+								</button>
 								<DropdownMenu.Root
 									open={openMenuId === chat.id}
 									onOpenChange={(v) => (openMenuId = v ? chat.id : null)}

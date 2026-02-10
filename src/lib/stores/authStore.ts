@@ -173,6 +173,7 @@ export async function getCountries() {
 
 	try {
 		const { data } = await api.get('/countries');
+
 		auth.update((state) => ({
 			...state,
 			countries: data.data
