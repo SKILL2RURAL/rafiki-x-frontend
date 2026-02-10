@@ -67,7 +67,7 @@
 		<div class="hidden lg:flex items-center gap-3">
 			<a href="/my-profile" class={` flex items-center gap-3`}>
 				{#if $profile.data?.profilePhoto}
-					<Avatar.Root class="size-5">
+					<Avatar.Root class="size-9">
 						<Avatar.Image src={$profile.data?.profilePhoto} alt="profile" />
 						<Avatar.Fallback
 							>{$profile.data?.firstName?.[0] + $profile.data?.lastName?.[0]}</Avatar.Fallback
