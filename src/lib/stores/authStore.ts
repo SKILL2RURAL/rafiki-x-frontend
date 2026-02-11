@@ -95,9 +95,6 @@ export async function login(payload: LoginPayload) {
 				localStorage.setItem('refreshToken', data.data.refreshToken);
 			}
 		}
-	} catch (err) {
-		console.log(err);
-		throw err;
 	} finally {
 		auth.update((state) => ({
 			...state,
@@ -296,6 +293,11 @@ export function runInitialAuthCheck() {
 		isInitialAuthCheckComplete: true
 	}));
 }
+
+// Check if user is authenticated
+export const isAuthenticated = derived(auth, ($auth) => {
+	return !!$auth.accessToken;
+});
 
 if (browser) {
 	runInitialAuthCheck();

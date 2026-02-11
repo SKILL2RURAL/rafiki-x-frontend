@@ -20,7 +20,8 @@ const publicEndpoints = [
 	'/auth/refresh',
 	'/chat/guest/message',
 	'/career-guide',
-	'/my-resume'
+	'/my-resume',
+	'/terms-and-conditions'
 ];
 
 /**
@@ -328,7 +329,6 @@ api.interceptors.response.use(
 
 		// 500 - Internal Server Error
 		if (err.response?.status === 500) {
-			// Don't redirect on 500 errors, let the component handle it
 			return Promise.reject(err);
 		}
 

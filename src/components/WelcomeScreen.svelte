@@ -14,6 +14,7 @@
 	import { getDots } from './main/Chat/inputArea.utils';
 	import { startDotCountAnimation } from './main/Chat/inputArea.actions';
 	import { Mic } from 'lucide-svelte';
+	import { isUserLoggedIn } from '$lib/helper/checkAuth';
 
 	const onOpenCreateAccount = getContext<(() => void) | undefined>('onOpenCreateAccount');
 
@@ -119,7 +120,7 @@
 	>
 		<div class="flex items-center gap-2 sm:gap-3">
 			<div
-				class="border border-[#E8E8E8] rounded-[16px] sm:rounded-[20px] flex px-3 sm:px-4 h-10 min-h-10 sm:h-11 sm:min-h-11 lg:h-12 lg:min-h-12 w-full items-center"
+				class="border border-[#E8E8E8] rounded-2xl sm:rounded-[20px] flex px-3 sm:px-4 h-10 min-h-10 sm:h-11 sm:min-h-11 lg:h-12 lg:min-h-12 w-full items-center"
 			>
 				{#if $isRecording}
 					<p class="text-[#80899A] text-[13px] sm:text-[14px] font-medium animate-pulse">

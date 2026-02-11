@@ -4,6 +4,7 @@
 	import { page } from '$app/state';
 	import { onMount } from 'svelte';
 	import logo from '$lib/assets/logo.svg';
+	import { goto } from '$app/navigation';
 
 	const publicRoutes = [
 		'/',
@@ -25,7 +26,7 @@
 			if ($auth.isInitialAuthCheckComplete) {
 				const currentPath = page.url.pathname;
 				if (!$auth.accessToken && !publicRoutes.includes(currentPath)) {
-					// goto('/login');
+					// goto(`/login?fallback=${currentPath}`);
 				}
 			}
 		});

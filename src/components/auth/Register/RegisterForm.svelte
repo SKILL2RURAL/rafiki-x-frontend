@@ -12,9 +12,15 @@
 	import Spinner from '$lib/components/ui/spinner/spinner.svelte';
 	import { AxiosError } from 'axios';
 
+	const formStorageKey = 'registerFormData';
+
 	// Get List of countries on mount
 	onMount(async () => {
 		if (!$auth.countries) await getCountries();
+		// Load any saved form data from session storage
+		if (window && sessionStorage.getItem(formStorageKey)) {
+			formData = JSON.parse(sessionStorage.getItem(formStorageKey) as string);
+		}
 	});
 
 	$: countries = $auth.countries ?? [];
@@ -61,6 +67,7 @@
 			.join(' ');
 	}
 
+	// Form submission handler
 	async function handleSubmit() {
 		if (!formData.firstName) {
 			toast.error('First name is required');
@@ -112,6 +119,7 @@
 				lastName: capitalizeName(formData.lastName)
 			};
 			await register(payloadToSend);
+			sessionStorage.removeItem(formStorageKey);
 			goto('/verify-email');
 		} catch (error: any) {
 			if (error instanceof AxiosError) {
@@ -120,8 +128,16 @@
 		}
 	}
 
+	// Toggle password visibility
 	function togglePasswordVisibility() {
 		isPasswordVisible = !isPasswordVisible;
+	}
+
+	function gotoTerms() {
+		if (window) {
+			sessionStorage.setItem(formStorageKey, JSON.stringify(formData));
+		}
+		goto('/terms-and-conditions');
 	}
 </script>
 
@@ -272,9 +288,12 @@
 		</div>
 	</div>
 
-	<div class="text-[12px] flex gap-2 items-center font-satoshi-regular">
+	<div class="text-[14px] flex gap-2 items-center font-satoshi-regular">
 		<Checkbox bind:checked={formData.agree} />
-		<p>I have read and agree with RafikiX</p>
+		<p>
+			I have read and agree with RafikiX
+			<button type="button" on:click={gotoTerms} class="underline">Terms and Conditions</button>
+		</p>
 	</div>
 	<Button class="bg-gradient w-full rounded-xl mt-5 border border-[#FFFFFF] h-[50px]" type="submit">
 		{#if $isLoading}

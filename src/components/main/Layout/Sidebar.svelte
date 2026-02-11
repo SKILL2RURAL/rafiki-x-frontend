@@ -35,8 +35,10 @@
 	let isDrawerOpen = $state(false);
 
 	onMount(() => {
-		chatStore.getConversations({});
-		fetchProfile();
+		if ($auth.accessToken) {
+			chatStore.getConversations({});
+			fetchProfile();
+		}
 	});
 
 	let isSidebarOpen = $state<boolean>(getInitialSidebarOpen());

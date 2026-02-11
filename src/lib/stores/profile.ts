@@ -44,11 +44,11 @@ export async function fetchProfile() {
 
 		profile.set({ data: normalizedUser, isLoading: false, error: null });
 	} catch (error) {
-		console.error('Error fetching profile:', error);
+		// console.error('Error fetching profile:', error);
 		if (error instanceof AxiosError) {
 			const message = error.response?.data?.message || 'Failed to load profile.';
 			profile.set({ data: null, isLoading: false, error: message });
-			toast.error(message);
+			// toast.error(message);
 		}
 	}
 }

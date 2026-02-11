@@ -15,11 +15,14 @@
 	let { onOpenCreateAccount }: { onOpenCreateAccount?: () => void } = $props();
 	const pathname = $derived($page.url.pathname);
 	import noProfile from '$lib/assets/icons/no-profile.png';
+	import { isUserLoggedIn } from '$lib/helper/checkAuth';
 
 	let isSidebarOpen = $state(false);
 
 	onMount(async () => {
-		await fetchProfile();
+		if (isUserLoggedIn()) {
+			await fetchProfile();
+		}
 	});
 
 	let links = [

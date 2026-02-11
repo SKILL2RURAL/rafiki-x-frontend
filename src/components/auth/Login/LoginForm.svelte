@@ -4,6 +4,7 @@
 	import Checkbox from '$lib/components/ui/checkbox/checkbox.svelte';
 	import Input from '$lib/components/ui/input/input.svelte';
 	import { Spinner } from '$lib/components/ui/spinner';
+	import { isUserLoggedIn } from '$lib/helper/checkAuth';
 	import { auth, isLoading, login } from '$lib/stores/authStore';
 	import { fetchProfile } from '$lib/stores/profile';
 	import { AxiosError } from 'axios';
@@ -19,7 +20,7 @@
 	async function handleSubmit() {
 		try {
 			await login(formData).then(() => {
-				if ($auth.accessToken) fetchProfile();
+				if (isUserLoggedIn()) fetchProfile();
 			});
 			auth.update((state) => ({ ...state, isLoading: false }));
 			goto('/');
@@ -48,14 +49,14 @@
 			type="email"
 			bind:value={formData.email}
 			placeholder="Enter your email address"
-			class="mt-2 border border-[#D0D5DD] h-[40px] rounded-[8px] bg-[#FFFFFF4D] placeholder:text-white placeholder:font-satoshi-regular"
+			class="mt-2 border border-[#D0D5DD] h-10 rounded-xl bg-[#FFFFFF4D] placeholder:text-white placeholder:font-satoshi-regular"
 		/>
 	</div>
 
 	<div>
 		<label for="password" class="text-sm">Password</label>
 		<div
-			class="mt-2 border border-[#D0D5DD] h-[40px] rounded-[8px] bg-[#FFFFFF4D] flex gap-2 p-2 px-3 justify-between items-center"
+			class="mt-2 border border-[#D0D5DD] h-10 rounded-xl bg-[#FFFFFF4D] flex gap-2 p-2 px-3 justify-between items-center"
 		>
 			<input
 				type={!isPasswordVisible ? 'password' : 'text'}
@@ -86,7 +87,7 @@
 	</div>
 	<Button
 		type="submit"
-		class="bg-gradient w-full rounded-[8px] mt-5 border border-[#FFFFFF] h-[50px]"
+		class="bg-gradient w-full rounded-xl mt-5 border border-[#FFFFFF] h-[50px]"
 		disabled={!formData.email || !formData.password}
 	>
 		{#if $isLoading}
