@@ -146,7 +146,7 @@ api.interceptors.request.use(
 api.interceptors.response.use(
 	(res) => res,
 	async (err) => {
-		const isPublic = publicEndpoints.some((path) => err.config?.url?.includes(path));
+		// const isPublic = publicEndpoints.some((path) => err.config?.url?.includes(path));
 
 		if (err.code === 'ERR_NETWORK') {
 			toast.error('Network Error. Please check your internet connection.');
@@ -154,7 +154,7 @@ api.interceptors.response.use(
 		}
 
 		// 401 - Unauthorized (Token expired or invalid)
-		if (err.response?.status === 401 && !isPublic) {
+		if (err.response?.status === 401) {
 			const originalRequest = err.config as InternalAxiosRequestConfig & { _retry?: boolean };
 			const currentAuth = get(auth);
 			const hasRefreshToken = !!currentAuth.refreshToken;
@@ -301,7 +301,7 @@ api.interceptors.response.use(
 		}
 
 		// 403 - Forbidden (Token doesn't have required permissions)
-		if (err.response?.status === 403 && !isPublic) {
+		if (err.response?.status === 403) {
 			if (!isLoggingOut) {
 				isLoggingOut = true;
 

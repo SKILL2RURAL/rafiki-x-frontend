@@ -14,7 +14,7 @@
 		class="h-screen w-screen z-[-1] top-0 left-0 opacity-50"
 	/>
 	<div
-		class="bg-gradient absolute top-0 left-0 overflow-scroll lg:h-screen w-screen flex flex-col items-center justify-center lg:grid grid-cols-2 gap-5 pt-10 z-50"
+		class="bg-gradient absolute top-0 left-0 overflow-scroll no-scrollbar lg:h-screen w-screen flex flex-col items-center justify-center lg:grid grid-cols-2 gap-5 pt-10 z-50"
 	>
 		<div class="flex justify-center items-center">
 			<img
@@ -26,7 +26,7 @@
 			/>
 		</div>
 		<div class="flex justify-center items-center lg:h-full">
-			<div class="text-white lg:max-h-screen lg:overflow-auto py-5 lg:w-[500px] px-5">
+			<div class="text-white lg:max-h-screen lg:overflow-auto py-5 lg:w-[500px] px-5 no-scrollbar">
 				<h1 class="font-plus-jakarta-sans-semibold text-[30px] text-center lg:text-left">
 					Welcome to RafikiX
 				</h1>

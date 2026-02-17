@@ -65,7 +65,6 @@
 			// file size validation (10 MB limit)
 			if (file.size > MAX_FILE_SIZE) {
 				toast.error('File size must not exceed 10MB');
-				// input.value = '';
 				return;
 			}
 
@@ -367,10 +366,10 @@
 					class="border bg-linear-to-r from-[#51A3DA] to-[#60269E] p-px rounded-xl"
 				>
 					<div
-						class="bg-white h-10 w-[120px] md:h-[55px] md:w-[185px] flex items-center justify-center rounded-[9px]"
+						class="bg-white h-10 w-[120px] md:h-[55px] md:w-[185px] flex items-center justify-center rounded-[9px] p-2"
 					>
 						<p
-							class="bg-linear-to-r from-[#51A3DA] to-[#60269E] bg-clip-text text-transparent font-mulish font-semibold"
+							class="bg-linear-to-r from-[#51A3DA] to-[#60269E] bg-clip-text text-transparent font-mulish font-semibold rounded-[9px]"
 						>
 							Go Back
 						</p>
