@@ -130,6 +130,11 @@ export async function handleRenew(
 		const result = await reactivateSubscription();
 
 		if (result) {
+			if (result.manageLink && browser) {
+				window.location.href = result.manageLink;
+				return;
+			}
+
 			// Subscription reactivated successfully
 			// fetchSubscriptionStatus is already called in reactivateSubscription
 			// Reset loading state when subscription status updates

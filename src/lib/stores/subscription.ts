@@ -40,6 +40,7 @@ export interface SubscriptionStatus {
 	endDate: string | null;
 	amount: number | null;
 	currency: string | null;
+	provider?: string | null;
 	limits: PlanLimits;
 	currentUsage: CurrentUsage;
 	active: boolean;
@@ -58,13 +59,15 @@ export interface FreePlan {
 export interface SupportPlanPricing {
 	ngn: number;
 	usd: number;
+	gbp?: number;
 }
 
 export interface SupportPlan {
 	description: string;
 	name: string;
 	limits: PlanLimits;
-	paystackPricing: {
+	providerByCurrency?: Record<string, string>;
+	paystackPricing?: {
 		monthly: {
 			ngn: number;
 		};
@@ -86,8 +89,9 @@ export interface PlansResponse {
 // Types for Subscription Initialization
 export interface InitializeSubscriptionPayload {
 	billingCycle: 'MONTHLY' | 'YEARLY';
-	currency: 'NGN' | 'USD';
+	currency: 'NGN' | 'USD' | 'GBP';
 	callbackUrl: string;
+	provider?: 'PAYSTACK' | 'POLAR';
 }
 
 export interface PaymentData {
@@ -97,6 +101,7 @@ export interface PaymentData {
 	reference: string;
 	amount: number;
 	currency: string;
+	provider?: string;
 }
 
 export interface InitializeSubscriptionResponse {
@@ -106,6 +111,7 @@ export interface InitializeSubscriptionResponse {
 	reference: string;
 	amount: number;
 	currency: string;
+	provider?: string;
 }
 
 // Types for Transaction History
@@ -118,6 +124,7 @@ export interface Transaction {
 	createdAt: string;
 	paymentChannel: string;
 	reference: string;
+	provider?: string;
 }
 
 export interface TransactionsResponse {
@@ -340,29 +347,31 @@ export function clearSubscriptionPlans() {
 export function getSupportPlanPrice(
 	plans: PlansResponse | null,
 	billingPeriod: 'monthly' | 'yearly',
-	currency: 'naira' | 'dollars'
+	currency: 'naira' | 'dollars' | 'pounds'
 ): number {
 	if (!plans?.support) return 0;
 
-	const apiCurrency = currency === 'naira' ? 'ngn' : 'usd';
-	return plans.support.pricing[billingPeriod][apiCurrency];
+	const apiCurrency = currency === 'naira' ? 'ngn' : currency === 'pounds' ? 'gbp' : 'usd';
+	return plans.support.pricing[billingPeriod][apiCurrency as keyof SupportPlanPricing] || 0;
 }
 
 // Initialize subscription (start payment process)
 export async function initializeSubscription(
 	billingCycle: 'monthly' | 'yearly',
-	currency: 'naira' | 'dollars',
+	currency: 'naira' | 'dollars' | 'pounds',
 	callbackUrl: string
 ): Promise<InitializeSubscriptionResponse | null> {
 	try {
 		// Convert to API format
 		const apiBillingCycle = billingCycle === 'monthly' ? 'MONTHLY' : 'YEARLY';
-		const apiCurrency = currency === 'naira' ? 'NGN' : 'USD';
+		const apiCurrency = currency === 'naira' ? 'NGN' : currency === 'pounds' ? 'GBP' : 'USD';
+		const provider = apiCurrency === 'NGN' ? 'PAYSTACK' : 'POLAR';
 
 		const payload: InitializeSubscriptionPayload = {
 			billingCycle: apiBillingCycle,
 			currency: apiCurrency,
-			callbackUrl
+			callbackUrl,
+			provider
 		};
 
 		const { data } = await api.post('/subscription/subscribe', payload);
@@ -377,7 +386,8 @@ export async function initializeSubscription(
 				accessCode: paymentData.accessCode,
 				reference: paymentData.reference,
 				amount: paymentData.amount,
-				currency: paymentData.currency
+				currency: paymentData.currency,
+				provider: paymentData.provider
 			};
 		} else {
 			// Handle error response (e.g., "You already have an active subscription")
@@ -397,6 +407,8 @@ export interface ReactivateSubscriptionResponse {
 	message: string;
 	subscriptionId: number;
 	reactivated: boolean;
+	manageLink?: string;
+	providerSubscriptionId?: string;
 }
 
 export async function reactivateSubscription(): Promise<ReactivateSubscriptionResponse | null> {

@@ -25,15 +25,17 @@
 	const plans = $derived($subscriptionPlans.plans);
 
 	const billingCycle = $derived(billingPeriod === 'monthly' ? 'Monthly' : 'Yearly');
-	const currencySymbol = $derived(currency === 'naira' ? '₦' : '$');
+	const currencySymbol = $derived(currency === 'naira' ? '₦' : currency === 'pounds' ? '£' : '$');
 
 	// Get price from the PricingCard's selected billing period and currency
 	const amount = $derived.by(() => {
 		if (!plans?.support) return 0;
 
-		// Use paystackPricing for NGN, pricing for USD
+		// Use paystackPricing for NGN, pricing for USD/GBP
 		if (currency === 'naira') {
-			return plans.support.paystackPricing[billingPeriod]?.ngn || 0;
+			return plans.support.paystackPricing?.[billingPeriod]?.ngn || plans.support.pricing?.[billingPeriod]?.ngn || 0;
+		} else if (currency === 'pounds') {
+			return plans.support.pricing?.[billingPeriod]?.gbp || 0;
 		} else {
 			return plans.support.pricing[billingPeriod]?.usd || 0;
 		}
