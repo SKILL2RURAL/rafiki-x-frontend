@@ -1,4 +1,4 @@
-export type Currency = 'naira' | 'dollars';
+export type Currency = 'naira' | 'dollars' | 'pounds';
 export type BillingPeriod = 'monthly' | 'yearly';
 
 export interface PricingPlan {
