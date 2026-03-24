@@ -30,7 +30,8 @@
 		onSupportPlanAction
 	} from './subscriptionPageActions';
 
-	let currency = $state<Currency>('naira');
+	const { data } = $props();
+	const currency = $derived(data.currency as Currency);
 	let freePlanPeriod = $state<BillingPeriod>('monthly');
 	let supportPlanPeriod = $state<BillingPeriod>('monthly');
 	let isCreateAccountOpen = $state(false);
@@ -47,8 +48,16 @@
 	const isAuthenticated = $derived(!!$auth.accessToken);
 
 	// Get price for support plan based on currency and billing period
-	// const supportPrice = $derived(getSupportPlanPrice(plans, supportPlanPeriod, currency));
-	const supportPrice = $derived(plans?.support?.paystackPricing[supportPlanPeriod]?.ngn || 0);
+	const supportPrice = $derived.by(() => {
+		if (!plans?.support) return 0;
+		if (currency === 'naira') {
+			return plans.support.paystackPricing?.[supportPlanPeriod]?.ngn || plans.support.pricing?.[supportPlanPeriod]?.ngn || 0;
+		} else if (currency === 'pounds') {
+			return plans.support.pricing?.[supportPlanPeriod]?.gbp || 0;
+		}
+
+		return plans.support.pricing?.[supportPlanPeriod]?.usd || 0;
+	});
 	// Get free plan features
 	const freePlanFeatures = $derived(plans?.free ? generateFeatures(plans.free.limits) : []);
 
@@ -89,7 +98,6 @@
 	<div class="relative p-5 md:p-10" style="font-family: 'Impact', sans-serif;">
 		<div class="text-center">
 			<h1 class="text-2xl md:text-3xl mb-5 font-black text-[#253B4B]">Upgrade Your RafikiX Plan</h1>
-			<!-- <div class="flex justify-center"><CurrencyToggle bind:selected={currency} /></div> -->
 			<p class="font-mulish text-[18px] text-[#808990] max-w-[500px] mx-auto">
 				When you subscribe, you help remove barriers so a young person from an underserved or
 				displaced background can access Rafiki AI career counselling for free.

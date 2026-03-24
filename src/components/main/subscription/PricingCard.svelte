@@ -22,7 +22,7 @@
 	const dispatch = createEventDispatcher();
 
 	$: displayPrice = price === 0 ? '0' : price.toLocaleString();
-	$: currencySymbol = currency === 'naira' ? '₦' : '$';
+	$: currencySymbol = currency === 'naira' ? '₦' : currency === 'pounds' ? '£' : '$';
 	$: billingText = billingPeriod === 'monthly' ? 'billed monthly' : 'billed annually';
 
 	function handleClick() {
