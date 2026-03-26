@@ -2,8 +2,8 @@
 	import Layout from '../../../components/main/Layout/Layout.svelte';
 	import Messaging from '../../../components/main/Chat/Messaging.svelte';
 	import { chatStore, initialMessage } from '$lib/stores/chatStore';
-	import { messages } from '$lib/stores/chatStore';
-	import { goto } from '$app/navigation';
+	// import { messages } from '$lib/stores/chatStore';
+	// import { goto } from '$app/navigation';
 
 	$effect(() => {
 		const unsubscribe = initialMessage.subscribe((message) => {
@@ -21,11 +21,11 @@
 				chatStore.setInitialMessage(null);
 			}
 		});
-		const unsubMsgs = messages.subscribe((ms) => {
-			if (!ms || ms.length === 0) {
-				goto('/');
-			}
-		});
+		// const unsubMsgs = messages.subscribe((ms) => {
+		// 	if (!ms || ms.length === 0) {
+		// 		goto('/');
+		// 	}
+		// });
 		return () => unsubscribe();
 	});
 </script>

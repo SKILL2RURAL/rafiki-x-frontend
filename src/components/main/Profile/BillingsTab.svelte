@@ -91,7 +91,7 @@
 							</td>
 						</tr>
 					{:else}
-						{#each $transactions.transactions as record, index}
+						{#each $transactions.transactions as record (record.id)}
 							<tr
 								class="border-b border-[#E8E8E8] text-[#101828] font-normal text-[14px] hover:bg-[#F9FAFB] transition-colors"
 							>

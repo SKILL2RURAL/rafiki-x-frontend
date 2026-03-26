@@ -4,7 +4,7 @@
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
 	import { Eye, EyeOff } from 'lucide-svelte';
 	import { toast } from 'svelte-sonner';
-	import { fetchProfile } from '$lib/stores/profile';
+	// import { fetchProfile } from '$lib/stores/profile';
 	import Spinner from '$lib/components/ui/spinner/spinner.svelte';
 
 	export let isOpen: boolean = false;

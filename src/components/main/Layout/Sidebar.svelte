@@ -25,11 +25,15 @@
 	import { auth, logout as authLogout } from '$lib/stores/authStore';
 	import { groupChatsLimited } from '$lib/chatGrouping';
 	import { getInitialSidebarOpen, toggleSidebarOpen } from './sidebar.utils';
+	import { resolve } from '$app/paths';
+	import { currentPlan } from '$lib/stores/subscription';
 
-	let { onOpenCreateAccount }: { onOpenCreateAccount?: () => void } = $props();
+	// let { onOpenCreateAccount }: { onOpenCreateAccount?: () => void } = $props();
 
 	// Local state for logout confirmation modal
 	let isLogoutModalOpen = $state(false);
+	const userCurrentPlan = $derived($currentPlan);
+	const isSupportPlanCurrent = $derived(userCurrentPlan === 'SUPPORT');
 
 	// LOACAL STATES
 	let isDrawerOpen = $state(false);
@@ -60,7 +64,7 @@
 		<!-- Settings -->
 		<div class="min-h-0 overflow-hidden">
 			<!-- Logo  -->
-			<button onclick={() => goto('/')}>
+			<button onclick={() => goto(resolve('/'))}>
 				<div class="flex gap-2 items-end">
 					<img src={logo} alt="Rafiki X" width="45" height="45" />
 					{#if isSidebarOpen}
@@ -76,7 +80,7 @@
 			<!-- Links  -->
 			<div class="my-5 space-y-3 mt-10">
 				<a
-					href="/"
+					href={resolve('/')}
 					class={`text-[14px] font-normal p-2 rounded-xl cursor-pointer flex items-center gap-2 ${pathname === '/' ? 'bg-gradient text-white' : 'text-[#808990]'} w-full`}
 				>
 					<MessageCircle size={17} color={pathname === '/' ? 'white' : '#808990'} />
@@ -85,7 +89,7 @@
 					{/if}
 				</a>
 				<a
-					href="/my-resume"
+					href={resolve('/my-resume')}
 					class={` text-[14px] font-normal p-2 rounded-xl cursor-pointer flex items-center gap-2 ${pathname.includes('my-resume') ? 'bg-gradient text-white' : 'text-[#808990]'} w-full`}
 				>
 					{#if !pathname.includes('my-resume')}
@@ -98,7 +102,7 @@
 					{/if}
 				</a>
 				<a
-					href="/career-guide"
+					href={resolve('/career-guide')}
 					class={` text-[14px] font-normal p-2 rounded-xl cursor-pointer flex items-center gap-2 ${pathname.includes('career-guide') ? 'bg-gradient text-white' : 'text-[#808990]'} w-full`}
 				>
 					{#if pathname.includes('/career-guide')}
@@ -124,11 +128,11 @@
 								{#if groupedLimited.today.length > 0}
 									<p class="mb-4 font-medium text-[12px] text-[#909090] uppercase">Today</p>
 									<div class="space-y-3 max-h-[220px] overflow-y-auto no-scrollbar pr-1">
-										{#each groupedLimited.today as chat}
+										{#each groupedLimited.today as chat (chat.id)}
 											<button
-												class={`flex justify-between items-center cursor-pointer w-full gap-5`}
+												class="flex justify-between items-center cursor-pointer w-full gap-5"
 												onclick={() => {
-													goto(`/${chat.id}`);
+													goto(resolve(`/${chat.id}`));
 													chatStore.getSingleConversation(Number(chat.id));
 												}}
 											>
@@ -143,11 +147,11 @@
 
 								{#if groupedLimited.yesterday.length > 0}
 									<p class="mb-4 font-medium text-[12px] text-[#909090] uppercase">Yesterday</p>
-									{#each groupedLimited.yesterday as chat}
+									{#each groupedLimited.yesterday as chat (chat.id)}
 										<button
-											class={`flex justify-between items-center cursor-pointer w-full gap-5`}
+											class="flex justify-between items-center cursor-pointer w-full gap-5"
 											onclick={() => {
-												goto(`/${chat.id}`);
+												goto(resolve(`/${chat.id}`));
 												chatStore.getSingleConversation(Number(chat.id));
 											}}
 										>
@@ -159,11 +163,11 @@
 
 								{#if groupedLimited.recent.length > 0}
 									<p class="mb-4 font-medium text-[12px] text-[#909090] uppercase">Recent</p>
-									{#each groupedLimited.recent as chat}
+									{#each groupedLimited.recent as chat (chat.id)}
 										<button
-											class={`flex justify-between items-center cursor-pointer w-full gap-5`}
+											class="flex justify-between items-center cursor-pointer w-full gap-5"
 											onclick={() => {
-												goto(`/${chat.id}`);
+												goto(resolve(`/${chat.id}`));
 												chatStore.getSingleConversation(Number(chat.id));
 											}}
 										>
@@ -197,7 +201,7 @@
 		<div class=" flex flex-col justify-end mt-auto h-[250px] pt-5">
 			<button
 				class={`w-full rounded-[11px] p-px mb-10 ${isSidebarOpen ? 'bg-linear-to-br from-[#51A3DA] to-[#60269E]' : ''}`}
-				onclick={() => goto('/learn-more')}
+				onclick={() => goto(resolve('/learn-more'))}
 			>
 				<div class="bg-white py-3 px-2 rounded-[10px]">
 					<div
@@ -218,14 +222,14 @@
 			{/if}
 
 			<div class="space-y-7 flex flex-col font-semibold text-[#80899A] text-sm">
-				<button class={`flex items-center gap-3`} onclick={() => goto('/subscription')}>
+				<button class="flex items-center gap-3" onclick={() => goto(resolve('/subscription'))}>
 					<img src={premium} alt="Rafiki X" width="20" height="20" />
 					{#if isSidebarOpen}
-						<p>Go premium</p>
+						<p>{isSupportPlanCurrent ? 'Premium Subscriber' : 'Go Premium'}</p>
 					{/if}
 				</button>
 				{#if $auth.accessToken}
-					<a href="/my-profile" class={` flex items-center gap-3`}>
+					<a href={resolve('/my-profile')} class="flex items-center gap-3">
 						{#if $profile.data?.profilePhoto}
 							<Avatar.Root class="size-5">
 								<Avatar.Image src={$profile.data?.profilePhoto} alt="profile" />
@@ -246,7 +250,7 @@
 				{#if $auth.accessToken}
 					{#if $auth.accessToken}
 						<button
-							class={`flex items-center gap-3`}
+							class="flex items-center gap-3"
 							onclick={() => {
 								isLogoutModalOpen = true;
 							}}
@@ -276,7 +280,7 @@
 		isLogoutModalOpen = false;
 		// Redirect if user is on my-profile page since unauthorized users can't access it
 		if ($page.url.pathname === '/my-profile') {
-			goto('/');
+			goto(resolve('/'));
 		}
 	}}
 />

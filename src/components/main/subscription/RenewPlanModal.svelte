@@ -33,7 +33,11 @@
 
 		// Use paystackPricing for NGN, pricing for USD/GBP
 		if (currency === 'naira') {
-			return plans.support.paystackPricing?.[billingPeriod]?.ngn || plans.support.pricing?.[billingPeriod]?.ngn || 0;
+			return (
+				plans.support.paystackPricing?.[billingPeriod]?.ngn ||
+				plans.support.pricing?.[billingPeriod]?.ngn ||
+				0
+			);
 		} else if (currency === 'pounds') {
 			return plans.support.pricing?.[billingPeriod]?.gbp || 0;
 		} else {
@@ -42,18 +46,18 @@
 	});
 
 	const displayAmount = $derived(amount.toLocaleString());
-	const isCancelled = $derived(subscription?.cancelled ?? false);
-	const isStatusCancelled = $derived(subscription?.status === 'CANCELLED');
+	// const isCancelled = $derived(subscription?.cancelled ?? false);
+	// const isStatusCancelled = $derived(subscription?.status === 'CANCELLED');
 
-	const endDate = $derived(
-		subscription?.endDate
-			? new Date(subscription.endDate).toLocaleDateString('en-US', {
-					year: 'numeric',
-					month: 'short',
-					day: 'numeric'
-				})
-			: 'N/A'
-	);
+	// const endDate = $derived(
+	// 	subscription?.endDate
+	// 		? new Date(subscription.endDate).toLocaleDateString('en-US', {
+	// 				year: 'numeric',
+	// 				month: 'short',
+	// 				day: 'numeric'
+	// 			})
+	// 		: 'N/A'
+	// );
 
 	// Calculate next billing date (assuming it's the same as endDate for reactivation)
 	const nextBillingDate = $derived(

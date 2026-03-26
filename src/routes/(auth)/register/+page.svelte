@@ -17,16 +17,10 @@
 		class="bg-gradient absolute top-0 left-0 overflow-scroll no-scrollbar lg:h-screen w-screen flex flex-col items-center justify-center lg:grid grid-cols-2 gap-5 pt-10 z-50"
 	>
 		<div class="flex justify-center items-center">
-			<img
-				src={logo}
-				alt="Rafiki X"
-				width="500"
-				height="500"
-				class="w-[100px] h-[100px] lg:w-[500px] lg:h-[500px]"
-			/>
+			<img src={logo} alt="Rafiki X" width="500" height="500" class="w-25 h-25 lg:w-125 lg:h-125" />
 		</div>
 		<div class="flex justify-center items-center lg:h-full">
-			<div class="text-white lg:max-h-screen lg:overflow-auto py-5 lg:w-[500px] px-5 no-scrollbar">
+			<div class="text-white lg:max-h-screen lg:overflow-auto py-5 lg:w-125 px-5 no-scrollbar">
 				<h1 class="font-plus-jakarta-sans-semibold text-[30px] text-center lg:text-left">
 					Welcome to RafikiX
 				</h1>

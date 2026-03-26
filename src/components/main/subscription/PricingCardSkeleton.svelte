@@ -8,7 +8,7 @@
 		<div class="mb-6">
 			<!-- Title -->
 			<Skeleton class="mb-4 h-8 w-24" />
-			
+
 			<!-- Price -->
 			<div class="mb-2 flex items-baseline gap-2">
 				<Skeleton class="h-4 w-4" />
@@ -32,7 +32,7 @@
 
 		<!-- Features List -->
 		<ul class="space-y-3">
-			{#each Array(4) as _}
+			{#each Array(4) as index (index)}
 				<li class="flex items-start gap-3">
 					<Skeleton class="size-[24px] rounded-full" />
 					<Skeleton class="h-5 flex-1 max-w-[200px]" />
@@ -41,4 +41,3 @@
 		</ul>
 	</div>
 </div>
-

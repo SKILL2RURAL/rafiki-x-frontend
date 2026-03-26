@@ -5,6 +5,7 @@
 	import ResumeUploader from '../../../components/main/my-resume/ResumeUploader.svelte';
 	import Layout from '../../../components/main/Layout/Layout.svelte';
 	import CreateAccountModal from '../../../components/main/Layout/CreateAccountModal.svelte';
+	import { resolve } from '$app/paths';
 
 	let isCreateAccountOpen = $state(false);
 </script>
@@ -20,7 +21,7 @@
 		>
 			<button
 				onclick={() => {
-					goto('/');
+					goto(resolve('/'));
 				}}
 				class="absolute top-3 right-3 md:top-7 md:right-5 cursor-pointer bg-white h-[35px] w-[35px] flex items-center justify-center text-[18px] rounded-full text-[#60269e]"
 			>
@@ -38,7 +39,7 @@
 
 			<div class="text-[13px] sm:text-[14px] font-mulish text-[#686868] leading-4 text-center px-2">
 				By messaging RafikiX, you agree to our <a
-					href="/terms-and-conditions"
+					href={resolve('/terms-and-conditions')}
 					class="bg-gradient from-[#51A3DA] to-[#60269E] text-transparent bg-clip-text hover:underline cursor-pointer"
 					>Terms and Conditions</a
 				>

@@ -1,5 +1,4 @@
 <script lang="ts">
-	import * as Avatar from '$lib/components/ui/avatar/index.js';
 	import { fetchProfile, profile } from '$lib/stores/profile';
 	import { onMount } from 'svelte';
 	import { cn } from '$lib/utils';

@@ -19,8 +19,7 @@
 		fetchSubscriptionStatus,
 		generateFeatures,
 		isSubscriptionCancelled,
-		subscriptionPlans,
-		subscriptionStatus
+		subscriptionPlans
 	} from '../../../lib/stores/subscription';
 	import {
 		onCancelPlan as onCancelPlanAction,
@@ -29,6 +28,7 @@
 		onManagePlan,
 		onSupportPlanAction
 	} from './subscriptionPageActions';
+	import { resolve } from '$app/paths';
 
 	const { data } = $props();
 	const currency = $derived(data.currency as Currency);
@@ -51,7 +51,11 @@
 	const supportPrice = $derived.by(() => {
 		if (!plans?.support) return 0;
 		if (currency === 'naira') {
-			return plans.support.paystackPricing?.[supportPlanPeriod]?.ngn || plans.support.pricing?.[supportPlanPeriod]?.ngn || 0;
+			return (
+				plans.support.paystackPricing?.[supportPlanPeriod]?.ngn ||
+				plans.support.pricing?.[supportPlanPeriod]?.ngn ||
+				0
+			);
 		} else if (currency === 'pounds') {
 			return plans.support.pricing?.[supportPlanPeriod]?.gbp || 0;
 		}
@@ -70,7 +74,6 @@
 	const isFreePlanCurrent = $derived(userCurrentPlan === 'FREE');
 	const isSupportPlanCurrent = $derived(userCurrentPlan === 'SUPPORT');
 	const isCancelled = $derived($isSubscriptionCancelled);
-	const subscription = $derived($subscriptionStatus.status);
 
 	// Track previous plan to detect changes
 	let previousPlan = $state<string | undefined>(undefined);
@@ -105,7 +108,7 @@
 		</div>
 
 		<!-- Close Button -->
-		<a href="/">
+		<a href={resolve('/')}>
 			<div
 				class="absolute top-2 right-2 md:top-0 md:right-0 rounded-full size-[34px] flex items-center justify-center bg-gradient"
 			>
@@ -195,7 +198,7 @@
 	<!-- Footer -->
 	<p class="mt-8 px-4 text-center text-sm text-gray-600 mb-20 lg:mb-0">
 		By messaging RafikiX, you agree to our <a
-			href="/terms-and-conditions"
+			href={resolve('/terms-and-conditions')}
 			class="bg-gradient from-[#51A3DA] to-[#60269E] text-transparent bg-clip-text hover:underline cursor-pointer"
 			>Terms and Conditions</a
 		>

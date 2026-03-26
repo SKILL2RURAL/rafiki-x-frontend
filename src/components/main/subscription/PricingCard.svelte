@@ -91,7 +91,7 @@
 
 		<!-- Features List -->
 		<ul class="space-y-3">
-			{#each features as feature}
+			{#each features as feature (feature)}
 				<li class="flex items-start gap-3">
 					<div class="bg-[#D1FADF] rounded-full size-6 flex items-center justify-center">
 						<img src={Check} alt="" width="13" height="13" />

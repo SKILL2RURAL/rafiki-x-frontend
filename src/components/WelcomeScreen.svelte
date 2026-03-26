@@ -14,7 +14,8 @@
 	import { getDots } from './main/Chat/inputArea.utils';
 	import { startDotCountAnimation } from './main/Chat/inputArea.actions';
 	import { Mic } from 'lucide-svelte';
-	import { isUserLoggedIn } from '$lib/helper/checkAuth';
+	// import { isUserLoggedIn } from '$lib/helper/checkAuth';
+	import { resolve } from '$app/paths';
 
 	const onOpenCreateAccount = getContext<(() => void) | undefined>('onOpenCreateAccount');
 
@@ -29,7 +30,7 @@
 	}
 
 	$effect(() => {
-		text;
+		// text;
 		resizeTextarea(textareaRef);
 	});
 
@@ -79,7 +80,7 @@
 				}
 			]);
 			await chatStore.sendGuestMessage(content, chatContext || null);
-			goto('/guest');
+			goto(resolve('/guest'));
 			return;
 		}
 		// For Authenticated Users
@@ -90,7 +91,7 @@
 				chatContext: chatContext || null
 			})
 			.then((res) => {
-				goto(`/${res.conversationId}`);
+				goto(resolve(`/${res.conversationId}`));
 			});
 	}
 </script>
@@ -112,7 +113,9 @@
 	</h1>
 	<p class="text-[14px] font-normal mt-3 lg:w-[80%] mx-auto">
 		RafikiX helps you explore opportunities, gain clarity, and build confidence at every stage of
-		your career. <a href="/learn-more" class="underline">Learn more about RafikiX policy here.</a>
+		your career. <a href={resolve('/learn-more')} class="underline"
+			>Learn more about RafikiX policy here.</a
+		>
 	</p>
 
 	<div
@@ -237,7 +240,7 @@
 	<p class="text-[14px] font-normal text-[#686868]">
 		By messaging RafikiX, you agree to our
 		<a
-			href="/terms-and-conditions"
+			href={resolve('/terms-and-conditions')}
 			class="bg-gradient from-[#51A3DA] to-[#60269E] text-transparent bg-clip-text hover:underline cursor-pointer"
 			>Terms and Conditions</a
 		>

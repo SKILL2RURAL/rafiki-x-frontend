@@ -5,6 +5,7 @@
 	import * as AlertDialog from '$lib/components/ui/alert-dialog/index.js';
 	import Spinner from '$lib/components/ui/spinner/spinner.svelte';
 	import { toast } from 'svelte-sonner';
+	import { resolve } from '$app/paths';
 
 	export let isOpen: boolean = false;
 	export let onClose: (value: boolean) => void;
@@ -20,7 +21,7 @@
 			onClose(false);
 
 			// Redirect to home page
-			goto('/login');
+			goto(resolve('/login'));
 			localStorage.clear();
 		} catch (error) {
 			console.error('Failed to delete account:', error);

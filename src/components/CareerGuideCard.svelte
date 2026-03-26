@@ -7,6 +7,7 @@
 	const { sendMessage } = chatStore;
 	import { auth } from '$lib/stores/authStore';
 	import type { ChatContext } from '$lib/types/chat';
+	import { resolve } from '$app/paths';
 
 	let {
 		title,
@@ -26,7 +27,7 @@
 			createNewConversation: true,
 			chatContext: context
 		}).then((res) => {
-			goto(`/${res.conversationId}`);
+			goto(resolve(`/${res.conversationId}`));
 		});
 	}
 </script>

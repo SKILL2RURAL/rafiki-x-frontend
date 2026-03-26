@@ -16,6 +16,7 @@
 	import TextEditor from './TextEditor.svelte';
 	import info from '$lib/assets/icons/yellow-info.png';
 	import { AxiosError } from 'axios';
+	import { resolve } from '$app/paths';
 
 	let {
 		onRequireAuth,
@@ -34,7 +35,7 @@
 	// LOCAL STATES
 	let isUploading = $state<boolean>(false);
 	let isDrawerOpen = $state<boolean>(false);
-	let resumeFiles = $state<Resume[]>($resumes || []);
+	let resumeFiles = $derived<Resume[]>($resumes || []);
 	let textContent = $state('');
 	let isSavingText = $state(false);
 	const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB
@@ -242,7 +243,7 @@
 	{/if}
 
 	<ul class="flex flex-col gap-4 mt-6 max-h-[300px] overflow-y-auto">
-		{#each resumeFiles as file}
+		{#each resumeFiles as file (file.id)}
 			<li>
 				<div
 					class={cn(
@@ -341,7 +342,7 @@
 	</ul>
 	<Button
 		class="bg-gradient w-full rounded-xl mt-5 border border-[#FFFFFF] h-[50px] hover:opacity-80"
-		onclick={() => goto('/')}
+		onclick={() => goto(resolve('/'))}
 	>
 		Go to chat
 	</Button>

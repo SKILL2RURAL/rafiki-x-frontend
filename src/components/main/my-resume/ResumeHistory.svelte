@@ -8,7 +8,7 @@
 		<p class="">No history available</p>
 	{:else}
 		<ul class="">
-			{#each history as item}
+			{#each history as item (item.title)}
 				<li class="flex justify-between items-cente">
 					<span>{item.title}</span>
 					<!-- {/*Button*/} -->
