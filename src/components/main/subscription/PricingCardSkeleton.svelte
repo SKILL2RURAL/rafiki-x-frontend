@@ -32,7 +32,7 @@
 
 		<!-- Features List -->
 		<ul class="space-y-3">
-			{#each Array(4) as index (index)}
+			{#each Array(4) as _, index (index)}
 				<li class="flex items-start gap-3">
 					<Skeleton class="size-[24px] rounded-full" />
 					<Skeleton class="h-5 flex-1 max-w-[200px]" />
