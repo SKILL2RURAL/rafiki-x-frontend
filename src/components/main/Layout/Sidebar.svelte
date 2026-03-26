@@ -224,8 +224,9 @@
 			<div class="space-y-7 flex flex-col font-semibold text-[#80899A] text-sm">
 				<button class="flex items-center gap-3" onclick={() => goto(resolve('/subscription'))}>
 					<img src={premium} alt="Rafiki X" width="20" height="20" />
+
 					{#if isSidebarOpen}
-						<p>{isSupportPlanCurrent ? 'Premium Subscriber' : 'Go Premium'}</p>
+						<p>{isSupportPlanCurrent ? 'Premium Subscriber' : 'Go Premium Today'}</p>
 					{/if}
 				</button>
 				{#if $auth.accessToken}
