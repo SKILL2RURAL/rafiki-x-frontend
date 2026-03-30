@@ -127,7 +127,7 @@
 							<div class="space-y-3">
 								{#if groupedLimited.today.length > 0}
 									<p class="mb-4 font-medium text-[12px] text-[#909090] uppercase">Today</p>
-									<div class="space-y-3 max-h-[220px] overflow-y-auto no-scrollbar pr-1">
+									<div class="space-y-3 max-h-55 overflow-y-auto no-scrollbar pr-1">
 										{#each groupedLimited.today as chat (chat.id)}
 											<button
 												class="flex justify-between items-center cursor-pointer w-full gap-5"
@@ -198,7 +198,7 @@
 			</div>
 		</div>
 
-		<div class=" flex flex-col justify-end mt-auto h-[250px] pt-5">
+		<div class=" flex flex-col justify-end mt-auto h-62.5 pt-5">
 			<button
 				class={`w-full rounded-[11px] p-px mb-10 ${isSidebarOpen ? 'bg-linear-to-br from-[#51A3DA] to-[#60269E]' : ''}`}
 				onclick={() => goto(resolve('/learn-more'))}

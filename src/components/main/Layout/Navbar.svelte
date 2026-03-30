@@ -16,8 +16,12 @@
 	const pathname = $derived($page.url.pathname);
 	import noProfile from '$lib/assets/icons/no-profile.png';
 	import { isUserLoggedIn } from '$lib/helper/checkAuth';
+	import { currentPlan } from '$lib/stores/subscription';
+	import { resolve } from '$app/paths';
 
 	let isSidebarOpen = $state(false);
+	const userCurrentPlan = $derived($currentPlan);
+	const isSupportPlanCurrent = $derived(userCurrentPlan === 'SUPPORT');
 
 	onMount(async () => {
 		if (isUserLoggedIn()) {
@@ -45,7 +49,7 @@
 		</button>
 
 		{#if !$auth.accessToken}
-			<Button class="bg-gradient h-10 w-[100px]" onclick={() => goto('/login')}>Sign In</Button>
+			<Button class="bg-gradient h-10 w-25" onclick={() => goto('/login')}>Sign In</Button>
 		{:else}
 			<div class="flex justify-center items-center gap-2 overflow-auto text-[16px] w-full">
 				{#each links as link}
@@ -57,12 +61,12 @@
 				{/each}
 			</div>
 			<button onclick={() => goto('/')}>
-				<img src={logo} alt="logo" class="h-5 w-[50px]" />
+				<img src={logo} alt="logo" class="h-5 w-12.5" />
 			</button>
 		{/if}
 	</div>
 	{#if !$auth.accessToken}
-		<Button class="hidden lg:block bg-gradient h-10 w-[100px]" onclick={() => goto('/login')}
+		<Button class="hidden lg:block bg-gradient h-10 w-25" onclick={() => goto('/login')}
 			>Sign In</Button
 		>
 	{:else}
@@ -81,11 +85,13 @@
 				{/if}
 			</a>
 			<button
-				onclick={() => goto('/subscription')}
+				onclick={() => goto(resolve('/subscription'))}
 				class="flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient text-white font-medium hover:opacity-90 transition-opacity cursor-pointer"
 			>
 				<img src={premium} alt="Premium" width="20" height="20" />
-				<span>Go Premium</span>
+				{#if isSidebarOpen}
+					<p>{isSupportPlanCurrent ? 'Premium Subscriber' : 'Go Premium Today'}</p>
+				{/if}
 			</button>
 		</div>
 	{/if}
